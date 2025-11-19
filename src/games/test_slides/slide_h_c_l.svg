@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="960" height="680" viewBox="0 -791.3 960.00004 679.99999" role="img" focusable="false"
+     version="1.1" id="svg15" xmlns="http://www.w3.org/2000/svg"
+     xmlns:svg="http://www.w3.org/2000/svg">
+     <title>horizontal slide</title>
+     <defs id="defs1">
+          <filter style="color-interpolation-filters:sRGB" id="filter32" x="-0.27845003" y="-0.27939973"
+               width="1.5569001" height="1.5587995">
+               <feFlood result="flood" in="SourceGraphic" flood-opacity="1.000000" flood-color="rgb(0,0,0)"
+                    id="feFlood31" />
+               <feGaussianBlur result="blur" in="SourceGraphic" stdDeviation="100" id="feGaussianBlur31" />
+               <feOffset result="offset" in="blur" dx="0" dy="0" id="feOffset31" />
+               <feComposite result="comp1" operator="in" in="flood" in2="offset" id="feComposite31" />
+               <feComposite result="comp2" operator="over" in="SourceGraphic" in2="comp1" id="feComposite32" />
+          </filter>
+     </defs>
+     <text style="fill:#ffffff;filter:url(#filter32)" x="0.95998442" y="-47.299095"
+          id="text18" transform="matrix(0.40028511,0,0,0.40028511,303.63869,-332.4598)">
+          <tspan id="slide-text" x="0.95998442" y="-47.299095"
+               style="font-weight:bold;font-size:1200px;font-family:Arial;fill:#ffffff;">c</tspan>
+     </text>
+</svg>

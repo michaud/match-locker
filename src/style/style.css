@@ -1,0 +1,641 @@
+:root {
+    --match-border-radius: .5rem;
+}
+
+/* Basic Reset and Body Styling */
+body,
+html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* Prevents scrollbars on the body */
+    background-color: #111;
+    /* Dark background for contrast */
+    font-family: sans-serif;
+    color: white;
+}
+
+body {
+    display: grid;
+    justify-content: center;
+}
+
+label {
+    padding: .75rem 0;
+}
+
+input[type="checkbox"] {
+
+    min-width: 1.5rem;
+    min-height: 1.5rem;
+    appearance: none;
+
+    &::after {
+        content: '';
+        display: inline-block;
+        width: 1.7rem;
+        height: 1.7rem;
+        right: 0;
+        border-radius:  .125rem;
+        margin: 3px 0px 1px 3px;
+    }
+    &:checked::after {
+        background-color: rgb(125 99 73);;
+    }
+
+    &::before {
+
+        content: ' ';
+        position: absolute;
+        display: inline-block;
+        width: 2rem;
+        height: 2rem;
+        border-radius:  .25rem;
+        border: #555 solid 1px;
+    }
+}
+/* This is the main viewport for our carousels */
+.screen > * {
+    box-sizing: border-box;
+    display: none;
+    /* Hide all screen elements by default */
+}
+
+.screen {
+    position: relative;
+    width: 960px;
+    height: 680px;
+    overflow: hidden;
+    background-color: black;
+}
+
+.start-screen {
+    display: block;
+    /* The start screen is visible by default */
+}
+
+.button--action {
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 20px;
+    margin: 0;
+    cursor: pointer;
+    color: rgb(255, 255, 255, 0.6);
+    border-radius: 10px;
+    font-size: 16px;
+    transition: background 0.3s ease;
+}
+
+/* Common styles for both lists */
+.swiper-container ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    /* We will use transform to move the lists for better performance */
+    /* This calculation centers the first image inside the 960x680 container */
+    /* (container_width - image_width) / 2 */
+    /* (960 - 960) / 2 = 0 for X */
+    /* (680 - 680) / 2 = 0 for Y */
+    transform: translate(0px, 0px);
+
+    /* Styling for list items and images */
+    li {
+        flex-shrink: 0;
+        /* Prevents flex items from shrinking */
+    }
+}
+
+
+/* Apply to the SVG elements directly now */
+.slide {
+
+    display: block;
+    width: 960px;
+    height: 680px;
+    user-select: none;
+    /* Prevents image selection during drag */
+    -webkit-user-drag: none;
+    /* Prevents image ghosting during drag in WebKit */
+
+    & img {
+        display: block;
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+        /* Ensures the image covers the slide area */
+    }
+}
+
+/* Disable pointer events on game screen when a modal/toaster is active */
+.game-screen.disabled {
+    pointer-events: none;
+}
+
+/* Style for a matched slide */
+.is-matched .slide {
+    box-sizing: border-box;
+    /* Ensures border is inside the element dimensions */
+    outline: 5px solid rgba(78 96 161 / .5);
+    outline-color: rgba(78 96 161 / .5);
+    border-radius: 10px;
+    outline-offset: -5px;
+    opacity: 1;
+    transition: outline-color 0.3s ease-in-out;
+}
+
+.is-dragging .is-matched .slide {
+
+    outline-color: rgba(78 96 161 / 0.0);
+}
+
+
+.slider-horizontal .is-matched-colored .slide {
+    border-left: solid var(--match-color, transparent);
+    border-bottom-left-radius: var(--match-border-radius);
+    border-bottom-right-radius: var(--match-border-radius);
+    border-top-left-radius: var(--match-border-radius);
+    border-top-right-radius: var(--match-border-radius);
+    border-right: var(--match-border-radius) solid var(--match-color, transparent);
+    box-sizing: border-box;
+}
+
+.slider-vertical .is-matched-colored .slide {
+    border-bottom-left-radius: var(--match-border-radius);
+    border-bottom-right-radius: var(--match-border-radius);
+    border-top-left-radius: var(--match-border-radius);
+    border-top-right-radius: var(--match-border-radius);
+
+    border-top: var(--match-border-radius) solid var(--match-color, transparent);
+    border-bottom: var(--match-border-radius) solid var(--match-color, transparent);
+    box-sizing: border-box;
+}
+
+/* Horizontal list (.leftnright) */
+.slider-horizontal {
+    /* Positioned behind the vertical list */
+    transition: opacity 0.3s ease-in-out;
+    z-index: 1;
+}
+
+/*
+Visibility control for vertical swipers.
+By default, they are hidden and non-interactive.
+*/
+.slider-vertical {
+    z-index: 2;
+    /* We will control visibility with opacity on the slide background now */
+    transition: opacity 0.3s ease-in-out;
+
+    & .slide {
+        display: grid;
+        align-items: end;
+    }
+
+    & .slide img {
+        display: block;
+        height: auto;
+        width: 100%;
+        object-fit: contain;
+    }
+}
+
+.sub-nav {
+
+    position: absolute;
+    display: grid;
+    width: 100%;
+    grid-template-columns: auto 1fr auto;
+    z-index: 10;
+
+    &.puzzle {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        bottom: 0;
+        user-select: none;
+        /* Make the container itself non-interactive */
+        pointer-events: none;
+        /* This allows clicks/drags to pass through the empty space */
+
+    }
+
+    &.game {
+
+        position: absolute;
+        top: 0;
+    }
+}
+
+.sub-nav button {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 20px;
+    margin: 0;
+    cursor: pointer;
+    color: rgb(255, 255, 255, 0.3);
+    border-radius: 10px;
+    font-size: 16px;
+    transition: background 0.3s ease;
+    /* Re-enable pointer events specifically for the buttons */
+    pointer-events: auto;
+
+    & span {
+        display: none;
+    }
+}
+
+.sub-nav button:hover {
+    background: rgba(255, 255, 255, .4);
+}
+
+.sub-nav button:disabled {
+    background: rgba(50, 50, 50, 0.2);
+    color: rgba(255, 255, 255, 0.1);
+    cursor: not-allowed;
+}
+
+.sub-nav button:first-child {
+    grid-column: 1;
+}
+
+.sub-nav button:last-child {
+    grid-column: 3;
+}
+
+.sub-nav.game {
+
+    &>button:first-child {
+        border-radius: 0 0 10px 0;
+        border-top-width: 0;
+        border-left-width: 0;
+    }
+
+    &>button:last-child {
+        border-radius: 0 0 0 10px;
+        border-top-width: 0;
+        border-right-width: 0;
+    }
+}
+
+.sub-nav.puzzle {
+
+    width: 100%;
+
+    & .left-right {
+
+        display: flex;
+        flex-direction: column;
+
+        & button:first-child {
+            grid-row: 1;
+            border-radius: 0 10px 0 0;
+            border-bottom-width: 0;
+            border-left-width: 0;
+            border-top-width: 1px;
+            border-right-width: 1px;
+        }
+
+        & button:last-child {
+
+            grid-row: 2;
+            border-radius: 0;
+            border-bottom-width: 0;
+            border-left-width: 0;
+            border-top-width: 0;
+            border-right-width: 1px;
+        }
+    }
+
+    & .up-down {
+
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        right: 0;
+        top: 0;
+
+        & button:first-child {
+            grid-row: 1;
+            border-radius: 10px 0 0 0;
+            border-bottom-width: 0;
+            border-left-width: 1px;
+            border-top-width: 1px;
+            border-right-width: 0;
+
+            & div {
+                transform: rotate(90deg);
+            }
+        }
+
+        & button:last-child {
+
+            grid-row: 2;
+            border-radius: 0;
+            border-bottom-width: 0;
+            border-left-width: 1px;
+            border-top-width: 0;
+            border-right-width: 0;
+
+            & div {
+                transform: rotate(90deg);
+            }
+        }
+    }
+}
+
+.tell-um {
+    font-size: 1.5rem;
+    margin-block: 2rem;
+    margin-inline: 4rem;
+}
+
+.tell-um summary {
+    font-size: 2rem;
+}
+
+.screen-title {
+    margin-inline: auto;
+    margin-block: 1.5rem;
+    min-height: 6rem;
+    font-size: 8rem;
+    line-height: 4.5rem;
+    background-image: url('../style/Leonhard_Euler_2.jpg');
+    background-clip: text;
+    color: transparent;
+    text-shadow: none;
+    text-align: center;
+}
+
+.screen-title span {
+    display: block;
+
+}
+
+.game-menu {
+
+    position: relative;
+    min-height: 10rem;
+    margin-block-start: 3rem;
+    margin-inline-start: 1.5rem;
+
+    & ol {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: .5rem;
+        margin: 0;
+        padding: 0 .5rem 0 0;
+        max-height: 20rem;
+        list-style: none;
+        overflow-y: auto;
+        scrollbar-color: #444543 #7d6652;
+        scrollbar-gutter: stable;
+    }
+
+    & li {
+        display: grid;
+    }
+}
+
+.game-button {
+
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: .75rem;
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.125rem;
+    font-weight: bold;
+    color: rgb(210 200 188);
+    border-radius: .5rem;
+    background-image: radial-gradient(circle farthest-corner at 40px 40px, rgb(51 56 46), #7d6652, hsl(34 23% 50% / 1));
+
+
+    & span {
+
+        display: block;
+    }
+
+    & .title {
+        max-width: 10ch;
+        font-size: 1rem;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    & .description {
+
+        font-weight: normal;
+        text-align: left;
+    }
+}
+
+.menu-popout {
+
+    display: none;
+    /* Initially hidden */
+    z-index: 20;
+    grid-column: 2;
+
+    &>button {
+        padding: 0.5rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgb(255, 255, 255, 0.3);
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: left;
+    }
+
+    & button:hover {
+        background: rgba(255, 255, 255, .4);
+    }
+}
+
+/* Settings Screen Styles */
+.settings-screen {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 1.5rem;
+}
+
+.settings-options {
+    color: white;
+    font-size: 1.5rem;
+    margin-top: 2rem;
+    width: 50%;
+}
+
+.setting-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.setting-option select {
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 5px;
+}
+
+.back-button {
+    margin-top: 3rem;
+    font-size: 1.5rem;
+    padding: 1rem 2rem;
+    background: #444;
+    color: white;
+    border: 1px solid #666;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* Toaster Notification */
+.toaster {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    position: absolute;
+    top: -150px;
+    /* Start off-screen */
+    left: 50%;
+    transform: translateX(-50%);
+    background-image: url(../style/Leonhard_Euler_2.jpg);
+    border: 2px solid #555;
+    border-top-width: 0;
+    border-radius: 0 0 20px 20px;
+    padding: 1rem 4rem;
+    z-index: 1000;
+    text-align: center;
+    transition: top 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    font-size: 1.5rem;
+
+    & p {
+        margin: 0;
+    }
+}
+
+.toaster.is-visible {
+    top: 0;
+    /* Slide into view */
+}
+
+.toaster-back-button {
+    font-size: 1rem;
+    padding: 0.5rem 1.5rem;
+    background: #444;
+    color: white;
+    border: 1px solid #666;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.info-content,
+.info-puzzle {
+    padding-inline: 4rem;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: #bbb
+}
+
+.info-puzzle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+/* Layout Visualizer Styles (for Info Screen) */
+.layout-svg {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    overflow: visible;
+    margin-top: 1rem;
+    max-width: 100%;
+    height: auto;
+}
+
+.slide-rect {
+    stroke: #555;
+    stroke-width: 1;
+    fill: #3c3c3c;
+    rx: 3;
+    ry: 3;
+}
+
+.horizontal-slide {
+    fill: rgba(74, 74, 74, 0.5);
+}
+
+.vertical-slide {
+    fill: rgba(74, 74, 74, 0.5);
+}
+
+.slide-text {
+    font-size: 8px;
+    fill: #d4d4d4;
+    pointer-events: none;
+}
+
+.visually-hidden {
+    opacity: 0;
+    /* Ensure it's not interactive when hidden */
+    pointer-events: none;
+}
+
+.highlight-slot {
+    fill: rgba(86, 156, 214, 0.3);
+    stroke: #569cd6;
+    stroke-width: 2;
+    rx: 3;
+    ry: 3;
+}
+
+.highlight-slot.is-active-puzzle-slot {
+    stroke: #f0ad4e;
+    /* A distinct orange color */
+    stroke-width: 3;
+}
+
+.info-sections {
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    display: block;
+    position: absolute;
+    top: 9rem;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.puzzle-status-indicator {
+    position: absolute;
+    display: none;
+    /* must be grid for display*/
+    top: 1rem;
+    z-index: 15;
+    left: 0;
+    right: 0;
+    justify-content: center;
+    pointer-events: none;
+
+    /* Allow clicks to pass through */
+    &.is-visible {
+        display: grid;
+    }
+}
+
+.puzzle-status {
+    background: rgba(0, 0, 0, 0.6);
+    color: #0f0;
+    padding: 0.5rem 1rem;
+    border: 2px solid #0f0;
+    border-radius: 5px;
+    font-size: 1.25rem;
+    font-weight: bold;
+}

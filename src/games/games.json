@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Scientists, equations, wives, wives equations",
+    "description": "Match scientists, equations, wives and wives equations",
+    "file": "games/scientists_equations_wives_wivesequations_advanced_puzzles_test.json"
+  },
+  {
+    "title": "Test Puzzles - All Types and evaluations",
+    "description": "All puzzle types and evaluation rules.",
+    "file": "games/test_puzzles.json"
+  },
+  {
+    "title": "Test Puzzles - smallest set",
+    "description": "smallest set of puzzles type:set, with unordered and ordered evaluation.",
+    "file": "games/test_puzzles_smallest_set_set_uo_o.json"
+  }
+]

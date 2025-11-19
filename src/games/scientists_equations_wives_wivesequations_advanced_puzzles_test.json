@@ -1,0 +1,210 @@
+{
+  "gametitle": "Scientists, equations, wives, wives equations",
+  "description": "",
+  "slide_groups": [
+    {
+      "group_id": "b7d3b3dd-83e4-434c-a654-e4b002f3a125",
+      "group_name": "physicists",
+      "slides": [
+        {
+          "name": "Newton",
+          "img": "games/scientistsEquations/Portrait_of_Sir_Isaac_Newton,_1689.jpg",
+          "id": "c001d5be-7ea2-43f8-8e89-e91dffdc32e3"
+        },
+        {
+          "name": "Einstein",
+          "img": "games/scientistsEquations/Albert_Einstein_1947.jpg",
+          "id": "68d03099-9f15-4104-9ae1-f4b190e57ca6"
+        },
+        {
+          "name": "schrodinger",
+          "img": "games/scientistsEquations/Erwin_Schrödinger_-_Narodowe_Archiwum_Cyfrowe_1-E-939.jpg",
+          "id": "4cf79a9e-8785-4f16-990b-38d1ca762039"
+        }
+      ]
+    },
+    {
+      "group_id": "caabf802-7975-4735-816f-b74833685835",
+      "group_name": "equations",
+      "slides": [
+        {
+          "name": "Emc2",
+          "img": "games/scientistsEquations/einsteinfieldequation.svg",
+          "id": "0215027a-6159-40f8-ba4c-673dec219215"
+        },
+        {
+          "name": "Fma",
+          "img": "games/scientistsEquations/Newtonslawsofmotion.svg",
+          "id": "6223e71d-5ca6-4c4e-b59c-a9dbae9ffe9d"
+        },
+        {
+          "name": "psi",
+          "img": "games/scientistsEquations/schrodingerequation.svg",
+          "id": "bd4221f3-0eaa-4921-8545-10e4efba4218"
+        }
+      ]
+    },
+    {
+      "group_id": "bcf939d2-b13a-439f-a028-c1a600120cb2",
+      "group_name": "wives",
+      "slides": [
+        {
+          "name": "mam einstein",
+          "img": "",
+          "id": "aa8940d9-2c5c-4fb0-80bf-f89672b6690a"
+        },
+        {
+          "name": "mam Newton",
+          "img": "",
+          "id": "43652721-3e8a-407e-a82d-d95ae61c6313"
+        },
+        {
+          "name": "mam schrodinger",
+          "img": "",
+          "id": "0114443a-ad37-4eb7-aab9-23788394c78a"
+        }
+      ]
+    },
+    {
+      "group_id": "9869719f-6281-4b6b-b1ff-c42caf370eb3",
+      "group_name": "wive equations",
+      "slides": [
+        {
+          "name": "w newton fma",
+          "img": "",
+          "id": "e8512c64-d4de-4050-8419-ea88c196704e"
+        },
+        {
+          "name": "w einstein equation",
+          "img": "",
+          "id": "6cf04b16-41ac-44ff-9f5e-1eb82f62b963"
+        },
+        {
+          "name": "w schro equation",
+          "img": "",
+          "id": "4e12b346-2d92-45ca-983a-31b5dbacc1a8"
+        }
+      ]
+    }
+  ],
+  "puzzles": [
+    {
+      "puzzletitle": "physicists and their equations",
+      "host_group_id": "b7d3b3dd-83e4-434c-a654-e4b002f3a125",
+      "guest_group_id": "caabf802-7975-4735-816f-b74833685835",
+      "instructions": "Match the items.",
+      "puzzle_id": "f8a5c6a7-3b2c-4d1e-8f6a-9b8c7d6e5f4a",
+      "matches": [
+        {
+          "match": [
+            "c001d5be-7ea2-43f8-8e89-e91dffdc32e3",
+            "6223e71d-5ca6-4c4e-b59c-a9dbae9ffe9d"
+          ]
+        },
+        {
+          "match": [
+            "68d03099-9f15-4104-9ae1-f4b190e57ca6",
+            "0215027a-6159-40f8-ba4c-673dec219215"
+          ]
+        },
+        {
+          "match": [
+            "4cf79a9e-8785-4f16-990b-38d1ca762039",
+            "bd4221f3-0eaa-4921-8545-10e4efba4218"
+          ]
+        }
+      ]
+    },
+    {
+      "puzzletitle": "Einstein connected",
+      "instructions": "connect einstein with what he worked on",
+      "puzzle_id": "a1b2c3d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+      "host_group_id": "b7d3b3dd-83e4-434c-a654-e4b002f3a125",
+      "guest_group_id": "bcf939d2-b13a-439f-a028-c1a600120cb2",
+      "matches": [
+        {
+          "match": [
+            "68d03099-9f15-4104-9ae1-f4b190e57ca6",
+            "0215027a-6159-40f8-ba4c-673dec219215"
+          ]
+        },
+        {
+          "match": [
+            "68d03099-9f15-4104-9ae1-f4b190e57ca6",
+            "6223e71d-5ca6-4c4e-b59c-a9dbae9ffe9d"
+          ]
+        },
+        {
+          "match": [
+            "68d03099-9f15-4104-9ae1-f4b190e57ca6",
+            "bd4221f3-0eaa-4921-8545-10e4efba4218"
+          ]
+        }
+      ],
+      "type": "star"
+    },
+    {
+      "puzzletitle": "test ordered",
+      "instructions": "test the ordered star puzzle, everything to schrodinger",
+      "puzzle_id": "7e6d5c4b-3a2b-4c1d-8e7f-6a5b4c3d2e1f",
+      "host_group_id": "bcf939d2-b13a-439f-a028-c1a600120cb2",
+      "guest_group_id": "9869719f-6281-4b6b-b1ff-c42caf370eb3",
+      "matches": [
+        {
+          "match": [
+            "4cf79a9e-8785-4f16-990b-38d1ca762039",
+            "0215027a-6159-40f8-ba4c-673dec219215"
+          ]
+        },
+        {
+          "match": [
+            "4cf79a9e-8785-4f16-990b-38d1ca762039",
+            "6223e71d-5ca6-4c4e-b59c-a9dbae9ffe9d"
+          ]
+        },
+        {
+          "match": [
+            "4cf79a9e-8785-4f16-990b-38d1ca762039",
+            "bd4221f3-0eaa-4921-8545-10e4efba4218"
+          ]
+        }
+      ],
+      "type": "star",
+      "evaluation": "ordered"
+    }
+  ],
+  "layout": {
+    "puzzle_slots": [
+      {
+        "slot_id": "d1f3e8b2-5c6a-4e7f-9a8b-0c1d2e3f4a5b",
+        "activates_puzzle_id": "f8a5c6a7-3b2c-4d1e-8f6a-9b8c7d6e5f4a",
+        "host_group_id": "b7d3b3dd-83e4-434c-a654-e4b002f3a125",
+        "guest_group_id": "caabf802-7975-4735-816f-b74833685835",
+        "at_index": 0,
+        "guest_align_index": 0,
+        "host_direction": "horizontal",
+        "guest_direction": "vertical"
+      },
+      {
+        "slot_id": "e2f4g5h6-i7j8-9k0l-m1n2-o3p4q5r6s7t8",
+        "activates_puzzle_id": "a1b2c3d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+        "host_group_id": "b7d3b3dd-83e4-434c-a654-e4b002f3a125",
+        "guest_group_id": "bcf939d2-b13a-439f-a028-c1a600120cb2",
+        "at_index": 2,
+        "guest_align_index": 0,
+        "host_direction": "horizontal",
+        "guest_direction": "vertical"
+      },
+      {
+        "slot_id": "u9v0w1x2-y3z4-5a6b-7c8d-9e0f1g2h3i4j",
+        "activates_puzzle_id": "7e6d5c4b-3a2b-4c1d-8e7f-6a5b4c3d2e1f",
+        "host_group_id": "bcf939d2-b13a-439f-a028-c1a600120cb2",
+        "guest_group_id": "9869719f-6281-4b6b-b1ff-c42caf370eb3",
+        "at_index": 2,
+        "guest_align_index": 1,
+        "host_direction": "vertical",
+        "guest_direction": "horizontal"
+      }
+    ]
+  }
+}

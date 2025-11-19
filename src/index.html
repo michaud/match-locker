@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Match-locker game</title>
+        <link rel="stylesheet" href="style/style.css">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='brown'/><text x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='white' font-size='60' font-family='sans-serif'>M</text></svg>">
+        <script type="module" src="js/app.js"></script>
+    </head>
+    <body>
+        <div class="screen">
+            <div class="start-screen">
+                <h1 class="screen-title">Match-locker</h1>
+                <details class="tell-um">
+                    <summary>Swipe to match until you win</summary>
+                    <p>Swipe horizontally or vertically to navigate through the puzzle pieces. Make the matches by tapping and finish the puzzle</p>
+                </details>
+                <nav class="game-menu">
+                    <ol>
+                        <!-- Game list will be populated by app.js -->
+                    </ol>
+                </nav>
+            </div>
+            <div class="game-screen swiper-container">
+                <!-- Slider <ol> elements will be dynamically created here by app.js -->
+                <div class="puzzle-status-indicator">
+                    <div class="puzzle-status">SOLVED</div>
+                </div>
+                <nav class="sub-nav puzzle">
+                    <div class="left-right">
+                        <button class="button-left"><div>&NestedLessLess;</div><span>left</span></button>
+                        <button class="button-right"><div>&NestedGreaterGreater;</div><span>right</span></button>
+                    </div>
+                    <div class="up-down">
+                        <button class="button-up"><div>&NestedLessLess;</div><span>up</span></button>
+                        <button class="button-down"><div>&NestedGreaterGreater;</div><span>down</span></button>
+                    </div>
+                </nav>
+            </div>
+            <div class="settings-screen">
+                <h1 class="screen-title"><span>Settings</span></h1>
+                <div class="settings-options">
+                    <div class="setting-option">
+                        <label for="puzzle-completion">Puzzle Completion</label>
+                        <select id="puzzle-completion" name="puzzle-completion">
+                            <option value="game-finishes" selected>Game Finishes</option>
+                            <option value="user-submits">You Submit</option>
+                        </select>
+                    </div>
+                    <div class="setting-option">
+                        <label for="show-slide-names">Slide Names in Info</label>
+                        <input type="checkbox" id="show-slide-names" name="show-slide-names" />
+                    </div>
+                    <div class="setting-option">
+                        <label for="match-visualization-strategy">Match borders</label>
+                        <select id="match-visualization-strategy">
+                            <option value="fade-on-drag">Fade on Drag</option>
+                            <option value="colored-outlines">Colored Outlines</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="info-screen">
+                <h1 class="screen-title"><span>info</span></h1>
+                <div class="info-sections">
+                    <section class="info-puzzle">
+                        <!-- Puzzle info will be populated here by app.js -->
+                    </section>
+                    <section class="info-content">
+                        <p>Match-locker is a fun and engaging puzzle game where you swipe to match pieces and complete puzzles. Enjoy matching all kinds of topics</p>
+                        <p>Developed by Cryogi</p>
+                    </section>
+                </div>
+            </div>
+            <nav class="sub-nav game">
+                <button class="menu-button">&equiv;<span>menu</span></button>
+                <div class="menu-popout">
+                    <button id="button-submit">submit</button>
+                    <button id="button-quit">quit</button>
+                    <button id="button-back">back</button>
+                    <button id="button-settings">settings</button>
+                </div>
+                <button id="info-button">&commat;<span>info</span></button>
+            </nav>
+        </div>
+        <div class="toaster">
+            <p>all matches complete!</p>
+            <button class="toaster-back-button">back</button>
+        </div>
+    </body>
+</html>

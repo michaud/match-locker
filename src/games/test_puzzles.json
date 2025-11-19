@@ -1,0 +1,690 @@
+{
+  "gametitle": "Test Puzzles",
+  "description": "all puzzle types (set, chain, ring, star) with ordered and unordered evaluation.",
+  "slide_groups": [
+    {
+      "slides": [
+        {
+          "id": "a9987a66-06db-4f2a-92f3-f7886079392c",
+          "name": "Slide A",
+          "img": "games/test_slides/slide_h_A_u.svg"
+        },
+        {
+          "id": "dd7a1e14-1778-46d1-9f18-dfdb4b4cea63",
+          "name": "Slide B",
+          "img": "games/test_slides/slide_h_B_u.svg"
+        },
+        {
+          "id": "62435401-a098-4be3-a72f-d2de1886e758",
+          "name": "Slide C",
+          "img": "games/test_slides/slide_h_C_u.svg"
+        },
+        {
+          "id": "d34be7df-e815-4da9-a1c6-e8c621df9584",
+          "name": "Slide D",
+          "img": "games/test_slides/slide_h_D_u.svg"
+        }
+      ],
+      "group_id": "27cb1a7c-3eb5-4f9f-a060-8e339b155f84",
+      "group_name": "Layout Group 0 (Host)"
+    },
+    {
+      "slides": [
+        {
+          "id": "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902",
+          "name": "Slide A",
+          "img": "games/test_slides/slide_v_A_u.svg"
+        },
+        {
+          "id": "f381721e-8a38-4b43-9e44-1653e20bf672",
+          "name": "Slide B",
+          "img": "games/test_slides/slide_v_B_u.svg"
+        },
+        {
+          "id": "fea3dde9-706f-4425-802c-cd0e353323e9",
+          "name": "Slide C",
+          "img": "games/test_slides/slide_v_C_u.svg"
+        },
+        {
+          "id": "e5f95c69-cbe3-4741-b4bb-b45821124665",
+          "name": "Slide D",
+          "img": "games/test_slides/slide_v_D_u.svg"
+        }
+      ],
+      "group_id": "db58f48d-8ed2-41a2-9d0c-40c1c7cd60fc",
+      "group_name": "Layout Group 1 (Guest)"
+    },
+    {
+      "slides": [
+        {
+          "id": "27b8a319-8de0-4e6a-a29c-4d6eadb81739",
+          "name": "Slide a",
+          "img": "games/test_slides/slide_h_a_l.svg"
+        },
+        {
+          "id": "5276879a-f734-4904-a773-b3ac1df605c6",
+          "name": "Slide b",
+          "img": "games/test_slides/slide_h_b_l.svg"
+        },
+        {
+          "id": "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e",
+          "name": "Slide c",
+          "img": "games/test_slides/slide_h_c_l.svg"
+        },
+        {
+          "id": "5f5c2c30-cf68-454b-a3da-92cc4487e989",
+          "name": "Slide d",
+          "img": "games/test_slides/slide_h_d_l.svg"
+        }
+      ],
+      "group_id": "05279dd5-f4b3-4b33-aede-a3b635104a76",
+      "group_name": "Layout Group 2 (Guest)"
+    },
+    {
+      "slides": [
+        {
+          "id": "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902",
+          "name": "Slide A",
+          "img": "games/test_slides/slide_v_A_u.svg"
+        },
+        {
+          "id": "f381721e-8a38-4b43-9e44-1653e20bf672",
+          "name": "Slide B",
+          "img": "games/test_slides/slide_v_B_u.svg"
+        },
+        {
+          "id": "fea3dde9-706f-4425-802c-cd0e353323e9",
+          "name": "Slide C",
+          "img": "games/test_slides/slide_v_C_u.svg"
+        },
+        {
+          "id": "e5f95c69-cbe3-4741-b4bb-b45821124665",
+          "name": "Slide D",
+          "img": "games/test_slides/slide_v_D_u.svg"
+        }
+      ],
+      "group_id": "05fca16f-9c5c-4e29-b964-d4833ee67c13",
+      "group_name": "Layout Group 3 (Guest)"
+    },
+    {
+      "slides": [
+        {
+          "id": "27b8a319-8de0-4e6a-a29c-4d6eadb81739",
+          "name": "Slide a",
+          "img": "games/test_slides/slide_h_a_l.svg"
+        },
+        {
+          "id": "5276879a-f734-4904-a773-b3ac1df605c6",
+          "name": "Slide b",
+          "img": "games/test_slides/slide_h_b_l.svg"
+        },
+        {
+          "id": "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e",
+          "name": "Slide c",
+          "img": "games/test_slides/slide_h_c_l.svg"
+        },
+        {
+          "id": "5f5c2c30-cf68-454b-a3da-92cc4487e989",
+          "name": "Slide d",
+          "img": "games/test_slides/slide_h_d_l.svg"
+        }
+      ],
+      "group_id": "21c3816d-a0af-4c22-a9db-e99f54f06abf",
+      "group_name": "Layout Group 4 (Guest)"
+    },
+    {
+      "slides": [
+        {
+          "id": "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902",
+          "name": "Slide A",
+          "img": "games/test_slides/slide_v_A_u.svg"
+        },
+        {
+          "id": "f381721e-8a38-4b43-9e44-1653e20bf672",
+          "name": "Slide B",
+          "img": "games/test_slides/slide_v_B_u.svg"
+        },
+        {
+          "id": "fea3dde9-706f-4425-802c-cd0e353323e9",
+          "name": "Slide C",
+          "img": "games/test_slides/slide_v_C_u.svg"
+        },
+        {
+          "id": "e5f95c69-cbe3-4741-b4bb-b45821124665",
+          "name": "Slide D",
+          "img": "games/test_slides/slide_v_D_u.svg"
+        }
+      ],
+      "group_id": "60db641f-d447-4d68-a95d-25bd18fd4f7b",
+      "group_name": "Layout Group 5 (Guest)"
+    },
+    {
+      "slides": [
+        {
+          "id": "27b8a319-8de0-4e6a-a29c-4d6eadb81739",
+          "name": "Slide a",
+          "img": "games/test_slides/slide_h_a_l.svg"
+        },
+        {
+          "id": "5276879a-f734-4904-a773-b3ac1df605c6",
+          "name": "Slide b",
+          "img": "games/test_slides/slide_h_b_l.svg"
+        },
+        {
+          "id": "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e",
+          "name": "Slide c",
+          "img": "games/test_slides/slide_h_c_l.svg"
+        },
+        {
+          "id": "5f5c2c30-cf68-454b-a3da-92cc4487e989",
+          "name": "Slide d",
+          "img": "games/test_slides/slide_h_d_l.svg"
+        }
+      ],
+      "group_id": "9b88971c-caf9-435d-9d91-8b0903fb7d1c",
+      "group_name": "Layout Group 6 (Guest)"
+    },
+    {
+      "slides": [
+        {
+          "id": "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902",
+          "name": "Slide A",
+          "img": "games/test_slides/slide_v_A_u.svg"
+        },
+        {
+          "id": "f381721e-8a38-4b43-9e44-1653e20bf672",
+          "name": "Slide B",
+          "img": "games/test_slides/slide_v_B_u.svg"
+        },
+        {
+          "id": "fea3dde9-706f-4425-802c-cd0e353323e9",
+          "name": "Slide C",
+          "img": "games/test_slides/slide_v_C_u.svg"
+        },
+        {
+          "id": "e5f95c69-cbe3-4741-b4bb-b45821124665",
+          "name": "Slide D",
+          "img": "games/test_slides/slide_v_D_u.svg"
+        }
+      ],
+      "group_id": "0fd7a8b3-901b-49f2-9bb7-0cb496d00cd1",
+      "group_name": "Layout Group 7 (Guest)"
+    },
+    {
+      "slides": [
+        {
+          "id": "27b8a319-8de0-4e6a-a29c-4d6eadb81739",
+          "name": "Slide a",
+          "img": "games/test_slides/slide_h_a_l.svg"
+        },
+        {
+          "id": "5276879a-f734-4904-a773-b3ac1df605c6",
+          "name": "Slide b",
+          "img": "games/test_slides/slide_h_b_l.svg"
+        },
+        {
+          "id": "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e",
+          "name": "Slide c",
+          "img": "games/test_slides/slide_h_c_l.svg"
+        },
+        {
+          "id": "5f5c2c30-cf68-454b-a3da-92cc4487e989",
+          "name": "Slide d",
+          "img": "games/test_slides/slide_h_d_l.svg"
+        }
+      ],
+      "group_id": "ab1ee9bd-f495-4987-a9dc-e830abf4afeb",
+      "group_name": "Layout Group 8 (Guest)"
+    }
+  ],
+  "puzzles": [
+    {
+      "puzzle_id": "c41664bb-967f-4628-8526-2ee72e433abf",
+      "puzzletitle": "Set Puzzle (unordered)",
+      "instructions": "This is a set puzzle with an unordered evaluation rule.",
+      "type": "set",
+      "evaluation": "unordered",
+      "host_group_id": "27cb1a7c-3eb5-4f9f-a060-8e339b155f84",
+      "guest_group_id": "db58f48d-8ed2-41a2-9d0c-40c1c7cd60fc",
+      "matches": [
+        {
+          "match": [
+            "a9987a66-06db-4f2a-92f3-f7886079392c",
+            "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902"
+          ]
+        },
+        {
+          "match": [
+            "dd7a1e14-1778-46d1-9f18-dfdb4b4cea63",
+            "f381721e-8a38-4b43-9e44-1653e20bf672"
+          ]
+        },
+        {
+          "match": [
+            "62435401-a098-4be3-a72f-d2de1886e758",
+            "fea3dde9-706f-4425-802c-cd0e353323e9"
+          ]
+        },
+        {
+          "match": [
+            "d34be7df-e815-4da9-a1c6-e8c621df9584",
+            "e5f95c69-cbe3-4741-b4bb-b45821124665"
+          ]
+        }
+      ]
+    },
+    {
+      "puzzle_id": "7f05605e-2bef-4c83-9daf-7ac6d5b19d96",
+      "puzzletitle": "Set Puzzle (ordered)",
+      "instructions": "This is a set puzzle with an ordered evaluation rule.",
+      "type": "set",
+      "evaluation": "ordered",
+      "host_group_id": "db58f48d-8ed2-41a2-9d0c-40c1c7cd60fc",
+      "guest_group_id": "05279dd5-f4b3-4b33-aede-a3b635104a76",
+      "matches": [
+        {
+          "match": [
+            "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902",
+            "27b8a319-8de0-4e6a-a29c-4d6eadb81739"
+          ]
+        },
+        {
+          "match": [
+            "f381721e-8a38-4b43-9e44-1653e20bf672",
+            "5276879a-f734-4904-a773-b3ac1df605c6"
+          ]
+        },
+        {
+          "match": [
+            "fea3dde9-706f-4425-802c-cd0e353323e9",
+            "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e"
+          ]
+        },
+        {
+          "match": [
+            "e5f95c69-cbe3-4741-b4bb-b45821124665",
+            "5f5c2c30-cf68-454b-a3da-92cc4487e989"
+          ]
+        }
+      ]
+    },
+    {
+      "puzzle_id": "86b0bbeb-bce0-4485-9216-9ebc4a117d43",
+      "puzzletitle": "Chain Puzzle (unordered)",
+      "instructions": "This is a chain puzzle with an unordered evaluation rule.",
+      "type": "chain",
+      "evaluation": "unordered",
+      "host_group_id": "05279dd5-f4b3-4b33-aede-a3b635104a76",
+      "guest_group_id": "05fca16f-9c5c-4e29-b964-d4833ee67c13",
+      "matches": [
+        {
+          "match": [
+            "27b8a319-8de0-4e6a-a29c-4d6eadb81739",
+            "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902"
+          ]
+        },
+        {
+          "match": [
+            "5276879a-f734-4904-a773-b3ac1df605c6",
+            "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902"
+          ]
+        },
+        {
+          "match": [
+            "5276879a-f734-4904-a773-b3ac1df605c6",
+            "f381721e-8a38-4b43-9e44-1653e20bf672"
+          ]
+        },
+        {
+          "match": [
+            "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e",
+            "f381721e-8a38-4b43-9e44-1653e20bf672"
+          ]
+        },
+        {
+          "match": [
+            "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e",
+            "fea3dde9-706f-4425-802c-cd0e353323e9"
+          ]
+        },
+        {
+          "match": [
+            "5f5c2c30-cf68-454b-a3da-92cc4487e989",
+            "fea3dde9-706f-4425-802c-cd0e353323e9"
+          ]
+        },
+        {
+          "match": [
+            "5f5c2c30-cf68-454b-a3da-92cc4487e989",
+            "e5f95c69-cbe3-4741-b4bb-b45821124665"
+          ]
+        }
+      ]
+    },
+    {
+      "puzzle_id": "e67000d7-4ad6-45b8-9724-4270f2811ac1",
+      "puzzletitle": "Chain Puzzle (ordered)",
+      "instructions": "This is a chain puzzle with an ordered evaluation rule.",
+      "type": "chain",
+      "evaluation": "ordered",
+      "host_group_id": "05fca16f-9c5c-4e29-b964-d4833ee67c13",
+      "guest_group_id": "21c3816d-a0af-4c22-a9db-e99f54f06abf",
+      "matches": [
+        {
+          "match": [
+            "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902",
+            "27b8a319-8de0-4e6a-a29c-4d6eadb81739"
+          ]
+        },
+        {
+          "match": [
+            "27b8a319-8de0-4e6a-a29c-4d6eadb81739",
+            "f381721e-8a38-4b43-9e44-1653e20bf672"
+          ]
+        },
+        {
+          "match": [
+            "f381721e-8a38-4b43-9e44-1653e20bf672",
+            "5276879a-f734-4904-a773-b3ac1df605c6"
+          ]
+        },
+        {
+          "match": [
+            "5276879a-f734-4904-a773-b3ac1df605c6",
+            "fea3dde9-706f-4425-802c-cd0e353323e9"
+          ]
+        },
+        {
+          "match": [
+            "fea3dde9-706f-4425-802c-cd0e353323e9",
+            "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e"
+          ]
+        },
+        {
+          "match": [
+            "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e",
+            "e5f95c69-cbe3-4741-b4bb-b45821124665"
+          ]
+        },
+        {
+          "match": [
+            "e5f95c69-cbe3-4741-b4bb-b45821124665",
+            "5f5c2c30-cf68-454b-a3da-92cc4487e989"
+          ]
+        }
+      ]
+    },
+    {
+      "puzzle_id": "8428d1e3-7858-4a90-a8db-124b505af8bf",
+      "puzzletitle": "Ring Puzzle (unordered)",
+      "instructions": "This is a ring puzzle with an unordered evaluation rule.",
+      "type": "ring",
+      "evaluation": "unordered",
+      "host_group_id": "21c3816d-a0af-4c22-a9db-e99f54f06abf",
+      "guest_group_id": "60db641f-d447-4d68-a95d-25bd18fd4f7b",
+      "matches": [
+        {
+          "match": [
+            "27b8a319-8de0-4e6a-a29c-4d6eadb81739",
+            "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902"
+          ]
+        },
+        {
+          "match": [
+            "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902",
+            "5276879a-f734-4904-a773-b3ac1df605c6"
+          ]
+        },
+        {
+          "match": [
+            "5276879a-f734-4904-a773-b3ac1df605c6",
+            "f381721e-8a38-4b43-9e44-1653e20bf672"
+          ]
+        },
+        {
+          "match": [
+            "f381721e-8a38-4b43-9e44-1653e20bf672",
+            "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e"
+          ]
+        },
+        {
+          "match": [
+            "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e",
+            "fea3dde9-706f-4425-802c-cd0e353323e9"
+          ]
+        },
+        {
+          "match": [
+            "fea3dde9-706f-4425-802c-cd0e353323e9",
+            "5f5c2c30-cf68-454b-a3da-92cc4487e989"
+          ]
+        },
+        {
+          "match": [
+            "5f5c2c30-cf68-454b-a3da-92cc4487e989",
+            "e5f95c69-cbe3-4741-b4bb-b45821124665"
+          ]
+        },
+        {
+          "match": [
+            "e5f95c69-cbe3-4741-b4bb-b45821124665",
+            "27b8a319-8de0-4e6a-a29c-4d6eadb81739"
+          ]
+        }
+      ]
+    },
+    {
+      "puzzle_id": "33f45712-6002-4b7c-9143-55d53dd7263d",
+      "puzzletitle": "Ring Puzzle (ordered)",
+      "instructions": "This is a ring puzzle with an ordered evaluation rule.",
+      "type": "ring",
+      "evaluation": "ordered",
+      "host_group_id": "60db641f-d447-4d68-a95d-25bd18fd4f7b",
+      "guest_group_id": "9b88971c-caf9-435d-9d91-8b0903fb7d1c",
+      "matches": [
+        {
+          "match": [
+            "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902",
+            "27b8a319-8de0-4e6a-a29c-4d6eadb81739"
+          ]
+        },
+        {
+          "match": [
+            "27b8a319-8de0-4e6a-a29c-4d6eadb81739",
+            "f381721e-8a38-4b43-9e44-1653e20bf672"
+          ]
+        },
+        {
+          "match": [
+            "f381721e-8a38-4b43-9e44-1653e20bf672",
+            "5276879a-f734-4904-a773-b3ac1df605c6"
+          ]
+        },
+        {
+          "match": [
+            "5276879a-f734-4904-a773-b3ac1df605c6",
+            "fea3dde9-706f-4425-802c-cd0e353323e9"
+          ]
+        },
+        {
+          "match": [
+            "fea3dde9-706f-4425-802c-cd0e353323e9",
+            "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e"
+          ]
+        },
+        {
+          "match": [
+            "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e",
+            "e5f95c69-cbe3-4741-b4bb-b45821124665"
+          ]
+        },
+        {
+          "match": [
+            "e5f95c69-cbe3-4741-b4bb-b45821124665",
+            "5f5c2c30-cf68-454b-a3da-92cc4487e989"
+          ]
+        },
+        {
+          "match": [
+            "5f5c2c30-cf68-454b-a3da-92cc4487e989",
+            "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902"
+          ]
+        }
+      ]
+    },
+    {
+      "puzzle_id": "5d3deef3-461d-44fe-995f-7606be2c05e8",
+      "puzzletitle": "Star Puzzle (unordered)",
+      "instructions": "This is a star puzzle with an unordered evaluation rule.",
+      "type": "star",
+      "evaluation": "unordered",
+      "host_group_id": "9b88971c-caf9-435d-9d91-8b0903fb7d1c",
+      "guest_group_id": "0fd7a8b3-901b-49f2-9bb7-0cb496d00cd1",
+      "matches": [
+        {
+          "match": [
+            "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e",
+            "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902"
+          ]
+        },
+        {
+          "match": [
+            "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e",
+            "f381721e-8a38-4b43-9e44-1653e20bf672"
+          ]
+        },
+        {
+          "match": [
+            "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e",
+            "fea3dde9-706f-4425-802c-cd0e353323e9"
+          ]
+        },
+        {
+          "match": [
+            "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e",
+            "e5f95c69-cbe3-4741-b4bb-b45821124665"
+          ]
+        }
+      ]
+    },
+    {
+      "puzzle_id": "95d54f63-f724-4b4d-8b60-1cd96e792b5c",
+      "puzzletitle": "Star Puzzle (ordered)",
+      "instructions": "This is a star puzzle with an ordered evaluation rule.",
+      "type": "star",
+      "evaluation": "ordered",
+      "host_group_id": "0fd7a8b3-901b-49f2-9bb7-0cb496d00cd1",
+      "guest_group_id": "ab1ee9bd-f495-4987-a9dc-e830abf4afeb",
+      "matches": [
+        {
+          "match": [
+            "fea3dde9-706f-4425-802c-cd0e353323e9",
+            "5f5c2c30-cf68-454b-a3da-92cc4487e989"
+          ]
+        },
+        {
+          "match": [
+            "fea3dde9-706f-4425-802c-cd0e353323e9",
+            "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e"
+          ]
+        },
+        {
+          "match": [
+            "fea3dde9-706f-4425-802c-cd0e353323e9",
+            "5276879a-f734-4904-a773-b3ac1df605c6"
+          ]
+        },
+        {
+          "match": [
+            "fea3dde9-706f-4425-802c-cd0e353323e9",
+            "27b8a319-8de0-4e6a-a29c-4d6eadb81739"
+          ]
+        }
+      ]
+    }
+  ],
+  "layout": {
+    "puzzle_slots": [
+      {
+        "slot_id": "1e6c526c-8706-4d87-95dd-0e66021a8115",
+        "activates_puzzle_id": "c41664bb-967f-4628-8526-2ee72e433abf",
+        "host_group_id": "27cb1a7c-3eb5-4f9f-a060-8e339b155f84",
+        "guest_group_id": "db58f48d-8ed2-41a2-9d0c-40c1c7cd60fc",
+        "at_index": 0,
+        "guest_align_index": 0,
+        "host_direction": "horizontal",
+        "guest_direction": "vertical"
+      },
+      {
+        "slot_id": "bc165ed2-f9a6-4b19-b71a-d8e3230323f6",
+        "activates_puzzle_id": "7f05605e-2bef-4c83-9daf-7ac6d5b19d96",
+        "host_group_id": "db58f48d-8ed2-41a2-9d0c-40c1c7cd60fc",
+        "guest_group_id": "05279dd5-f4b3-4b33-aede-a3b635104a76",
+        "at_index": 2,
+        "guest_align_index": 0,
+        "host_direction": "vertical",
+        "guest_direction": "horizontal"
+      },
+      {
+        "slot_id": "1287c2b2-d025-4bfc-b8d9-c37259db3725",
+        "activates_puzzle_id": "86b0bbeb-bce0-4485-9216-9ebc4a117d43",
+        "host_group_id": "05279dd5-f4b3-4b33-aede-a3b635104a76",
+        "guest_group_id": "05fca16f-9c5c-4e29-b964-d4833ee67c13",
+        "at_index": 2,
+        "guest_align_index": 0,
+        "host_direction": "horizontal",
+        "guest_direction": "vertical"
+      },
+      {
+        "slot_id": "282a1e67-6465-4246-9604-6adbf3cc3d37",
+        "activates_puzzle_id": "e67000d7-4ad6-45b8-9724-4270f2811ac1",
+        "host_group_id": "05fca16f-9c5c-4e29-b964-d4833ee67c13",
+        "guest_group_id": "21c3816d-a0af-4c22-a9db-e99f54f06abf",
+        "at_index": 2,
+        "guest_align_index": 0,
+        "host_direction": "vertical",
+        "guest_direction": "horizontal"
+      },
+      {
+        "slot_id": "fc32d47b-fe69-408b-b0c3-b40d94e7a165",
+        "activates_puzzle_id": "8428d1e3-7858-4a90-a8db-124b505af8bf",
+        "host_group_id": "21c3816d-a0af-4c22-a9db-e99f54f06abf",
+        "guest_group_id": "60db641f-d447-4d68-a95d-25bd18fd4f7b",
+        "at_index": 2,
+        "guest_align_index": 0,
+        "host_direction": "horizontal",
+        "guest_direction": "vertical"
+      },
+      {
+        "slot_id": "75ffe085-8363-4075-8956-358e5165a335",
+        "activates_puzzle_id": "33f45712-6002-4b7c-9143-55d53dd7263d",
+        "host_group_id": "60db641f-d447-4d68-a95d-25bd18fd4f7b",
+        "guest_group_id": "9b88971c-caf9-435d-9d91-8b0903fb7d1c",
+        "at_index": 2,
+        "guest_align_index": 0,
+        "host_direction": "vertical",
+        "guest_direction": "horizontal"
+      },
+      {
+        "slot_id": "cd4bf9d4-406e-46b0-ad2c-37c5f55f875e",
+        "activates_puzzle_id": "5d3deef3-461d-44fe-995f-7606be2c05e8",
+        "host_group_id": "9b88971c-caf9-435d-9d91-8b0903fb7d1c",
+        "guest_group_id": "0fd7a8b3-901b-49f2-9bb7-0cb496d00cd1",
+        "at_index": 2,
+        "guest_align_index": 0,
+        "host_direction": "horizontal",
+        "guest_direction": "vertical"
+      },
+      {
+        "slot_id": "9fb9a221-9a09-4b7d-a26f-2ab107d92851",
+        "activates_puzzle_id": "95d54f63-f724-4b4d-8b60-1cd96e792b5c",
+        "host_group_id": "0fd7a8b3-901b-49f2-9bb7-0cb496d00cd1",
+        "guest_group_id": "ab1ee9bd-f495-4987-a9dc-e830abf4afeb",
+        "at_index": 2,
+        "guest_align_index": 0,
+        "host_direction": "vertical",
+        "guest_direction": "horizontal"
+      }
+    ]
+  }
+}

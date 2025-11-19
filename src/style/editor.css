@@ -1,0 +1,504 @@
+@layer base, editor, simple-editor, advanced-editor;
+
+@layer base {
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background-color: #1e1e1e;
+        color: #d4d4d4;
+        margin: 0;
+        padding: 1.5rem;
+
+        & * {
+            scrollbar-color: #313131 #6d6d6d;
+        }
+    }
+
+    /* #root {} */
+
+    /* Tab Navigation */
+    .editor-tabs {
+        display: flex;
+        border-bottom: 1px solid #333;
+        margin-bottom: 2rem;
+    }
+
+    .tab-button {
+        padding: 1rem 1.5rem;
+        cursor: pointer;
+        background-color: transparent;
+        border: none;
+        color: #d4d4d4;
+        font-size: 1.1rem;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -1px;
+        /* Align with the container's border */
+        margin-top: 0;
+    }
+
+    .tab-button.active {
+        color: #569cd6;
+        border-bottom-color: #569cd6;
+    }
+
+    .tab-button:hover {
+        background-color: #252526;
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+}
+
+@layer editor {
+
+    .output-section {
+
+        grid-column: 3;
+        grid-row: 3;
+        padding-block-start: 1rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .json-output-container {
+        flex-grow: 1;
+        position: relative;
+        overflow-y: scroll;
+        overflow-x: scroll;
+
+    }
+
+    .json-output {
+
+        position: absolute;
+        margin: 0;
+        padding: 1rem;
+        max-height: 70rem;        
+        border: 1px solid #333;
+        border-radius: 8px;
+        background-color: #1e1e1e;
+        white-space: pre-wrap;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.875rem;
+        color: #9cdcfe;
+    }
+}
+
+@layer advanced-editor {
+
+    h1,
+    h2,
+    h3 {
+        color: #569cd6;
+        border-bottom: 1px solid #333;
+        padding-bottom: 0.5rem;
+        margin: 0;
+    }
+
+    .editor-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .form-section {
+
+        background-color: #252526;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #333;
+
+        &.load-game {
+            grid-column: 1 / span 2;
+            grid-row: 1;
+        }
+
+        &.new-game-section {
+            grid-column: 3;
+            grid-row: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        &.main-settings {
+
+            grid-column: 1 / span 3;
+            grid-row: 2;
+            display: grid;
+            grid-template-columns: subgrid;
+            
+            & :nth-child(2) {
+                grid-column: 2 / span 2;
+            }
+
+
+        }
+
+        &.puzzles {
+            grid-column: 1;
+            grid-row: 4;
+        }
+
+        &.matches {
+            grid-column: 2 / span 2;
+            grid-row: 4;
+        }
+
+        &.slide-groups {
+
+            grid-column: 1;
+            grid-row: 3;
+        }
+    }
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 0.5rem;
+        background-color: #3c3c3c;
+        border: 1px solid #555;
+        color: #d4d4d4;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .editor-container button {
+        padding: 0.75rem 1.5rem;
+        background-color: #0e639c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.2s ease;
+        margin-top: .5rem;
+    }
+
+    .editor-container button:hover {
+        background-color: #157ecb;
+    }
+
+    .list-item {
+        border: 1px solid #444;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background-color: #303031;
+    }
+
+    .item-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .item-header label {
+        margin-bottom: 0;
+    }
+
+    .list-item.selected {
+        border-color: #569cd6;
+        box-shadow: 0 0 5px #569cd6;
+    }
+
+    button.remove-button {
+        background-color: transparent;
+        border: none;
+        padding: 0.2rem;
+        margin-top: 0;
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+    }
+
+    .remove-button img {
+        width: 1.2rem;
+        height: 1.2rem;
+        vertical-align: middle;
+        opacity: 0.7;
+        padding-block-end: 4px;
+    }
+
+    .editor-container .remove-button:hover {
+        opacity: 1;
+        background-color: red;
+    }
+
+    button.icon-button {
+        background-color: transparent;
+        border: none;
+        padding: 0.2rem;
+        margin-top: 0;
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+    }
+
+    .icon-button img {
+        width: 1.4rem;
+        height: 1.4rem;
+        vertical-align: middle;
+        opacity: 0.7;
+    }
+
+    .item-id {
+        display: block;
+        margin-top: 0.75rem;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.7rem;
+        color: #888;
+    }
+
+    .game-list {
+        display: flex;
+        gap: .5rem;
+        flex-wrap: wrap;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .game-list li button {
+        width: 100%;
+        text-align: left;
+    }
+
+    .slide-list-container {
+        max-height: 78rem;
+        overflow-y: scroll;
+        padding-right: 0.5rem;
+    }
+
+    .matches-section {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #444;
+    }
+
+    .matches-section h4 {
+        margin-top: 0;
+    }
+
+    .match-item {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        align-items: center;
+        padding: 0.5rem;
+        background-color: #252526;
+        border: 1px solid #3a3a3a;
+    }
+
+    .match-editor-container {
+        display: grid;
+        grid-template-columns: 2fr 1fr 2fr;
+        position: relative;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .match-slide-list li {
+        padding: 0.5rem;
+        border: 1px solid #444;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .match-slide-list li:hover {
+        background-color: #3a3a3a;
+    }
+
+    .match-slide-list li.source-selected {
+        background-color: #0e639c;
+        border-color: #569cd6;
+    }
+
+    .match-slide-list.left {
+        grid-column: 1;
+    }
+
+    .match-slide-list.right {
+        grid-column: 3;
+        padding-right: 1rem;
+    }
+
+    .match-slide-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .match-slide-list.left li {
+        border-right-color: #569cd6;
+    }
+
+    .match-slide-list.right li {
+        border-left-color: #569cd6;
+    }
+
+    .match-lines {
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+
+    .match-lines line {
+        stroke: #569cd6;
+        stroke-width: 2;
+        opacity: 0.7;
+    }
+
+    .output-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .output-header h3 {
+        border-bottom: none;
+    }
+
+    .form-section.slides-in-group {
+
+        grid-column: 2;
+        grid-row: 3;
+    }
+
+    .match-group-selectors {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .layout-section {
+        grid-column: 1 / span 3;
+        grid-row: 5;
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 1rem;
+    }
+
+    .layout-visualizer {
+        grid-column: 2; /* Place visualizer in the second column of the layout section */
+    }
+
+    .layout-svg {
+        background-color: #1e1e1e;
+        border: 1px solid #333;
+        border-radius: 8px;
+        overflow: visible; /* Allow elements to draw outside if needed */
+    }
+
+    .slider-label {
+        font-size: 0.8em;
+        fill: #d4d4d4;
+    }
+
+    .slide-rect {
+        stroke: #555;
+        stroke-width: 1;
+        fill: #3c3c3c;
+        rx: 3; /* Rounded corners */
+        ry: 3;
+    }
+
+    .horizontal-slide {
+        fill: rgba(74, 74, 74, 0.5); /* Use RGBA for transparency */
+    }
+
+    .vertical-slide {
+        fill: rgba(74, 74, 74, 0.5); /* Use RGBA for transparency */
+    }
+
+    .slide-text {
+        font-size: 0.7em;
+        fill: #d4d4d4;
+        pointer-events: none; /* Don't block clicks */
+    }
+
+    .highlight-slot {
+        fill: rgba(86, 156, 214, 0.3); /* Semi-transparent blue */
+        stroke: #569cd6;
+        stroke-width: 2;
+        rx: 3;
+        ry: 3;
+    }
+
+    .connection-line {
+        stroke: #569cd6;
+        stroke-width: 2;
+        marker-end: url(#arrowhead); /* Optional: add an arrowhead */
+    }
+
+    /* Define arrowhead marker if needed */
+    marker#arrowhead {
+        fill: #569cd6;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-row .form-group {
+        flex: 1;
+    }
+
+    .read-only-input {
+        background-color: #f0f0f0;
+        cursor: not-allowed;
+    }
+
+}
+
+.match-slide-list {
+
+    & .match-order-number {
+
+        display: block;
+        float: right;
+        background: white;
+        width: 1.5rem;
+        height: 1.5rem;
+        text-align: center;
+        color: black;
+        font-weight: bold;
+        border-radius: 1rem;
+    }
+
+    &.left {
+
+        & .match-order-number {
+            float: right;
+        }
+    }
+
+    &.right {
+
+        text-align: right;
+
+        & .match-order-number {
+
+            float: left;
+        }
+    }
+}
+
