@@ -411,11 +411,11 @@ function PuzzleSlotItem({ slot, index, onUpdate, onRemove, onDirectionChange, pu
                 </div>
             </div>
             <div className="form-group">
-                <label>At Index</label>
+                <label>Host slot Index</label>
                 <input type="number" name="at_index" value={slot.at_index} onChange={handleInputChange} min="0" />
             </div>
             <div className="form-group">
-                <label>Guest Align Index</label>
+                <label>Guest slot Index</label>
                 <input type="number" name="guest_align_index" value={slot.guest_align_index || 0} onChange={handleInputChange} min="0" />
             </div>
             <small className="item-id">{slot.slot_id}</small>
