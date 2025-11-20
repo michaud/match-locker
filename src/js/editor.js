@@ -1077,7 +1077,7 @@ function Editor() {
 
     return (
         <div>
-            <h1>MatchAttack Puzzle Editor</h1>
+            <h1>Match-locker game Editor</h1>
             <div className="editor-tabs">
                 <button className="tab-button active">Editor</button>
             </div>
