@@ -68,20 +68,20 @@
         flex-grow: 1;
         position: relative;
         overflow-y: scroll;
-        overflow-x: scroll;
-
+        overflow-x: auto;
+        border: 1px solid #333;
+        border-radius: 8px;
     }
 
     .json-output {
 
         position: absolute;
+        left: 0;
+        bottom: 0;
         margin: 0;
         padding: 1rem;
         max-height: 70rem;        
-        border: 1px solid #333;
-        border-radius: 8px;
         background-color: #1e1e1e;
-        white-space: pre-wrap;
         font-family: 'Courier New', Courier, monospace;
         font-size: 0.875rem;
         color: #9cdcfe;
