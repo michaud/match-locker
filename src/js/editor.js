@@ -695,6 +695,10 @@ function AdvancedEditor() {
     const [sourceGroupId, setSourceGroupId] = useState('');
     const [targetGroupId, setTargetGroupId] = useState('');
 
+    // State for direct JSON editing
+    const [isJsonEditable, setIsJsonEditable] = useState(false);
+    const jsonOutputRef = useRef(null);
+
     // This effect synchronizes the Match Editor's group selectors with the selected puzzle's explicit group IDs.
     useEffect(() => {
 
@@ -951,6 +955,30 @@ function AdvancedEditor() {
 
         setGameData(newInitialData);
     };
+    const toggleJsonEdit = () => {
+        if (isJsonEditable) {
+            // We are turning edit mode OFF. Parse the content.
+            if (jsonOutputRef.current) {
+                const newJsonString = jsonOutputRef.current.innerText;
+                try {
+                    const parsedData = JSON.parse(newJsonString);
+                    // It's valid JSON, update the state
+                    setGameData(parsedData);
+                } catch (error) {
+                    // It's invalid JSON
+                    alert(`Error parsing JSON: ${error.message}\n\nYour changes were not saved. Please correct the JSON or disable editing to discard changes.`);
+                    // Don't turn off edit mode, so the user can fix it.
+                    return; // Prevent setIsJsonEditable(false) from running
+                }
+            }
+        }
+        setIsJsonEditable(prev => !prev);
+    };
+
+    // When isJsonEditable becomes true, focus the editor
+    useEffect(() => {
+        if (isJsonEditable && jsonOutputRef.current) jsonOutputRef.current.focus();
+    }, [isJsonEditable]);
 
     const selectedGroup = gameData.slide_groups[selectedGroupIndex];
     const selectedPuzzle = gameData.puzzles[selectedPuzzleIndex];
@@ -1017,12 +1045,18 @@ function AdvancedEditor() {
             <div className="output-section">
                 <div className="output-header">
                     <h3>Live JSON Output</h3>
-                    <button onClick={handleDownload} className="icon-button" title="Download JSON">
-                        <img src="style/save.svg" alt="Download" />
-                    </button>
+                    <div>
+                        <button onClick={toggleJsonEdit} className={`icon-button ${isJsonEditable ? 'active' : ''}`} title={isJsonEditable ? "Save and Exit Edit Mode" : "Edit JSON"}>
+                            <img src="style/edit.svg" alt="Edit" />
+                        </button>
+                        <button onClick={handleDownload} className="icon-button" title="Download JSON">
+                            <img src="style/save.svg" alt="Download" />
+                        </button>
+                    </div>
                 </div>
                 <div className="json-output-container">
-                    <pre className="json-output">
+                    <pre className="json-output" ref={jsonOutputRef} contentEditable={isJsonEditable} suppressContentEditableWarning={true}
+                        onBlur={isJsonEditable ? null : undefined}>
                         {JSON.stringify(gameData, null, 2)}
                     </pre>
                 </div>

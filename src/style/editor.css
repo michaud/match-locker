@@ -235,6 +235,11 @@
         background-color: red;
     }
 
+    .editor-container .icon-button.active {
+        background-color: #0e639c;
+        border-radius: 4px;
+    }
+
     button.icon-button {
         background-color: transparent;
         border: none;
@@ -501,4 +506,3 @@
         }
     }
 }
-
