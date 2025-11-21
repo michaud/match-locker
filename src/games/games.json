@@ -5,6 +5,11 @@
     "file": "games/scientists_equations_wives_wivesequations_advanced_puzzles_test.json"
   },
   {
+    "title": "Test Puzzles - test oob indices",
+    "description": "What happens when the guest slot index is higher than the slide count?",
+    "file": "games/test_puzzles_-_test_oob_indices,_smallest_set,_set,_unordered_and_ordered.json"
+  },
+  {
     "title": "Test Puzzles - All Types and evaluations",
     "description": "All puzzle types and evaluation rules.",
     "file": "games/test_puzzles.json"

@@ -1,0 +1,180 @@
+{
+  "gametitle": "Test Puzzles - test oob indices, smallest set, set, unordered and ordered",
+  "description": "What happens when the guest slot index is higher than the slide count?\nall puzzle types (set, chain, ring, star) with ordered and unordered evaluation.",
+  "slide_groups": [
+    {
+      "slides": [
+        {
+          "id": "a9987a66-06db-4f2a-92f3-f7886079392c",
+          "name": "Slide A",
+          "img": "games/test_slides/slide_h_A_u.svg"
+        },
+        {
+          "id": "dd7a1e14-1778-46d1-9f18-dfdb4b4cea63",
+          "name": "Slide B",
+          "img": "games/test_slides/slide_h_B_u.svg"
+        },
+        {
+          "id": "62435401-a098-4be3-a72f-d2de1886e758",
+          "name": "Slide C",
+          "img": "games/test_slides/slide_h_C_u.svg"
+        },
+        {
+          "id": "d34be7df-e815-4da9-a1c6-e8c621df9584",
+          "name": "Slide D",
+          "img": "games/test_slides/slide_h_D_u.svg"
+        }
+      ],
+      "group_id": "27cb1a7c-3eb5-4f9f-a060-8e339b155f84",
+      "group_name": "Layout Group 0 (Host)"
+    },
+    {
+      "slides": [
+        {
+          "id": "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902",
+          "name": "Slide A",
+          "img": "games/test_slides/slide_v_A_u.svg"
+        },
+        {
+          "id": "f381721e-8a38-4b43-9e44-1653e20bf672",
+          "name": "Slide B",
+          "img": "games/test_slides/slide_v_B_u.svg"
+        },
+        {
+          "id": "fea3dde9-706f-4425-802c-cd0e353323e9",
+          "name": "Slide C",
+          "img": "games/test_slides/slide_v_C_u.svg"
+        },
+        {
+          "id": "e5f95c69-cbe3-4741-b4bb-b45821124665",
+          "name": "Slide D",
+          "img": "games/test_slides/slide_v_D_u.svg"
+        }
+      ],
+      "group_id": "db58f48d-8ed2-41a2-9d0c-40c1c7cd60fc",
+      "group_name": "Layout Group 1 (Guest)"
+    },
+    {
+      "slides": [
+        {
+          "id": "27b8a319-8de0-4e6a-a29c-4d6eadb81739",
+          "name": "Slide a",
+          "img": "games/test_slides/slide_h_a_l.svg"
+        },
+        {
+          "id": "5276879a-f734-4904-a773-b3ac1df605c6",
+          "name": "Slide b",
+          "img": "games/test_slides/slide_h_b_l.svg"
+        },
+        {
+          "id": "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e",
+          "name": "Slide c",
+          "img": "games/test_slides/slide_h_c_l.svg"
+        },
+        {
+          "id": "5f5c2c30-cf68-454b-a3da-92cc4487e989",
+          "name": "Slide d",
+          "img": "games/test_slides/slide_h_d_l.svg"
+        }
+      ],
+      "group_id": "05279dd5-f4b3-4b33-aede-a3b635104a76",
+      "group_name": "Layout Group 2 (Guest)"
+    }
+  ],
+  "puzzles": [
+    {
+      "puzzle_id": "c41664bb-967f-4628-8526-2ee72e433abf",
+      "puzzletitle": "Set Puzzle (unordered)",
+      "instructions": "This is a set puzzle with an unordered evaluation rule.",
+      "type": "set",
+      "evaluation": "unordered",
+      "host_group_id": "27cb1a7c-3eb5-4f9f-a060-8e339b155f84",
+      "guest_group_id": "db58f48d-8ed2-41a2-9d0c-40c1c7cd60fc",
+      "matches": [
+        {
+          "match": [
+            "a9987a66-06db-4f2a-92f3-f7886079392c",
+            "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902"
+          ]
+        },
+        {
+          "match": [
+            "dd7a1e14-1778-46d1-9f18-dfdb4b4cea63",
+            "f381721e-8a38-4b43-9e44-1653e20bf672"
+          ]
+        },
+        {
+          "match": [
+            "62435401-a098-4be3-a72f-d2de1886e758",
+            "fea3dde9-706f-4425-802c-cd0e353323e9"
+          ]
+        },
+        {
+          "match": [
+            "d34be7df-e815-4da9-a1c6-e8c621df9584",
+            "e5f95c69-cbe3-4741-b4bb-b45821124665"
+          ]
+        }
+      ]
+    },
+    {
+      "puzzle_id": "7f05605e-2bef-4c83-9daf-7ac6d5b19d96",
+      "puzzletitle": "Set Puzzle (ordered)",
+      "instructions": "This is a set puzzle with an ordered evaluation rule.",
+      "type": "set",
+      "evaluation": "ordered",
+      "host_group_id": "db58f48d-8ed2-41a2-9d0c-40c1c7cd60fc",
+      "guest_group_id": "05279dd5-f4b3-4b33-aede-a3b635104a76",
+      "matches": [
+        {
+          "match": [
+            "fa26c712-aba1-46ed-bd4e-d2d0bbb0d902",
+            "27b8a319-8de0-4e6a-a29c-4d6eadb81739"
+          ]
+        },
+        {
+          "match": [
+            "f381721e-8a38-4b43-9e44-1653e20bf672",
+            "5276879a-f734-4904-a773-b3ac1df605c6"
+          ]
+        },
+        {
+          "match": [
+            "fea3dde9-706f-4425-802c-cd0e353323e9",
+            "bea5bb9e-78e6-42b0-9b62-88c765bd5a5e"
+          ]
+        },
+        {
+          "match": [
+            "e5f95c69-cbe3-4741-b4bb-b45821124665",
+            "5f5c2c30-cf68-454b-a3da-92cc4487e989"
+          ]
+        }
+      ]
+    }
+  ],
+  "layout": {
+    "puzzle_slots": [
+      {
+        "slot_id": "1e6c526c-8706-4d87-95dd-0e66021a8115",
+        "activates_puzzle_id": "c41664bb-967f-4628-8526-2ee72e433abf",
+        "host_group_id": "27cb1a7c-3eb5-4f9f-a060-8e339b155f84",
+        "guest_group_id": "db58f48d-8ed2-41a2-9d0c-40c1c7cd60fc",
+        "at_index": 0,
+        "guest_align_index": 5,
+        "host_direction": "horizontal",
+        "guest_direction": "vertical"
+      },
+      {
+        "slot_id": "bc165ed2-f9a6-4b19-b71a-d8e3230323f6",
+        "activates_puzzle_id": "7f05605e-2bef-4c83-9daf-7ac6d5b19d96",
+        "host_group_id": "db58f48d-8ed2-41a2-9d0c-40c1c7cd60fc",
+        "guest_group_id": "05279dd5-f4b3-4b33-aede-a3b635104a76",
+        "at_index": 2,
+        "guest_align_index": 0,
+        "host_direction": "vertical",
+        "guest_direction": "horizontal"
+      }
+    ]
+  }
+}
