@@ -12,8 +12,7 @@ export function createDragAndTapHandler(callbacks) {
         checkGameWin,
         getActivePuzzle,
         matchVisualizer,
-        domElements, // prettier-ignore
-        onStateUpdate
+        domElements
     } = callbacks;
 
     let dragHandler = null;
