@@ -38,11 +38,13 @@ input[type="checkbox"] {
         width: 1.7rem;
         height: 1.7rem;
         right: 0;
-        border-radius:  .125rem;
+        border-radius: .125rem;
         margin: 3px 0px 1px 3px;
     }
+
     &:checked::after {
-        background-color: rgb(125 99 73);;
+        background-color: rgb(125 99 73);
+        ;
     }
 
     &::before {
@@ -52,12 +54,13 @@ input[type="checkbox"] {
         display: inline-block;
         width: 2rem;
         height: 2rem;
-        border-radius:  .25rem;
+        border-radius: .25rem;
         border: #555 solid 1px;
     }
 }
+
 /* This is the main viewport for our carousels */
-.screen > * {
+.screen>* {
     box-sizing: border-box;
     display: none;
     /* Hide all screen elements by default */
@@ -345,16 +348,6 @@ By default, they are hidden and non-interactive.
     }
 }
 
-.tell-um {
-    font-size: 1.5rem;
-    margin-block: 2rem;
-    margin-inline: 4rem;
-}
-
-.tell-um summary {
-    font-size: 2rem;
-}
-
 .screen-title {
     margin-inline: auto;
     margin-block: 1.5rem;
@@ -638,4 +631,94 @@ By default, they are hidden and non-interactive.
     border-radius: 5px;
     font-size: 1.25rem;
     font-weight: bold;
+}
+
+.tell-um {
+    font-size: 1.5rem;
+    margin-block: 2rem;
+    margin-inline: 4rem;
+}
+
+.tell-um summary {
+    font-size: 2rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+
+    & span {
+        margin-left: 1rem;
+    }
+}
+
+
+.tell-um summary::marker,
+:is(::-webkit-details-marker) {
+    content: "+ ";
+    font-family: monospace;
+    color: red;
+    font-weight: bold;
+}
+
+.tell-um[open]:first-of-type summary::marker {
+    content: "− ";
+}
+
+[open] &::after {
+    content: "−";
+}
+
+details:last-of-type summary::-webkit-details-marker {
+    display: none;
+}
+
+
+/* Initial state for elements that will be animated */
+#logo-big-bg,
+#tell-swipe-icons,
+#slide-match-play,
+#slide-v-play,
+#slide-h-play {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+#tell-swipe-right,
+#tell-swipe-up {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Set initial opacities before animation starts */
+.leadin-screen:not(.start-animation) #tell-swipe-icons,
+.leadin-screen:not(.start-animation) #slide-match-play,
+.leadin-screen:not(.start-animation) #slide-v-play,
+.leadin-screen:not(.start-animation) #slide-h-play {
+    opacity: 0;
+}
+
+/* Animation states */
+.leadin-screen.start-animation #logo-big-bg {
+    animation: fadeOut 0.5s ease-in-out 5s forwards;
+}
+
+.leadin-screen.start-animation #tell-swipe-icons,
+.leadin-screen.start-animation #slide-match-play,
+.leadin-screen.start-animation #slide-v-play,
+.leadin-screen.start-animation #slide-h-play {
+    animation: fadeIn 0.5s ease-in-out 5s forwards;
+}
+
+#tell-swipe-right.visible,
+#tell-swipe-up.visible {
+    opacity: 1;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
 }

@@ -4,9 +4,11 @@ import { createLayoutVisualizer } from './visualiser.js';
 import { createNavigationHandler } from './navigation-handler.js';
 import { createMatchVisualizer } from './match-visualizer.js';
 import { createDragAndTapHandler } from './drag-and-tap-handler.js';
+import { initLeadInScreen } from './leadin-screen.js';
 
 const start = () => {
 
+    const leadInScreen = document.querySelector('.leadin-screen'); 
     const mainScreen = document.querySelector('.screen');
     const startScreen = mainScreen.querySelector('.start-screen');
     const gameScreen = mainScreen.querySelector('.game-screen');
@@ -46,6 +48,8 @@ const start = () => {
         matchVisualization: matchVisualizationSelect.value,
         showSlideNames: showSlideNamesCheckbox.checked
     };
+
+    initLeadInScreen(leadInScreen);
 
     // Encapsulate all game-related state into a single object.
     // This object will be replaced entirely when a new game is loaded.
@@ -773,7 +777,8 @@ const start = () => {
     dragAndTapHandler.attach();
 
     // Set initial state
-    startScreen.style.display = 'block';
+    startScreen.style.display = 'none';
+    leadInScreen.style.display = 'block';
     gameScreen.style.display = 'none';
     settingsScreen.style.display = 'none';
     infoScreen.style.display = 'none';
