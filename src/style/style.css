@@ -698,14 +698,14 @@ details:last-of-type summary::-webkit-details-marker {
 
 /* Animation states */
 .leadin-screen.start-animation #logo-big-bg {
-    animation: fadeOut 0.5s ease-in-out 5s forwards;
+    animation: fadeOut 0.5s ease-in-out 2s forwards;
 }
 
 .leadin-screen.start-animation #tell-swipe-icons,
 .leadin-screen.start-animation #slide-match-play,
 .leadin-screen.start-animation #slide-v-play,
 .leadin-screen.start-animation #slide-h-play {
-    animation: fadeIn 0.5s ease-in-out 5s forwards;
+    animation: fadeIn 0.5s ease-in-out 2s forwards;
 }
 
 #tell-swipe-right.visible,

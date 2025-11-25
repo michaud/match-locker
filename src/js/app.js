@@ -49,8 +49,6 @@ const start = () => {
         showSlideNames: showSlideNamesCheckbox.checked
     };
 
-    initLeadInScreen(leadInScreen);
-
     // Encapsulate all game-related state into a single object.
     // This object will be replaced entirely when a new game is loaded.
     let activeGame = {
@@ -565,7 +563,7 @@ const start = () => {
     };
 
     // --- State-based Screen Navigation ---
-    let activeScreen = startScreen;
+    let activeScreen = leadInScreen;
     let previousScreen = null;
 
     function navigateTo(targetScreen) {
@@ -579,14 +577,14 @@ const start = () => {
         targetScreen.style.display = targetScreen.classList.contains('settings-screen') ? 'flex' : 'block';
         activeScreen = targetScreen;
 
+        // The top nav should not be visible on the lead-in screen.
+        topNav.style.display = (targetScreen === leadInScreen) ? 'none' : 'flex';
+
         // When navigating to the game screen, ensure the puzzle nav is visible.
         if (targetScreen === gameScreen) {
 
             puzzleNav.style.display = 'grid';
         }
-
-        // The top navigation containing the menu button should always be visible.
-        topNav.style.display = 'grid';
     }
 
     menuButton.addEventListener('click', () => {
@@ -776,12 +774,16 @@ const start = () => {
     // For now, we will attach it here. A more advanced implementation might attach/detach per game.
     dragAndTapHandler.attach();
 
+    // Initialize the lead-in screen after all other setup is complete and just before showing it.
+    initLeadInScreen(leadInScreen, () => navigateTo(startScreen));
+
     // Set initial state
     startScreen.style.display = 'none';
     leadInScreen.style.display = 'block';
     gameScreen.style.display = 'none';
     settingsScreen.style.display = 'none';
     infoScreen.style.display = 'none';
+    topNav.style.display = 'none';
 
     // --- Screen and Menu Navigation Logic ---
     previousScreen = startScreen;
