@@ -10,6 +10,7 @@ import { wrap } from './utils.js'; // This utility is used by the main swiper as
  * @param {number} [options.initialIndex=0] - The data-index of the slide that should be initially visible.
  * @param {string} options.playSlideId - The data-slide-id of the slide that represents the "play" position.
  * @param {number} [options.throwMultiplier=0.7] - Multiplier for swipe velocity to determine snap distance.
+ * @param {function} [options.onActiveStateChange] - Callback (isActive, swiperId) when swiper becomes active/inactive.
  * @param {string} [options.id] - An optional unique identifier for the swiper instance.
  * @returns {object} A public API to control the swiper instance.
  */
@@ -21,6 +22,7 @@ export function createLeadInSwiper(options) {
         initialIndex = 0,
         playSlideId,
         throwMultiplier = 0.7,
+        onActiveStateChange = () => {},
         id = null,
     } = options;
 
@@ -58,13 +60,12 @@ export function createLeadInSwiper(options) {
         const currentIndex = Math.round(-currentTranslate / itemSize);
         const filmstripLength = itemSize * sourceItemCount;
 
-        // If the current translation has moved outside the bounds of the original middle group,
-        // wrap it back around.
-        // The "safe" area is between 0 and -2 * filmstripLength. If we go past that, we wrap.
-        if (currentTranslate > 0 || currentTranslate < -2 * filmstripLength) {
+        // The "safe" area is between -3*filmstripLength and -1*filmstripLength.
+        // This logic is for a different model. With the new model, we wrap around the original block's length.
+        if (currentTranslate > 0 || Math.abs(currentTranslate) > filmstripLength) {
             element.style.transition = 'none';
-            // Use modulo to find the position within a single filmstrip length and offset it back into the 'safe' area.
-            currentTranslate = (currentTranslate % filmstripLength) - filmstripLength;
+            // Wrap back to the equivalent position within the original block.
+            currentTranslate %= filmstripLength;
             element.style.transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
             void element.offsetWidth; // Force reflow
         }
@@ -83,6 +84,7 @@ export function createLeadInSwiper(options) {
             if (onComplete) onComplete();
             // Perform the silent wrap-around check AFTER the snap is complete.
             checkWrapAround();
+            API.onActiveStateChange(false, id); // Notify that this swiper is inactive
         };
         element.addEventListener('transitionend', handleTransitionEnd, { once: true });
     };
@@ -97,6 +99,11 @@ export function createLeadInSwiper(options) {
         originalSlides.sort((a, b) => parseInt(a.dataset.index) - parseInt(b.dataset.index));
         slideIdMap = originalSlides.map(item => item.dataset.slideId);
 
+        // Find the correct initialIndex based on the playSlideId, overriding the option.
+        const correctInitialIndex = slideIdMap.indexOf(playSlideId);
+
+        const filmstripLength = itemSize * sourceItemCount;
+
         // Create four clones of the entire slide group for a [C, C, O, C, C] structure
         const clones = Array.from({ length: 4 }, () => {
             const clone = originalSlidesGroup.cloneNode(true);
@@ -104,16 +111,7 @@ export function createLeadInSwiper(options) {
             return clone;
         });
 
-        // Clear the main swiper element and append the groups in order
-        element.innerHTML = '';
-        element.appendChild(clones[0]); // Prepend clone 1
-        element.appendChild(clones[1]); // Prepend clone 2
-        element.appendChild(originalSlidesGroup);
-        element.appendChild(clones[2]); // Append clone 1
-        element.appendChild(clones[3]); // Append clone 2
-
         // Position the five groups to form a continuous filmstrip
-        const filmstripLength = itemSize * sourceItemCount;
         const transformProp = IS_HORIZONTAL ? 'translateX' : 'translateY';
         clones[0].style.transform = `${transformProp}(${-2 * filmstripLength}px)`;
         clones[1].style.transform = `${transformProp}(${-filmstripLength}px)`;
@@ -121,9 +119,15 @@ export function createLeadInSwiper(options) {
         clones[2].style.transform = `${transformProp}(${filmstripLength}px)`;
         clones[3].style.transform = `${transformProp}(${2 * filmstripLength}px)`;
 
-        // Set initial position to the start of the "middle" block of real slides
-        // We offset by one filmstrip length to start on the original group, not a clone.
-        currentTranslate = -filmstripLength - (itemSize * initialIndex);
+        // Append the groups to the DOM to create the filmstrip.
+        element.appendChild(clones[0]);
+        element.appendChild(clones[1]);
+        // The original group is already in the element.
+        element.appendChild(clones[2]);
+        element.appendChild(clones[3]);
+
+        // The initial transform on the PARENT element should position the correct slide.
+        currentTranslate = 0;
         element.style.transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
     };
 
@@ -131,7 +135,11 @@ export function createLeadInSwiper(options) {
 
     const API = {
         id: id,
+        // Allow the callback to be attached after initialization to avoid closure issues.
+        onActiveStateChange: onActiveStateChange,
+
         startDrag(position) {
+            API.onActiveStateChange(true, id); // Notify that this swiper is active
             element.style.transition = 'none';
             const matrix = new DOMMatrix(window.getComputedStyle(element).transform);
             currentTranslate = IS_HORIZONTAL ? matrix.m41 : matrix.m42;
@@ -152,6 +160,7 @@ export function createLeadInSwiper(options) {
             lastMovePos = position;
             currentTranslate = startTranslate + delta;
             element.style.transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
+            checkWrapAround(); // Check and reset during drag
             emit('drag');
         },
         endDrag(onComplete = null) {
@@ -169,6 +178,7 @@ export function createLeadInSwiper(options) {
                 console.warn(`LeadInSwiper: Slide with ID ${slideId} not found.`);
                 return;
             }
+            const filmstripLength = itemSize * sourceItemCount;
             const targetTranslate = -filmstripLength - (index * itemSize);
             if (immediate) {
                 element.style.transition = 'none';
@@ -176,7 +186,9 @@ export function createLeadInSwiper(options) {
                 currentTranslate = targetTranslate;
                 if (options.onComplete) options.onComplete();
                 emit('snapComplete', { slideId: API.getCurrentSlideId(), source: options.source || 'programmatic' });
+                API.onActiveStateChange(false, id); // Notify inactive for immediate snap
             } else {
+                API.onActiveStateChange(true, id); // Notify active for animated snap
                 animateListTo(targetTranslate, () => {
                     if (options.onComplete) options.onComplete();
                     emit('snapComplete', { slideId: API.getCurrentSlideId(), source: options.source || 'programmatic' });
@@ -185,8 +197,7 @@ export function createLeadInSwiper(options) {
         },
         getCurrentSlideId() {
             const filmstripLength = itemSize * sourceItemCount;
-            const rawIndex = Math.round((-currentTranslate - filmstripLength) / itemSize);
-            const logicalIndex = wrap(rawIndex, sourceItemCount);
+            const logicalIndex = wrap(Math.round(-(currentTranslate + filmstripLength) / itemSize), sourceItemCount);
             return slideIdMap[logicalIndex];
         },
         getDirection() { return direction; },
@@ -205,6 +216,7 @@ export function createLeadInSwiper(options) {
         init() {
             // Clear any existing clones before setup
             const clones = element.querySelectorAll('.swiper-clone');
+            // The original group is assumed to be the only <g> left after this.
             clones.forEach(clone => clone.remove());
 
             // Find the original group of slides. There should only be one non-clone group.
