@@ -75,8 +75,13 @@ input[type="checkbox"] {
 }
 
 .start-screen {
-    display: block;
+    display: grid;
     /* The start screen is visible by default */
+}
+
+#logo-start {
+    margin: 0 auto;
+    margin-block-start: 2rem;
 }
 
 .button--action {

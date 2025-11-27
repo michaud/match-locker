@@ -8,6 +8,14 @@ import { initLeadInScreen } from './leadin-screen.js';
 
 const start = () => {
 
+    // Enum-like object for display styles to avoid magic strings.
+    const DisplayStyle = Object.freeze({
+        BLOCK: 'block',
+        FLEX: 'flex',
+        GRID: 'grid',
+        NONE: 'none'
+    });
+
     const leadInScreen = document.querySelector('.leadin-screen'); 
     const mainScreen = document.querySelector('.screen');
     const startScreen = mainScreen.querySelector('.start-screen');
@@ -60,6 +68,14 @@ const start = () => {
         worldMap: new Map(),
         swiperInstances: new Map()
     };
+
+    const screenDisplayMap = new Map([
+        [leadInScreen, DisplayStyle.BLOCK],
+        [startScreen, DisplayStyle.GRID],
+        [gameScreen, DisplayStyle.BLOCK],
+        [settingsScreen, DisplayStyle.FLEX],
+        [infoScreen, DisplayStyle.BLOCK]
+    ]);
 
     const showWinToaster = () => {
         toaster.classList.add('is-visible');
@@ -568,22 +584,32 @@ const start = () => {
 
     function navigateTo(targetScreen) {
 
+        // Hide the previously active screen
         if (activeScreen) {
-
             previousScreen = activeScreen;
-            activeScreen.style.display = 'none';
+            activeScreen.style.display = DisplayStyle.NONE;
         }
 
-        targetScreen.style.display = targetScreen.classList.contains('settings-screen') ? 'flex' : 'block';
+        // Show the new screen and handle screen-specific side effects
+        targetScreen.style.display = screenDisplayMap.get(targetScreen) || DisplayStyle.BLOCK;
         activeScreen = targetScreen;
 
-        // The top nav should not be visible on the lead-in screen.
-        topNav.style.display = (targetScreen === leadInScreen) ? 'none' : 'flex';
-
-        // When navigating to the game screen, ensure the puzzle nav is visible.
-        if (targetScreen === gameScreen) {
-
-            puzzleNav.style.display = 'grid';
+        // Handle visibility of navigation elements based on the active screen
+        switch (targetScreen) {
+            case leadInScreen:
+                topNav.style.display = DisplayStyle.NONE;
+                puzzleNav.style.display = DisplayStyle.NONE;
+                break;
+            case gameScreen:
+                topNav.style.display = DisplayStyle.GRID;
+                puzzleNav.style.display = DisplayStyle.GRID;
+                break;
+            case startScreen:
+            case settingsScreen:
+            case infoScreen:
+                topNav.style.display = DisplayStyle.GRID;
+                puzzleNav.style.display = DisplayStyle.NONE;
+                break;
         }
     }
 
@@ -600,7 +626,7 @@ const start = () => {
 
         if (activeScreen === startScreen) {
 
-            settingsButton.style.display = 'block';
+            settingsButton.style.display = 'grid';
 
         } else if (activeScreen === gameScreen) {
 
