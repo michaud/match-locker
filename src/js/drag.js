@@ -63,8 +63,8 @@ export function createDragHandler(screen, getSwipers, onTapCallback, onDragStart
                 state.isDragStarted = true;
 
                 if (onDragStartCallback) {
-
-                    onDragStartCallback(dragSwiper, otherSwiper); // prettier-ignore
+                    // Pass the identified swipers to the callback
+                    onDragStartCallback(dragSwiper, otherSwiper);
                 }
             }
 

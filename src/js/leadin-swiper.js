@@ -13,17 +13,19 @@ import { wrap } from './utils.js'; // This utility is used by the main swiper as
  * @param {function} [options.onActiveStateChange] - Callback (isActive, swiperId) when swiper becomes active/inactive.
  * @param {string} [options.id] - An optional unique identifier for the swiper instance.
  * @returns {object} A public API to control the swiper instance.
+ * @param {boolean} [options.endDragDisabled=false] - If true, the endDrag logic will not execute.
  */
 export function createLeadInSwiper(options) {
     const {
         elementSelector,
         direction,
         itemSize,
-        initialIndex = 0,
+        initialOverlapIndex = 0,
         playSlideId,
         throwMultiplier = 0.7,
         onActiveStateChange = () => {},
         id = null,
+        endDragDisabled = false,
     } = options;
 
     const element = document.querySelector(elementSelector);
@@ -44,6 +46,7 @@ export function createLeadInSwiper(options) {
     let velocity = 0;
     let sourceItemCount = 0; // The real number of unique items
     let slideIdMap = []; // Maps original index to slide ID
+    let curOverlapIndex = initialOverlapIndex;
     const listeners = new Map();
 
     // --- Private Methods (adapted from swiper.js) ---
@@ -57,10 +60,9 @@ export function createLeadInSwiper(options) {
     };
 
     const checkWrapAround = () => {
-        const currentIndex = Math.round(-currentTranslate / itemSize);
+
         const filmstripLength = itemSize * sourceItemCount;
 
-        // The "safe" area is between -3*filmstripLength and -1*filmstripLength.
         // This logic is for a different model. With the new model, we wrap around the original block's length.
         if (currentTranslate > 0 || Math.abs(currentTranslate) > filmstripLength) {
             element.style.transition = 'none';
@@ -97,10 +99,8 @@ export function createLeadInSwiper(options) {
 
         // Sort slides by data-index to ensure slideIdMap is correct
         originalSlides.sort((a, b) => parseInt(a.dataset.index) - parseInt(b.dataset.index));
-        slideIdMap = originalSlides.map(item => item.dataset.slideId);
-
-        // Find the correct initialIndex based on the playSlideId, overriding the option.
-        const correctInitialIndex = slideIdMap.indexOf(playSlideId);
+        // Correctly find the slide ID, whether it's on the element or a child (for groups).
+        slideIdMap = originalSlides.map(item => item.dataset.slideId || item.querySelector('[data-slide-id]')?.dataset.slideId);
 
         const filmstripLength = itemSize * sourceItemCount;
 
@@ -164,11 +164,24 @@ export function createLeadInSwiper(options) {
             emit('drag');
         },
         endDrag(onComplete = null) {
+            if (endDragDisabled) {
+                // For debugging: if endDrag is disabled, do nothing.
+                // The swiper will remain where the user dragged it.
+                return;
+            }
             emit('dragEnd', { velocity: velocity, currentTranslate: currentTranslate });
             const projected = currentTranslate + velocity * itemSize * THROW_MULTIPLIER;
             const targetTranslate = Math.round(projected / itemSize) * itemSize;
             animateListTo(targetTranslate, () => {
-                emit('snapComplete', { slideId: API.getCurrentSlideId(), source: 'drag' });
+                // At the end of the swipe, calculate the index offset from the drag's start to end.
+                const startSlideIndex = Math.round(-startTranslate / itemSize);
+                const targetSlideIndex = Math.round(-targetTranslate / itemSize);
+                const indexOffset = targetSlideIndex - startSlideIndex;
+                // Apply this offset to the overlap index that was current when the drag started.
+
+                curOverlapIndex = wrap(curOverlapIndex + indexOffset, sourceItemCount);
+
+                emit('snapComplete', { slideId: API.getOverlappingSlideId(), source: 'drag' });
                 if (onComplete) onComplete();
             });
         },
@@ -184,21 +197,20 @@ export function createLeadInSwiper(options) {
                 element.style.transition = 'none';
                 element.style.transform = IS_HORIZONTAL ? `translateX(${targetTranslate}px)` : `translateY(${targetTranslate}px)`;
                 currentTranslate = targetTranslate;
-                if (options.onComplete) options.onComplete();
-                emit('snapComplete', { slideId: API.getCurrentSlideId(), source: options.source || 'programmatic' });
+                if (options.onComplete) { options.onComplete(); }
+                emit('snapComplete', { slideId: API.getOverlappingSlideId(), source: options.source || 'programmatic' });
                 API.onActiveStateChange(false, id); // Notify inactive for immediate snap
             } else {
                 API.onActiveStateChange(true, id); // Notify active for animated snap
                 animateListTo(targetTranslate, () => {
-                    if (options.onComplete) options.onComplete();
-                    emit('snapComplete', { slideId: API.getCurrentSlideId(), source: options.source || 'programmatic' });
+                    if (options.onComplete) { options.onComplete(); }
+                    emit('snapComplete', { slideId: API.getOverlappingSlideId(), source: options.source || 'programmatic' });
                 });
             }
         },
-        getCurrentSlideId() {
-            const filmstripLength = itemSize * sourceItemCount;
-            const logicalIndex = wrap(Math.round(-(currentTranslate + filmstripLength) / itemSize), sourceItemCount);
-            return slideIdMap[logicalIndex];
+        getOverlappingSlideId() {
+            // Return the slide ID for the currently tracked overlap index.
+            return slideIdMap[curOverlapIndex];
         },
         getDirection() { return direction; },
         getElement() { return element; },

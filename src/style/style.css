@@ -682,6 +682,11 @@ details:last-of-type summary::-webkit-details-marker {
     transition: opacity 0.5s ease-in-out;
 }
 
+#logo-big-bg {
+    pointer-events: none;
+}
+
+
 #tell-swipe-right,
 #tell-swipe-up {
     opacity: 0;
