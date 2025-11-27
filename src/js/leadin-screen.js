@@ -95,7 +95,11 @@ export function initLeadInScreen(screen, navigateToStartScreen) {
                 // It's primarily for visual feedback, similar to the game screen.
                 screen.style.cursor = 'grabbing';
                 screen.classList.add('is-dragging');
-                // Hide idle indicators if dragging starts
+
+                // A swipe has started, so permanently disable the idle handling.
+                clearTimeout(idleTimer);
+                screen.removeEventListener('pointerdown', handleInteraction);
+                screen.removeEventListener('keydown', handleInteraction);
                 tellSwipeRight.classList.remove('visible');
                 tellSwipeUp.classList.remove('visible');
             }
@@ -140,14 +144,14 @@ export function initLeadInScreen(screen, navigateToStartScreen) {
         }
 
         function resetIdleTimer() {
-            // clearTimeout(idleTimer);
-            // idleTimer = setTimeout(showIdleIndicators, 8000); // 2 minutes
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(showIdleIndicators, 8000); // 2 minutes
         }
 
         function handleInteraction() {
             resetIdleTimer();
-            tellSwipeRight.classList.remove('visible');
-            tellSwipeUp.classList.remove('visible');
+            // The indicators are hidden inside the drag start callback now,
+            // this function is just for resetting the timer on non-swipe interactions.
         }
 
         // Add a class to the screen to trigger the initial animations via CSS
@@ -155,8 +159,8 @@ export function initLeadInScreen(screen, navigateToStartScreen) {
 
         // Set up idle timer
         resetIdleTimer();
-        screen.addEventListener('pointerdown', handleInteraction, { once: true });
-        screen.addEventListener('keydown', handleInteraction, { once: true });
+        screen.addEventListener('pointerdown', handleInteraction);
+        screen.addEventListener('keydown', handleInteraction);
 
         leadinPlayButton.addEventListener('click', navigateToStartScreen);
     });
