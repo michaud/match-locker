@@ -90,7 +90,7 @@ export function initLeadInScreen(screen, navigateToStartScreen) {
             screen,
             () => ({ hostSwiper: leadinHSwiper, guestSwiper: leadinVSwiper }), // Return lead-in swipers
             () => { /* No tap callback for lead-in screen */ },
-            (dragSwiper, otherSwiper) => {
+            () => {
                 // This is the onDragStartCallback for the lead-in screen.
                 // It's primarily for visual feedback, similar to the game screen.
                 screen.style.cursor = 'grabbing';
