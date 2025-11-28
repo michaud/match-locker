@@ -655,6 +655,9 @@ By default, they are hidden and non-interactive.
     }
 }
 
+.details-image.open {
+    
+}
 
 .tell-um summary::marker,
 :is(::-webkit-details-marker) {
@@ -668,12 +671,22 @@ By default, they are hidden and non-interactive.
     content: "− ";
 }
 
-[open] &::after {
-    content: "−";
+.tell-um  {
+    & .details-image.closed {
+        display: none;
+    }
 }
 
-details:last-of-type summary::-webkit-details-marker {
-    display: none;
+.tell-um[open]  {
+
+    & .details-image.open {
+        display: none;
+    }
+
+    & .details-image.closed {
+        display: block;
+    }
+
 }
 
 
