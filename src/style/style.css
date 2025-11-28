@@ -76,6 +76,9 @@ input[type="checkbox"] {
 
 .start-screen {
     display: grid;
+    width: 960px;
+    height: 680px;
+    grid-template-rows: auto auto 1fr;
     /* The start screen is visible by default */
 }
 
@@ -377,37 +380,43 @@ By default, they are hidden and non-interactive.
     min-height: 10rem;
     margin-block-start: 3rem;
     margin-inline-start: 1.5rem;
+    overflow: hidden;
 
     & ol {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        display: flex;
         gap: .5rem;
         margin: 0;
         padding: 0 .5rem 0 0;
         max-height: 20rem;
         list-style: none;
-        overflow-y: auto;
+        overflow-x: hidden;
         scrollbar-color: #444543 #7d6652;
         scrollbar-gutter: stable;
     }
 
     & li {
         display: grid;
+        min-width: 15rem;
+        min-height: 7rem;
     }
 }
 
 .game-button {
 
     display: grid;
-    grid-template-columns: auto 1fr;
     gap: .75rem;
     width: 100%;
     padding: 1rem;
     font-size: 1.125rem;
     font-weight: bold;
     color: rgb(210 200 188);
-    border-radius: .5rem;
-    background-image: radial-gradient(circle farthest-corner at 40px 40px, rgb(51 56 46), #7d6652, hsl(34 23% 50% / 1));
+    border-radius: .5rem .5rem 1rem 1rem;
+    border-block-start: 0.125rem solid rgba(255, 255, 255, 0.1);
+    border-inline-start: 0.125rem solid rgba(255, 255, 255, 0.1);
+    border-block-end:1rem solid rgba(255, 255, 255, 0.1);
+    border-inline-end: 0.125rem solid rgba(255, 255, 255, 0.1);
+    background-image: radial-gradient(circle farthest-corner at 40px 40px, #1a1e50, hsl(236 51% 14% / 1), #1a1e50);
+
 
 
     & span {
@@ -416,14 +425,13 @@ By default, they are hidden and non-interactive.
     }
 
     & .title {
-        max-width: 10ch;
         font-size: 1rem;
         font-weight: bold;
-        text-align: center;
+        text-align: left;
     }
 
     & .description {
-
+        display: none;
         font-weight: normal;
         text-align: left;
     }

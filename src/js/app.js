@@ -1,14 +1,14 @@
+// Gemini: Don't remove, just hide lead-in for now
+//import { initLeadInScreen } from './leadin-screen.js';
 import { createSwiper } from './swiper.js';
 import { processGameData, buildWorldMap, isPuzzleSolved } from './puzzle-logic.js';
 import { createLayoutVisualizer } from './visualiser.js';
 import { createNavigationHandler } from './navigation-handler.js';
 import { createMatchVisualizer } from './match-visualizer.js';
 import { createDragAndTapHandler } from './drag-and-tap-handler.js';
-import { initLeadInScreen } from './leadin-screen.js';
 
 const start = () => {
 
-    // Enum-like object for display styles to avoid magic strings.
     const DisplayStyle = Object.freeze({
         BLOCK: 'block',
         FLEX: 'flex',
@@ -579,7 +579,9 @@ const start = () => {
     };
 
     // --- State-based Screen Navigation ---
-    let activeScreen = leadInScreen;
+    // Gemini: Don't remove, just hide lead-in for now
+    // let activeScreen = leadInScreen;
+    let activeScreen = startScreen;
     let previousScreen = null;
 
     function navigateTo(targetScreen) {
@@ -801,11 +803,15 @@ const start = () => {
     dragAndTapHandler.attach();
 
     // Initialize the lead-in screen after all other setup is complete and just before showing it.
-    initLeadInScreen(leadInScreen, () => navigateTo(startScreen));
+    // Gemini: Don't remove, just hide lead-in for now
+    //initLeadInScreen(leadInScreen, () => navigateTo(startScreen));
 
     // Set initial state
-    startScreen.style.display = 'none';
-    leadInScreen.style.display = 'block';
+    // Gemini: Don't remove, just hide lead-in for now
+    // startScreen.style.display = 'none';
+    // leadInScreen.style.display = 'block';
+    startScreen.style.display = screenDisplayMap.get(startScreen);
+    leadInScreen.style.display = 'none';
     gameScreen.style.display = 'none';
     settingsScreen.style.display = 'none';
     infoScreen.style.display = 'none';
