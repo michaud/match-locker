@@ -473,20 +473,22 @@ const start = () => {
             games.forEach(game => {
 
                 const li = document.createElement('li');
-                const button = document.createElement('button');
+                const button = document.createElement('div');
                 button.className = 'game-button';
                 button.dataset.gameFile = game.file;
 
                 button.innerHTML = `
                     <div class="title">${game.title}</div>
-                    <div class="description">${game.description}</div>
+                    <div class="game-description">
+                        <div class="action-buttons">
+                            <button class="button--action info">info</button>
+                            <button class="button--action play">play</button>
+                        </div>
+                        <div class="description">
+                            <p>${game.description}</p>
+                        </div>
+                    </div>
                 `;
-
-                button.addEventListener('click', () => {
-                    navigateTo(gameScreen);
-                    menuPopout.style.display = 'none';
-                    loadGame(game.file);
-                });
 
                 li.appendChild(button);
                 gameMenu.appendChild(li);

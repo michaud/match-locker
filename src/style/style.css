@@ -376,28 +376,27 @@ By default, they are hidden and non-interactive.
 
 .game-menu {
 
-    position: relative;
-    min-height: 10rem;
-    margin-block-start: 3rem;
-    margin-inline-start: 1.5rem;
+    /* The container for the swiper needs to be full width to center correctly */
+    width: 100%;
+    margin-block-start: 2rem;
     overflow: hidden;
 
     & ol {
         display: flex;
-        gap: .5rem;
+        gap: 1rem;
         margin: 0;
-        padding: 0 .5rem 0 0;
-        max-height: 20rem;
+        padding: 0;
         list-style: none;
-        overflow-x: hidden;
-        scrollbar-color: #444543 #7d6652;
-        scrollbar-gutter: stable;
+        /* Remove scrollbar properties as swiper will handle it */
     }
 
     & li {
         display: grid;
-        min-width: 15rem;
-        min-height: 7rem;
+        /* Fixed width is crucial for the swiper's calculations */
+        width: 15rem;
+        height: 10rem;
+        /* Prevent items from shrinking when the container is full */
+        flex-shrink: 0;
     }
 }
 
@@ -406,7 +405,7 @@ By default, they are hidden and non-interactive.
     display: grid;
     gap: .75rem;
     width: 100%;
-    padding: 1rem;
+    padding: 0;
     font-size: 1.125rem;
     font-weight: bold;
     color: rgb(210 200 188);
@@ -428,14 +427,65 @@ By default, they are hidden and non-interactive.
         font-size: 1rem;
         font-weight: bold;
         text-align: left;
+        padding: 1rem;
     }
 
     & .description {
-        display: none;
+        /* Hide by default, but allow transition */
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+        pointer-events: none;
         font-weight: normal;
         text-align: left;
+        position: absolute;
+        z-index: 1;
+        width: 22ch;
+        padding: 2.5rem 1rem 1rem 1rem;
+        background-color: #1a1e50;
+        border-radius: 0 0 1rem 1rem;
+    }
+
+    & .action-buttons {
+        /* Hide by default, but allow transition */
+        display: grid;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+        pointer-events: none; /* Not interactive when hidden */
+
+        grid-template-columns: 1fr 1fr;
+        margin-block-end: -.9rem;
+        z-index: 2;
+        position: absolute;
+        width: 100%;
     }
 }
+
+.game-button .description.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.game-menu li.is-active-slide .action-buttons {
+    opacity: 1;
+    pointer-events: auto; /* Interactive when visible */
+}
+
+.game-description {
+    
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.button--action.info {
+    background-color: green;
+    border-radius: 0 0 0 1rem;
+}
+.button--action.play {
+    background-color: #a52a2a;
+    border-radius: 0 0 1rem 0;
+}
+
 
 .menu-popout {
 
