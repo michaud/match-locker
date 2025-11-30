@@ -116,37 +116,35 @@ export function createSwiper(options) {
 
     const setupInfiniteList = () => {
 
-        let items = Array.from(listElement.children);
-        sourceItemCount = items.length;
+        const initialItems = Array.from(listElement.children);
+        sourceItemCount = initialItems.length;
 
         if (sourceItemCount === 0) return;
 
         // Build the map from original index to slide ID
-        slideIdMap = items.map(item => item.dataset.slideId);
+        slideIdMap = initialItems.map(item => item.dataset.slideId);
 
         // Determine the number of clones needed for a seamless experience.
         // If the source list is very short, we need to duplicate it to create a large enough buffer.
         const duplicationFactor = Math.ceil(CLONE_COUNT / sourceItemCount);
 
         if (duplicationFactor > 1) {
-
-            const originalItems = [...items];
-
             for (let i = 1; i < duplicationFactor; i++) {
-
-                originalItems.forEach(item => listElement.appendChild(item.cloneNode(true)));
+                initialItems.forEach(item => listElement.appendChild(item.cloneNode(true)));
             }
-
-            items = Array.from(listElement.children);
         }
+
+        // Now that the list is potentially duplicated, get the final "working set" of items.
+        const items = Array.from(listElement.children);
         workingItemCount = items.length; // This is now the "working set" of items.
         instanceCloneCount = CLONE_COUNT; // We always use the configured clone count.
 
         // Prepend clones from the end of the list
         for (let i = 0; i < instanceCloneCount; i++) {
-
+            // The modulo logic was also slightly off for negative numbers. Correcting it.
             const itemIndex = (workingItemCount - instanceCloneCount + i) % workingItemCount;
-            listElement.insertBefore(items[itemIndex].cloneNode(true), listElement.firstChild);
+            const correctedIndex = itemIndex < 0 ? itemIndex + workingItemCount : itemIndex;
+            listElement.insertBefore(items[correctedIndex].cloneNode(true), listElement.firstChild);
         }
         // Append clones from the start of the list
         for (let i = 0; i < instanceCloneCount; i++) {
@@ -238,6 +236,7 @@ export function createSwiper(options) {
 
                 if (onComplete) onComplete();
             };
+
             animateListTo(targetTranslate, animationCompletionHandler);
         },
 

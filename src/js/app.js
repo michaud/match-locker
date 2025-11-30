@@ -6,6 +6,7 @@ import { createLayoutVisualizer } from './visualiser.js';
 import { createNavigationHandler } from './navigation-handler.js';
 import { createMatchVisualizer } from './match-visualizer.js';
 import { createDragAndTapHandler } from './drag-and-tap-handler.js';
+import { createDragHandler } from './drag.js';
 
 const start = () => {
 
@@ -492,6 +493,46 @@ const start = () => {
 
                 li.appendChild(button);
                 gameMenu.appendChild(li);
+            });
+            const gameMenuContainer = startScreen.querySelector('.game-menu');
+
+            // Calculate slide width including the gap from rem to px
+            const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+            const slideWidthInRem = 15; // from .game-menu li
+            const gapInRem = 1; // from .game-menu ol
+            const totalItemWidthPx = (slideWidthInRem + gapInRem) * rootFontSize;
+
+            const menuSwiper = createSwiper({
+                listSelector: '.game-menu ol',
+                direction: 'horizontal',
+                id: 'game-menu-swiper',
+                slideWidth: totalItemWidthPx,
+                cloneCount: 10,
+                throwMultiplier: 0.85,
+            });
+
+            const onMenuDragStart = (dragSwiper) => {
+                // This function is called by drag.js when a drag gesture is confirmed.
+                // We use it to set up a one-time listener for when the eventual snap completes.
+                const handleSnap = () => {
+                    gameMenuContainer.style.cursor = 'grab';
+                    gameMenuContainer.classList.remove('is-dragging');
+                    // Clean up the listener to prevent it from firing again.
+                    dragSwiper.off('snapComplete', handleSnap);
+                };
+                dragSwiper.on('snapComplete', handleSnap);
+            };
+
+            const menuDragHandler = createDragHandler(
+                gameMenuContainer,
+                () => ({ hostSwiper: menuSwiper, guestSwiper: null }), // Only this swiper is draggable
+                null, // No tap action for now
+                onMenuDragStart
+            );
+            menuDragHandler.attach();
+
+            gameMenuContainer.addEventListener('pointerdown', () => {
+                gameMenuContainer.style.cursor = 'grabbing';
             });
 
         } catch (error) {
