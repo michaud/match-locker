@@ -75,7 +75,7 @@ export function createSwiper(options) {
         }
     };
 
-    const animateListTo = (targetTranslate, onComplete = null) => {
+    const animateListTo = (targetTranslate, onComplete = null, skipWrapCheck = false) => {
 
         const distance = Math.abs(targetTranslate - currentTranslate);
         const duration = Math.min(BASE_ANIMATION_DURATION + distance / ANIMATION_DISTANCE_FACTOR, MAX_ANIMATION_DURATION);
@@ -93,27 +93,31 @@ export function createSwiper(options) {
                 onComplete();
             }
             // THEN, perform the silent wrap-around check to prepare for the next interaction.
-            checkWrapAround();
+            if (!skipWrapCheck) {
+                checkWrapAround();
+            }
         }
 
         listElement.addEventListener('transitionend', handleTransitionEnd, { once: true });
     };
 
+    const getSafeIndex = (rawIndex) => {
+        const wrappedIndex = (rawIndex - instanceCloneCount) % sourceItemCount;
+        const targetIndex = (wrappedIndex < 0) ? wrappedIndex + sourceItemCount : wrappedIndex;
+        return targetIndex + instanceCloneCount;
+    };
+
     const checkWrapAround = () => {
 
         const currentIndex = Math.round(-currentTranslate / itemSize);
-        const wrappedIndex = (currentIndex - instanceCloneCount) % sourceItemCount;
-        const targetIndex = (wrappedIndex < 0) ? wrappedIndex + sourceItemCount : wrappedIndex;
-        const safeIndex = targetIndex + instanceCloneCount;
+        const safeIndex = getSafeIndex(currentIndex);
 
         if (currentIndex !== safeIndex) {
-
             listElement.style.transition = 'none';
             currentTranslate = -safeIndex * itemSize;
             listElement.style.transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
         }
     };
-
     const setupInfiniteList = () => {
 
         const initialItems = Array.from(listElement.children);
@@ -221,11 +225,16 @@ export function createSwiper(options) {
             });
 
             const projected = currentTranslate + velocity * itemSize * THROW_MULTIPLIER; // prettier-ignore
-            const targetTranslate = Math.round(projected / itemSize) * itemSize;
+            const projectedIndex = Math.round(projected / itemSize);
+            const safeIndex = getSafeIndex(projectedIndex);
+            const targetTranslate = -safeIndex * itemSize;
+
+            const finalRawIndex = Math.round(-targetTranslate / itemSize); // This will now be the safeIndex
+            const wrappedIndex = (finalRawIndex - instanceCloneCount) % sourceItemCount;
+            const finalIndex = (wrappedIndex < 0) ? wrappedIndex + sourceItemCount : wrappedIndex;
 
             const animationCompletionHandler = () => {
 
-                const finalIndex = API.getCurrentIndex();
                 const finalSlideId = slideIdMap[finalIndex];
 
                 emit('snapComplete', {
@@ -237,7 +246,7 @@ export function createSwiper(options) {
                 if (onComplete) onComplete();
             };
 
-            animateListTo(targetTranslate, animationCompletionHandler);
+            animateListTo(targetTranslate, animationCompletionHandler, true); // Pass true to skip the redundant wrap check
         },
 
         /**
