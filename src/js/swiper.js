@@ -25,6 +25,8 @@ export function createSwiper(options) {
     } = options;
 
     const listElement = document.querySelector(listSelector);
+    // The filmstrip is the new container we will create to hold the lists.
+    let filmstripElement = null;
 
     if (!listElement) {
 
@@ -49,10 +51,9 @@ export function createSwiper(options) {
     let lastMoveTime = 0;
     let lastMovePos = 0;
     let velocity = 0;
-    let workingItemCount = 0; // The count after initial cloning to ensure the list is long enough
     let sourceItemCount = 0; // The real number of unique items from the source
-    let instanceCloneCount = 0;
-    let slideIdMap = []; // Maps original index to slide ID
+    let centerOffset = 0; // Offset to center the snapped slide
+    let slideIdMap = [];
     const listeners = new Map(); // For event emitter pattern
 
     // --- Private Methods ---
@@ -75,13 +76,13 @@ export function createSwiper(options) {
         }
     };
 
-    const animateListTo = (targetTranslate, onComplete = null, skipWrapCheck = false) => {
+    const animateListTo = (targetTranslate, onComplete = null, isWrapCorrection = false) => {
 
         const distance = Math.abs(targetTranslate - currentTranslate);
         const duration = Math.min(BASE_ANIMATION_DURATION + distance / ANIMATION_DISTANCE_FACTOR, MAX_ANIMATION_DURATION);
 
-        listElement.style.transition = `transform ${duration}s cubic-bezier(0.2, 0.8, 0.2, 1)`;
-        listElement.style.transform = IS_HORIZONTAL ? `translateX(${targetTranslate}px)` : `translateY(${targetTranslate}px)`;
+        filmstripElement.style.transition = `transform ${duration}s cubic-bezier(0.2, 0.8, 0.2, 1)`;
+        filmstripElement.style.transform = IS_HORIZONTAL ? `translateX(${targetTranslate}px)` : `translateY(${targetTranslate}px)`;
 
         const handleTransitionEnd = () => {
 
@@ -92,72 +93,55 @@ export function createSwiper(options) {
 
                 onComplete();
             }
-            // THEN, perform the silent wrap-around check to prepare for the next interaction.
-            if (!skipWrapCheck) {
+            // Only perform the wrap check if this animation wasn't already a wrap correction.
+            if (!isWrapCorrection) {
                 checkWrapAround();
             }
         }
 
-        listElement.addEventListener('transitionend', handleTransitionEnd, { once: true });
-    };
-
-    const getSafeIndex = (rawIndex) => {
-        const wrappedIndex = (rawIndex - instanceCloneCount) % sourceItemCount;
-        const targetIndex = (wrappedIndex < 0) ? wrappedIndex + sourceItemCount : wrappedIndex;
-        return targetIndex + instanceCloneCount;
+        filmstripElement.addEventListener('transitionend', handleTransitionEnd, { once: true });
     };
 
     const checkWrapAround = () => {
-
-        const currentIndex = Math.round(-currentTranslate / itemSize);
-        const safeIndex = getSafeIndex(currentIndex);
-
-        if (currentIndex !== safeIndex) {
-            listElement.style.transition = 'none';
-            currentTranslate = -safeIndex * itemSize;
-            listElement.style.transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
+        const filmstripLength = itemSize * sourceItemCount;
+        // With a 5-block model [C,C,O,C,C], the "safe" zone is the original block.
+        // We wrap if the translation goes outside the range of [-2*len, -len].
+        if (currentTranslate > -filmstripLength || currentTranslate < -2 * filmstripLength) {
+            filmstripElement.style.transition = 'none';
+            // This formula correctly handles the modulo of negative numbers in JS.
+            currentTranslate = -filmstripLength - ((-currentTranslate) % filmstripLength);
+            filmstripElement.style.transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
         }
     };
-    const setupInfiniteList = () => {
 
+    const setupInfiniteList = () => {
         const initialItems = Array.from(listElement.children);
         sourceItemCount = initialItems.length;
 
         if (sourceItemCount === 0) return;
-
-        // Build the map from original index to slide ID
         slideIdMap = initialItems.map(item => item.dataset.slideId);
 
-        // Determine the number of clones needed for a seamless experience.
-        // If the source list is very short, we need to duplicate it to create a large enough buffer.
-        const duplicationFactor = Math.ceil(CLONE_COUNT / sourceItemCount);
+        // Create a new filmstrip container and move the original list inside it.
+        filmstripElement = document.createElement('div');
+        filmstripElement.classList.add('swiper-filmstrip');
+        listElement.parentElement.insertBefore(filmstripElement, listElement);
+        // The parent of the filmstrip is the element that should hide the overflow.
+        filmstripElement.parentElement.style.overflow = 'hidden';
+        filmstripElement.parentElement.style.position = 'relative';
+        filmstripElement.appendChild(listElement);
 
-        if (duplicationFactor > 1) {
-            for (let i = 1; i < duplicationFactor; i++) {
-                initialItems.forEach(item => listElement.appendChild(item.cloneNode(true)));
-            }
-        }
+        // Create four clones for a [C, C, O, C, C] filmstrip.
+        // The flexbox layout will handle positioning, so no transforms are needed on the lists themselves.
+        const clonesToPrepend = Array.from({ length: 2 }, () => listElement.cloneNode(true));
+        const clonesToAppend = Array.from({ length: 2 }, () => listElement.cloneNode(true));
 
-        // Now that the list is potentially duplicated, get the final "working set" of items.
-        const items = Array.from(listElement.children);
-        workingItemCount = items.length; // This is now the "working set" of items.
-        instanceCloneCount = CLONE_COUNT; // We always use the configured clone count.
+        clonesToPrepend.reverse().forEach(clone => filmstripElement.insertBefore(clone, filmstripElement.firstChild));
+        clonesToAppend.forEach(clone => filmstripElement.appendChild(clone));
 
-        // Prepend clones from the end of the list
-        for (let i = 0; i < instanceCloneCount; i++) {
-            // The modulo logic was also slightly off for negative numbers. Correcting it.
-            const itemIndex = (workingItemCount - instanceCloneCount + i) % workingItemCount;
-            const correctedIndex = itemIndex < 0 ? itemIndex + workingItemCount : itemIndex;
-            listElement.insertBefore(items[correctedIndex].cloneNode(true), listElement.firstChild);
-        }
-        // Append clones from the start of the list
-        for (let i = 0; i < instanceCloneCount; i++) {
-
-            listElement.appendChild(items[i % workingItemCount].cloneNode(true));
-        }
-
-        currentTranslate = -itemSize * instanceCloneCount;
-        listElement.style.transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
+        // Start positioned in the middle "Original" block.
+        const filmstripLength = itemSize * sourceItemCount;
+        currentTranslate = -filmstripLength * 2; // Start at the beginning of the middle block
+        filmstripElement.style.transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
     };
 
     // --- Public API ---
@@ -174,9 +158,9 @@ export function createSwiper(options) {
          */
         startDrag(position) {
 
-            listElement.style.transition = 'none';
+            filmstripElement.style.transition = 'none';
 
-            const style = window.getComputedStyle(listElement);
+            const style = window.getComputedStyle(filmstripElement);
             const matrix = new DOMMatrix(style.transform);
             currentTranslate = IS_HORIZONTAL ? matrix.m41 : matrix.m42;
 
@@ -208,7 +192,7 @@ export function createSwiper(options) {
 
             currentTranslate = startTranslate + delta;
             const transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
-            listElement.style.transform = transform;
+            filmstripElement.style.transform = transform;
 
             emit('drag');
         },
@@ -225,13 +209,8 @@ export function createSwiper(options) {
             });
 
             const projected = currentTranslate + velocity * itemSize * THROW_MULTIPLIER; // prettier-ignore
-            const projectedIndex = Math.round(projected / itemSize);
-            const safeIndex = getSafeIndex(projectedIndex);
-            const targetTranslate = -safeIndex * itemSize;
-
-            const finalRawIndex = Math.round(-targetTranslate / itemSize); // This will now be the safeIndex
-            const wrappedIndex = (finalRawIndex - instanceCloneCount) % sourceItemCount;
-            const finalIndex = (wrappedIndex < 0) ? wrappedIndex + sourceItemCount : wrappedIndex;
+            const targetTranslate = Math.round((projected - centerOffset) / itemSize) * itemSize + centerOffset;
+            const finalIndex = API.getCurrentIndex(targetTranslate);
 
             const animationCompletionHandler = () => {
 
@@ -246,7 +225,7 @@ export function createSwiper(options) {
                 if (onComplete) onComplete();
             };
 
-            animateListTo(targetTranslate, animationCompletionHandler, true); // Pass true to skip the redundant wrap check
+            animateListTo(targetTranslate, animationCompletionHandler);
         },
 
         /**
@@ -259,14 +238,12 @@ export function createSwiper(options) {
          */
         snapTo(index, immediate = false, options = {}) {
             // This is the authoritative function to move the slider.
-            // It calculates the correct position within the 'safe' area of clones.
-            const targetTranslate = -(index + instanceCloneCount) * itemSize;
-            
+            const targetTranslate = -(index * itemSize) + centerOffset - (itemSize * sourceItemCount * 2);
             if (immediate) {
                 // For an immediate snap, kill any ongoing animation, jump directly,
                 // and then ensure the wrap-around state is clean for the next interaction.
-                listElement.style.transition = 'none';
-                listElement.style.transform = IS_HORIZONTAL ? `translateX(${targetTranslate}px)` : `translateY(${targetTranslate}px)`;
+                filmstripElement.style.transition = 'none';
+                filmstripElement.style.transform = IS_HORIZONTAL ? `translateX(${targetTranslate}px)` : `translateY(${targetTranslate}px)`;
                 currentTranslate = targetTranslate;
 
                 if (options.onComplete) {
@@ -274,7 +251,7 @@ export function createSwiper(options) {
                     options.onComplete(); // Call local onComplete first
                 }
                 // Then emit the global event
-                const finalIndex = API.getCurrentIndex();
+                const finalIndex = API.getCurrentIndex(targetTranslate);
                 const finalSlideId = slideIdMap[finalIndex];
                 emit('snapComplete', { index: finalIndex, slideId: finalSlideId, source: options.source || 'programmatic' });
 
@@ -285,7 +262,7 @@ export function createSwiper(options) {
 
                     if (options.onComplete) options.onComplete();
 
-                    const finalIndex = API.getCurrentIndex();
+                    const finalIndex = API.getCurrentIndex(targetTranslate);
                     const finalSlideId = slideIdMap[finalIndex];
 
                     emit('snapComplete', { index: finalIndex, slideId: finalSlideId, source: options.source || 'programmatic' });
@@ -303,7 +280,7 @@ export function createSwiper(options) {
          */
         next() {
 
-            const currentIndex = API.getCurrentIndex();
+            const currentIndex = API.getCurrentIndex(currentTranslate);
             const nextIndex = (currentIndex + 1) % sourceItemCount;
             API.snapTo(nextIndex, false, { source: 'navigation' });
         },
@@ -313,7 +290,7 @@ export function createSwiper(options) {
          */
         prev() {
 
-            const currentIndex = API.getCurrentIndex();
+            const currentIndex = API.getCurrentIndex(currentTranslate);
             const prevIndex = (currentIndex - 1 + sourceItemCount) % sourceItemCount;
             API.snapTo(prevIndex, false, { source: 'navigation' });
         },
@@ -326,7 +303,11 @@ export function createSwiper(options) {
             if (IS_HORIZONTAL) {
 
                 itemSize = slideWidth || (listElement.firstElementChild ? listElement.firstElementChild.offsetWidth : 0);
-                listElement.style.display = 'flex';
+                // The filmstrip is the flex container now.
+                if (filmstripElement) {
+                    filmstripElement.style.display = 'flex';
+                    filmstripElement.style.position = 'relative'; // Needed for absolute positioning of children
+                }
 
             } else {
 
@@ -342,21 +323,33 @@ export function createSwiper(options) {
                 return;
             }
 
+            // Create the filmstrip first.
             setupInfiniteList();
+
+            // Then set its style and calculate the center offset.
+            filmstripElement.style.display = 'flex';
+            // Re-apply the gap that was on the original <ol> to the new filmstrip container.
+            const originalGap = window.getComputedStyle(listElement).gap;
+            filmstripElement.style.gap = originalGap;
+
+            const containerSize = IS_HORIZONTAL ? filmstripElement.parentElement.offsetWidth : filmstripElement.parentElement.offsetHeight;
+            centerOffset = (containerSize / 2) - (itemSize / 2);
+
+            // Apply the initial centering.
+            currentTranslate += centerOffset;
+            filmstripElement.style.transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
         },
 
         /**
          * Gets the current "real" index of the active slide.
          * @returns {number} The zero-based index of the current slide.
          */
-        getCurrentIndex() {
-
-            const rawIndex = Math.round(-currentTranslate / itemSize);
-            // The raw index includes the prepended clones. We subtract the clone count
-            // and then use the modulo operator to wrap the index into the range of original items.
-            const wrappedIndex = (rawIndex - instanceCloneCount) % sourceItemCount;
-
-            return (wrappedIndex < 0) ? wrappedIndex + sourceItemCount : wrappedIndex;
+        getCurrentIndex(translate) {
+            if (itemSize === 0) return 0;
+            // Calculate index relative to the start of the list, accounting for the center offset.
+            const rawIndex = Math.round((-translate + centerOffset) / itemSize);
+            // Wrap this index within the bounds of the original source items
+            return (rawIndex % sourceItemCount + sourceItemCount) % sourceItemCount; // True modulo
         },
 
         /**
@@ -364,14 +357,10 @@ export function createSwiper(options) {
          * @returns {number} The zero-based index of the visually current slide.
          */
         getVisualIndex() {
-
-            const style = window.getComputedStyle(listElement);
+            const style = window.getComputedStyle(filmstripElement);
             const matrix = new DOMMatrix(style.transform);
             const liveTranslate = IS_HORIZONTAL ? matrix.m41 : matrix.m42;
-            const currentIndex = Math.round(-liveTranslate / itemSize);
-            const wrappedIndex = (currentIndex - instanceCloneCount) % workingItemCount;
-
-            return (wrappedIndex < 0) ? wrappedIndex + workingItemCount : wrappedIndex;
+            return API.getCurrentIndex(liveTranslate);
         },
 
         /**
@@ -380,7 +369,7 @@ export function createSwiper(options) {
          */
         getCurrentSlideId() {
 
-            const realIndex = API.getCurrentIndex();
+            const realIndex = API.getCurrentIndex(currentTranslate);
 
             return slideIdMap[realIndex];
         },
@@ -419,7 +408,7 @@ export function createSwiper(options) {
          */
         getElement() {
 
-            return listElement;
+            return filmstripElement;
         },
 
         /**

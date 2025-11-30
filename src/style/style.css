@@ -419,6 +419,7 @@ By default, they are hidden and non-interactive.
     border-block-end:1rem solid rgba(255, 255, 255, 0.1);
     border-inline-end: 0.125rem solid rgba(255, 255, 255, 0.1);
     background-image: radial-gradient(circle farthest-corner at 40px 40px, #1a1e50, hsl(236 51% 14% / 1), #1a1e50);
+    user-select: none;
 
 
 
