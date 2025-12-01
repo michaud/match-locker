@@ -90,8 +90,13 @@ const start = () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const gameData = await response.json();
-            // Initialize the game and receive the new state, then update the activeGame.
-            activeGame = initializeGame(gameData);
+            const initializedGame = await initializeGame(gameData);
+            if (initializedGame) {
+                activeGame = initializedGame;
+            } else {
+                console.error("Game could not be loaded due to initialization errors.");
+                // Optionally, show a user-facing error or navigate back to the start screen.
+            }
         } catch (error) {
             console.error("Could not load game:", error);
         }
@@ -260,58 +265,82 @@ const start = () => {
      * @returns {Map} A map of the created swiper instances.
      */
     function createSwipersFromLayout(newGame) {
-
-        newGame.layout.sliders.forEach(sliderConfig => {
-
-            const listElement = document.createElement('ol');
-            const listSelector = `slider-${sliderConfig.id.replace(/[^a-zA-Z0-9-_]/g, '')}`;
-            listElement.classList.add(listSelector);
-            const slideGroup = newGame.slideGroups.find(g => g.group_id === sliderConfig.populates_from_group);
-            listElement.classList.add('visually-hidden');
-
-            // Add direction-specific classes immediately to ensure they are styled correctly
-            // (and thus hidden by default via CSS) before being added to the DOM.
-            if (sliderConfig.direction === 'horizontal') {
-
-                listElement.classList.add('slider-horizontal');
-
-            } else {
-
-                listElement.classList.add('slider-vertical');
+        return new Promise((resolve, reject) => {
+            const sliderConfigs = newGame.layout.sliders;
+            if (!sliderConfigs || sliderConfigs.length === 0) {
+                resolve();
+                return;
             }
 
-            if (!slideGroup) return;
+            let swipersToCreate = sliderConfigs.length;
+            let failedSwipers = 0;
 
-            listElement.innerHTML = slideGroup.slides.map(slide =>
-                `<li data-slide-id="${slide.id}"><div class="slide"><img src="${slide.img}" draggable="false" alt="${slide.name}"/></div></li>`
-            ).join('');
+            sliderConfigs.forEach(sliderConfig => {
+                const listElement = document.createElement('ol');
+                const listSelector = `slider-${sliderConfig.id.replace(/[^a-zA-Z0-9-_]/g, '')}`;
+                listElement.classList.add(listSelector);
+                const slideGroup = newGame.slideGroups.find(g => g.group_id === sliderConfig.populates_from_group);
+                listElement.classList.add('visually-hidden');
 
-            gameScreen.insertBefore(listElement, puzzleNav);
-
-            const swiper = createSwiper({
-                listSelector: `.${listSelector}`,
-                direction: sliderConfig.direction,
-                id: sliderConfig.id,
-                cloneCount: 10,
-                throwMultiplier: 0.7,
-            });
-
-            // When a swiper snaps due to a navigation action, update the application state.
-            // This is the correct place for this logic, as it separates navigation from visual swipes.
-            swiper.on('snapComplete', (event) => {
-
-                if (event.source === 'navigation') {
-                    // A navigation click updates the application state.
-                    updateStateAndRender({ currentSliderId: swiper.id, currentIndex: event.index });
-
-                } else if (event.source === 'drag') {
-                    // A drag is a purely visual action. It does not update the application state,
-                    // but we must re-evaluate the match visuals based on the new slide positions.
-                    matchVisualizer.synchronizeVisuals();
+                if (sliderConfig.direction === 'horizontal') {
+                    listElement.classList.add('slider-horizontal');
+                } else {
+                    listElement.classList.add('slider-vertical');
                 }
-            });
 
-            newGame.swiperInstances.set(sliderConfig.id, swiper);
+                if (!slideGroup) {
+                    console.warn(`Slide group not found for slider config: ${sliderConfig.id}`);
+                    swipersToCreate--;
+                    if (swipersToCreate === 0) {
+                        if (failedSwipers > 0) reject(new Error("Some swipers failed to initialize."));
+                        else resolve();
+                    }
+                    return;
+                }
+
+                listElement.innerHTML = slideGroup.slides.map(slide =>
+                    `<li data-slide-id="${slide.id}"><div class="slide"><img src="${slide.img}" draggable="false" alt="${slide.name}"/></div></li>`
+                ).join('');
+
+                gameScreen.insertBefore(listElement, puzzleNav);
+
+                // Defer swiper creation until the next animation frame. This ensures
+                // the browser has calculated the layout of the newly added listElement,
+                // allowing the swiper to correctly determine slide dimensions.
+                requestAnimationFrame(() => {
+                    const swiperOptions = {
+                        listSelector: `.${listSelector}`,
+                        direction: sliderConfig.direction,
+                        id: sliderConfig.id,
+                        cloneCount: 10,
+                        throwMultiplier: 0.7,
+                        slideWidth: sliderConfig.direction === 'horizontal' ? 960 : null,
+                        slideHeight: sliderConfig.direction === 'vertical' ? 680 : null,
+                    };
+
+                    const swiper = createSwiper(swiperOptions);
+
+                    if (!swiper) {
+                        console.error(`Failed to create swiper for ${listSelector}. Game cannot load.`);
+                        failedSwipers++;
+                    } else {
+                        swiper.on('snapComplete', (event) => {
+                            if (event.source === 'navigation') {
+                                updateStateAndRender({ currentSliderId: swiper.id, currentIndex: event.index });
+                            } else if (event.source === 'drag') {
+                                matchVisualizer.synchronizeVisuals();
+                            }
+                        });
+                        newGame.swiperInstances.set(sliderConfig.id, swiper);
+                    }
+
+                    swipersToCreate--;
+                    if (swipersToCreate === 0) {
+                        if (failedSwipers > 0) reject(new Error("Some swipers failed to initialize."));
+                        else resolve();
+                    }
+                });
+            });
         });
     }
 
@@ -387,7 +416,7 @@ const start = () => {
      * @param {object} gameData - The raw JSON data for the game.
      * @returns {object} The complete state object for the newly initialized game.
      */
-    function initializeGame(gameData) {
+    async function initializeGame(gameData) {
 
         cleanupPreviousGame();
 
@@ -410,7 +439,12 @@ const start = () => {
         };
 
         // Create swipers and add them to the new game state. This function also modifies the DOM.
-        createSwipersFromLayout(newGame);
+        try {
+            await createSwipersFromLayout(newGame);
+        } catch (e) {
+            console.error("Game initialization failed:", e.message);
+            return null; // Indicate that game initialization failed
+        }
 
         // Stop any pointer events that start on the nav from bubbling to the gameScreen
         puzzleNav.addEventListener('pointerdown', (event) => {
@@ -511,6 +545,24 @@ const start = () => {
                 throwMultiplier: 0.85,
             });
 
+            const onMenuTap = async (event) => { // This is the onTapCallback
+                // This callback is only executed by drag.js if no drag occurred (it was a tap).
+                const playButton = event.target.closest('.button--action.play');
+
+                if (playButton) {
+                    // Find the parent .game-button to get the data-game-file attribute.
+                    const gameButton = playButton.closest('.game-button');
+                    if (gameButton && gameButton.dataset.gameFile && !playButton.disabled) {
+                        const gameFile = gameButton.dataset.gameFile;
+                        playButton.disabled = true;
+                        await loadGame(gameFile);
+                        navigateTo(gameScreen);
+                        // Re-enable after a short delay to prevent double-clicks during screen transition
+                        setTimeout(() => { playButton.disabled = false; }, 500);
+                    }
+                }
+            };
+
             const onMenuDragStart = (dragSwiper) => {
                 // This function is called by drag.js when a drag gesture is confirmed.
                 // We use it to set up a one-time listener for when the eventual snap completes.
@@ -526,7 +578,7 @@ const start = () => {
             const menuDragHandler = createDragHandler(
                 gameMenuContainer,
                 () => ({ hostSwiper: menuSwiper, guestSwiper: null }), // Only this swiper is draggable
-                null, // No tap action for now
+                onMenuTap,
                 onMenuDragStart
             );
             menuDragHandler.attach();

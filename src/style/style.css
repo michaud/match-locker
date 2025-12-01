@@ -453,12 +453,10 @@ By default, they are hidden and non-interactive.
     & .action-buttons {
         /* Hide by default, but allow transition */
         display: grid;
-        opacity: 0;
+        opacity: 1;
         transition: opacity 0.3s ease-in-out;
-        pointer-events: none; /* Not interactive when hidden */
-
         grid-template-columns: 1fr 1fr;
-        margin-block-end: -.9rem;
+        bottom: -.875rem;
         z-index: 2;
         position: absolute;
         width: 100%;
