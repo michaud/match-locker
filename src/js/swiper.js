@@ -247,7 +247,11 @@ export function createSwiper(options) {
          */
         snapTo(index, immediate = false, options = {}) {
             // This is the authoritative function to move the slider.
-            const targetTranslate = -(index * itemSize) + centerOffset;
+            // It must account for the infinite scroll setup.
+            const filmstripBlockLength = itemSize * sourceItemCount;
+            const basePosition = -(filmstripBlockLength * CLONE_COUNT); // Start of the original block
+            const targetTranslate = basePosition - (index * itemSize) + centerOffset;
+
             if (immediate) {
                 // For an immediate snap, kill any ongoing animation, jump directly,
                 // and then ensure the wrap-around state is clean for the next interaction.
@@ -356,6 +360,7 @@ export function createSwiper(options) {
             // then add the offset to center the first slide.
             const filmstripBlockLength = itemSize * sourceItemCount;
             currentTranslate = -(filmstripBlockLength * CLONE_COUNT) + centerOffset;
+
             filmstripElement.style.transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
             return true; // Indicate success
         },
