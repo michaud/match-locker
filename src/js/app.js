@@ -329,8 +329,8 @@ const start = () => {
                         listSelector: `#${listId}`,
                         direction: sliderConfig.direction,
                         id: sliderConfig.id,
-                        slideWidth: GAME_SLIDE_WIDTH,
-                        slideHeight: GAME_SLIDE_HEIGHT,
+                        slideWidth: sliderConfig.direction === 'horizontal' ? GAME_SLIDE_WIDTH : null,
+                        slideHeight: sliderConfig.direction === 'vertical' ? GAME_SLIDE_HEIGHT : null,
                         viewportMatchesSlide: true,
                         cloneCount: GAME_CLONE_COUNT,
                     };

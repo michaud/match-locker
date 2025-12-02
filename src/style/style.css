@@ -223,6 +223,15 @@ By default, they are hidden and non-interactive.
         width: 100%;
         object-fit: contain;
     }
+
+    & .swiper-filmstrip {
+
+        flex-direction: column;
+
+        & ol {
+            flex-direction: column;
+        }
+    }
 }
 
 .sub-nav {
