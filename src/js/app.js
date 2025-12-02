@@ -10,6 +10,14 @@ import { createDragHandler } from './drag.js';
 
 const start = () => {
 
+    const GAME_SLIDE_WIDTH = 960;
+    const GAME_SLIDE_HEIGHT = 680;
+    const GAME_CLONE_COUNT = 10;
+
+    const GAME_MENU_SLIDE_WIDTH = 240;
+    const GAME_MENU_SLIDE_HEIGHT = 160;
+    const GAME_MENU_CLONE_COUNT = 10;
+
     const DisplayStyle = Object.freeze({
         BLOCK: 'block',
         FLEX: 'flex',
@@ -321,8 +329,10 @@ const start = () => {
                         listSelector: `#${listId}`,
                         direction: sliderConfig.direction,
                         id: sliderConfig.id,
-                        slideWidth: sliderConfig.direction === 'horizontal' ? 960 : null,
-                        slideHeight: sliderConfig.direction === 'vertical' ? 680 : null,
+                        slideWidth: GAME_SLIDE_WIDTH,
+                        slideHeight: GAME_SLIDE_HEIGHT,
+                        viewportMatchesSlide: true,
+                        cloneCount: GAME_CLONE_COUNT,
                     };
     
                     const swiper = createSwiper(swiperOptions);
@@ -549,9 +559,9 @@ const start = () => {
                 listSelector: '.game-menu ol',
                 direction: 'horizontal',
                 id: 'game-menu-swiper',
-                slideWidth: 240,
-                slideHeight: 160,
-                cloneCount: 10,
+                slideWidth: GAME_MENU_SLIDE_WIDTH,
+                slideHeight: GAME_MENU_SLIDE_HEIGHT,
+                cloneCount: GAME_MENU_CLONE_COUNT,
                 throwMultiplier: 0.85,
             });
 
