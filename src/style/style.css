@@ -376,18 +376,23 @@ By default, they are hidden and non-interactive.
 
 .game-menu {
 
-    /* Use grid to create a centered "viewport" for the swiper */
-    display: grid;
-    /* 1fr (space) | 15rem (item width) | 1fr (space) */
-    grid-template-columns: 1fr 15rem 1fr;
     margin-block-start: 2rem;
+
+    & li {
+        width: 15rem;
+        height: 10rem;
+    }
+}
+
+.swiper {
+
+    box-sizing: border-box;
 
     & ol {
         /* Place the swiper list into the central column */
-        grid-column: 2;
+
         overflow: visible; /* Let the swiper handle the overflow logic */
         display: flex;
-        gap: 1rem;
         margin: 0;
         padding: 0;
         list-style: none;
@@ -397,10 +402,12 @@ By default, they are hidden and non-interactive.
     & li {
         display: grid;
         /* Fixed width is crucial for the swiper's calculations */
-        width: 15rem;
-        height: 10rem;
         /* Prevent items from shrinking when the container is full */
         flex-shrink: 0;
+    }
+
+    & .swiper-filmstrip {
+        display: flex;
     }
 }
 
@@ -408,8 +415,8 @@ By default, they are hidden and non-interactive.
 
     display: grid;
     gap: .75rem;
-    width: 100%;
     padding: 0;
+    margin-inline: .5rem;
     font-size: 1.125rem;
     font-weight: bold;
     color: rgb(210 200 188);

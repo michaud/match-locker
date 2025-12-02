@@ -102,13 +102,9 @@ export function createSwiper(options) {
         filmstripElement.addEventListener('transitionend', handleTransitionEnd, { once: true });
     };
 
-    /**
-     * Silently resets the filmstrip's position if it drifts too far from the central original block.
-     * This maintains the illusion of infinite scrolling without expensive DOM manipulation.
-     */
     const checkWrapAround = () => {
         const filmstripLength = itemSize * sourceItemCount;
-        // The `currentTranslate` includes `centerOffset`. For wrap logic, we consider the logical position.
+        // The `currentTranslate` includes `centerOffset`. For wrap logic, we must work with the logical position.
         const logicalTranslate = currentTranslate - centerOffset;
 
         // Define a safe zone around the original block. We check if the viewport has moved
@@ -118,11 +114,11 @@ export function createSwiper(options) {
 
         if (logicalTranslate > rightBoundary) {
             filmstripElement.style.transition = 'none';
-            currentTranslate -= filmstripLength; // Shift left by one block length
+            currentTranslate -= filmstripLength; // Silently shift left by one block length
             filmstripElement.style.transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
         } else if (logicalTranslate < leftBoundary) {
             filmstripElement.style.transition = 'none';
-            currentTranslate += filmstripLength; // Shift right by one block length
+            currentTranslate += filmstripLength; // Silently shift right by one block length
             filmstripElement.style.transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
         }
     };
@@ -249,11 +245,7 @@ export function createSwiper(options) {
          */
         snapTo(index, immediate = false, options = {}) {
             // This is the authoritative function to move the slider.
-            // It calculates the position of the target slide within the "Original" block.
-            const targetInOriginalBlock = -(index * itemSize);
-            // The final position is the start of the original block plus the target's position within it, plus the centering offset.
-            const targetTranslate = -(itemSize * sourceItemCount * CLONE_COUNT) + targetInOriginalBlock + centerOffset;
-
+            const targetTranslate = -(index * itemSize) + centerOffset;
             if (immediate) {
                 // For an immediate snap, kill any ongoing animation, jump directly,
                 // and then ensure the wrap-around state is clean for the next interaction.
@@ -261,7 +253,6 @@ export function createSwiper(options) {
                 filmstripElement.style.transform = IS_HORIZONTAL ? `translateX(${targetTranslate}px)` : `translateY(${targetTranslate}px)`;
                 currentTranslate = targetTranslate;
 
-                checkWrapAround(); // Ensure the filmstrip is in a valid wrapped state after immediate snap
                 if (options.onComplete) {
 
                     options.onComplete(); // Call local onComplete first
@@ -316,19 +307,9 @@ export function createSwiper(options) {
          */
         init() {
 
-            if (IS_HORIZONTAL) {
-
-                itemSize = slideWidth || (listElement.firstElementChild ? listElement.firstElementChild.offsetWidth : 0);
-                // The filmstrip is the flex container now.
-                if (filmstripElement) {
-                    filmstripElement.style.display = 'flex';
-                    filmstripElement.style.position = 'relative'; // Needed for absolute positioning of children
-                }
-
-            } else {
-
-                itemSize = slideHeight || (listElement.firstElementChild ? listElement.firstElementChild.offsetHeight : 0);
-            }
+            itemSize = IS_HORIZONTAL
+                ? slideWidth || (listElement.firstElementChild ? listElement.firstElementChild.offsetWidth : 0)
+                : slideHeight || (listElement.firstElementChild ? listElement.firstElementChild.offsetHeight : 0);
 
             if (itemSize === 0) {
 
@@ -339,16 +320,23 @@ export function createSwiper(options) {
                 return false; // Indicate failure
             }
 
+            // Apply the explicit size to all slide elements (li).
+            // This ensures the visual size matches the calculated itemSize.
+            const slideElements = listElement.querySelectorAll('li');
+            slideElements.forEach(li => {
+                // Apply both width and height if they are provided.
+                if (slideWidth) {
+                    li.style.width = `${slideWidth}px`;
+                }
+                if (slideHeight) {
+                    li.style.height = `${slideHeight}px`;
+                }
+            });
+
             // Create the filmstrip first.
             setupInfiniteList();
 
-            // Then set its style and calculate the center offset.
-            filmstripElement.style.display = 'flex';
-
-            // Re-apply the gap that was on the original <ol> to the new filmstrip container.
-            const originalGap = window.getComputedStyle(listElement).gap;
-            filmstripElement.style.gap = originalGap;
-
+            // Calculate the offset needed to center the active slide.
             const containerSize = IS_HORIZONTAL ? filmstripElement.parentElement.offsetWidth : filmstripElement.parentElement.offsetHeight;
             centerOffset = (containerSize / 2) - (itemSize / 2);
 

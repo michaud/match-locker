@@ -314,8 +314,8 @@ const start = () => {
                         id: sliderConfig.id,
                         cloneCount: 10,
                         throwMultiplier: 0.7,
-                        slideWidth: sliderConfig.direction === 'horizontal' ? 960 : null,
-                        slideHeight: sliderConfig.direction === 'vertical' ? 680 : null,
+                        slideWidth: 960,
+                        slideHeight: 680,
                     };
 
                     const swiper = createSwiper(swiperOptions);
@@ -530,17 +530,12 @@ const start = () => {
             });
             const gameMenuContainer = startScreen.querySelector('.game-menu');
 
-            // Calculate slide width including the gap from rem to px
-            const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-            const slideWidthInRem = 15; // from .game-menu li
-            const gapInRem = 1; // from .game-menu ol
-            const totalItemWidthPx = (slideWidthInRem + gapInRem) * rootFontSize;
-
             const menuSwiper = createSwiper({
                 listSelector: '.game-menu ol',
                 direction: 'horizontal',
                 id: 'game-menu-swiper',
-                slideWidth: totalItemWidthPx,
+                slideWidth: 240,
+                slideHeight: 160,
                 cloneCount: 10,
                 throwMultiplier: 0.85,
             });
