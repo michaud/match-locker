@@ -17,6 +17,7 @@ export function createSwiper(options) {
         slideWidth = null,
         slideHeight = null,
         throwMultiplier = 0.7,
+        viewportMatchesSlide = false,
         id = null, // Capture the ID
         cloneCount = 10,
         baseAnimationDuration = 0.3,
@@ -339,7 +340,15 @@ export function createSwiper(options) {
 
             // Calculate the offset needed to center the active slide.
             const viewportElement = filmstripElement.parentElement;
-            const containerSize = IS_HORIZONTAL ? viewportElement.offsetWidth : viewportElement.offsetHeight;
+            let containerSize;
+
+            if (viewportMatchesSlide) {
+                // If the viewport is the same size as the slide, use itemSize directly.
+                containerSize = itemSize;
+            } else {
+                // Otherwise, measure the viewport element from the DOM.
+                containerSize = IS_HORIZONTAL ? viewportElement.offsetWidth : viewportElement.offsetHeight;
+            }
             centerOffset = (containerSize / 2) - (itemSize / 2);
 
             // Authoritative Initial Position Calculation:
