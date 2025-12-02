@@ -141,7 +141,6 @@ export function createSwiper(options) {
         viewportElement.insertBefore(filmstripElement, listElement);
 
         viewportElement.style.overflow = 'hidden';
-        viewportElement.style.position = 'relative';
         filmstripElement.appendChild(listElement);
 
         // Create CLONE_COUNT clones before and after the original list.

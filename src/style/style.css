@@ -196,6 +196,8 @@ input[type="checkbox"] {
     /* Positioned behind the vertical list */
     transition: opacity 0.3s ease-in-out;
     z-index: 1;
+    width: 960px;
+    height: 680px;
 }
 
 /*
@@ -207,6 +209,8 @@ By default, they are hidden and non-interactive.
     z-index: 2;
     /* We will control visibility with opacity on the slide background now */
     transition: opacity 0.3s ease-in-out;
+    width: 960px;
+    height: 680px;
 
     & .slide {
         display: grid;
