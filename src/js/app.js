@@ -264,76 +264,77 @@ const start = () => {
      * @param {object} newGame - The new game state object.
      * @returns {Map} A map of the created swiper instances.
      */
-    function createSwipersFromLayout(newGame) {
+    function createSwipersFromLayout(newGame, onSnapComplete) {
         return new Promise((resolve, reject) => {
             const sliderConfigs = newGame.layout.sliders;
             if (!sliderConfigs || sliderConfigs.length === 0) {
                 resolve();
                 return;
             }
-
+    
             let swipersToCreate = sliderConfigs.length;
             let failedSwipers = 0;
-
+    
             sliderConfigs.forEach(sliderConfig => {
+                // --- NEW STRUCTURE ---
+                // 1. Create the dedicated viewport container for this swiper.
+                const swiperContainer = document.createElement('div');
+                swiperContainer.classList.add('swiper');
+                swiperContainer.dataset.groupId = sliderConfig.id;
+    
+                // 2. Create the list element.
                 const listElement = document.createElement('ol');
-                const listSelector = `slider-${sliderConfig.id.replace(/[^a-zA-Z0-9-_]/g, '')}`;
-                listElement.classList.add(listSelector);
+                const listId = `swiper-list-${sliderConfig.id.replace(/[^a-zA-Z0-9-_]/g, '')}`;
+                listElement.id = listId;
+    
                 const slideGroup = newGame.slideGroups.find(g => g.group_id === sliderConfig.populates_from_group);
-                listElement.classList.add('visually-hidden');
-
-                if (sliderConfig.direction === 'horizontal') {
-                    listElement.classList.add('slider-horizontal');
-                } else {
-                    listElement.classList.add('slider-vertical');
-                }
-
+    
                 if (!slideGroup) {
                     console.warn(`Slide group not found for slider config: ${sliderConfig.id}`);
                     swipersToCreate--;
-                    if (swipersToCreate === 0) {
-                        if (failedSwipers > 0) reject(new Error("Some swipers failed to initialize."));
-                        else resolve();
-                    }
+                    if (swipersToCreate === 0) resolve(); // Continue even if one is missing
                     return;
                 }
-
-                listElement.innerHTML = slideGroup.slides.map(slide =>
-                    `<li data-slide-id="${slide.id}"><div class="slide"><img src="${slide.img}" draggable="false" alt="${slide.name}"/></div></li>`
-                ).join('');
-
-                gameScreen.insertBefore(listElement, puzzleNav);
-
-                // Defer swiper creation until the next animation frame. This ensures
-                // the browser has calculated the layout of the newly added listElement,
-                // allowing the swiper to correctly determine slide dimensions.
+    
+                // 3. Populate the list with slides.
+                slideGroup.slides.forEach((slide, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.dataset.slideId = slide.id;
+                    listItem.dataset.index = index;
+                    listItem.classList.add('slide');
+                    listItem.innerHTML = `<img src="${slide.img}" alt="${slide.name}" />`;
+                    listElement.appendChild(listItem);
+                });
+    
+                // 4. Place the list inside its viewport container.
+                swiperContainer.appendChild(listElement);
+    
+                // 5. Add the entire swiper unit to the game screen.
+                gameScreen.appendChild(swiperContainer);
+    
+                // Apply layout classes to the swiper container, NOT the list.
+                swiperContainer.classList.add(sliderConfig.direction === 'horizontal' ? 'slider-horizontal' : 'slider-vertical');
+                swiperContainer.classList.add('visually-hidden'); // All swipers are hidden initially.
+    
                 requestAnimationFrame(() => {
                     const swiperOptions = {
-                        listSelector: `.${listSelector}`,
+                        listSelector: `#${listId}`,
                         direction: sliderConfig.direction,
                         id: sliderConfig.id,
-                        cloneCount: 10,
-                        throwMultiplier: 0.7,
-                        slideWidth: 960,
-                        slideHeight: 680,
+                        slideWidth: sliderConfig.direction === 'horizontal' ? 960 : null,
+                        slideHeight: sliderConfig.direction === 'vertical' ? 680 : null,
                     };
-
+    
                     const swiper = createSwiper(swiperOptions);
-
+    
                     if (!swiper) {
-                        console.error(`Failed to create swiper for ${listSelector}. Game cannot load.`);
+                        console.error(`Failed to create swiper for #${listId}.`);
                         failedSwipers++;
                     } else {
-                        swiper.on('snapComplete', (event) => {
-                            if (event.source === 'navigation') {
-                                updateStateAndRender({ currentSliderId: swiper.id, currentIndex: event.index });
-                            } else if (event.source === 'drag') {
-                                matchVisualizer.synchronizeVisuals();
-                            }
-                        });
+                        swiper.on('snapComplete', onSnapComplete);
                         newGame.swiperInstances.set(sliderConfig.id, swiper);
                     }
-
+    
                     swipersToCreate--;
                     if (swipersToCreate === 0) {
                         if (failedSwipers > 0) reject(new Error("Some swipers failed to initialize."));
@@ -342,6 +343,20 @@ const start = () => {
                 });
             });
         });
+    }
+
+    const onGameSwiperSnapComplete = (event) => {
+        const { source, id, index } = event;
+        if (source === 'navigation') {
+            // A programmatic navigation (prev/next button) happened.
+            // We need to update the central state to reflect the new position.
+            updateStateAndRender({ currentSliderId: id, currentIndex: index });
+        } else if (source === 'drag') {
+            // A user drag finished. The swiper is visually in the right place,
+            // but we need to synchronize the match visuals based on the new slide alignment.
+            // The central state doesn't change here, as a swipe doesn't change the "active" puzzle slot.
+            matchVisualizer.synchronizeVisuals();
+        }
     }
 
     const updatePuzzleStatusIndicator = (game = activeGame) => {
@@ -440,7 +455,7 @@ const start = () => {
 
         // Create swipers and add them to the new game state. This function also modifies the DOM.
         try {
-            await createSwipersFromLayout(newGame);
+            await createSwipersFromLayout(newGame, onGameSwiperSnapComplete);
         } catch (e) {
             console.error("Game initialization failed:", e.message);
             return null; // Indicate that game initialization failed

@@ -82,6 +82,12 @@ input[type="checkbox"] {
     /* The start screen is visible by default */
 }
 
+.game-screen {
+    display: grid;
+    /* This allows absolute positioning of children relative to the screen */
+    position: relative;
+}
+
 #logo-start {
     margin: 0 auto;
     margin-block-start: 2rem;
@@ -186,6 +192,7 @@ input[type="checkbox"] {
 
 /* Horizontal list (.leftnright) */
 .slider-horizontal {
+    position: absolute;
     /* Positioned behind the vertical list */
     transition: opacity 0.3s ease-in-out;
     z-index: 1;
@@ -196,6 +203,7 @@ Visibility control for vertical swipers.
 By default, they are hidden and non-interactive.
 */
 .slider-vertical {
+    position: absolute;
     z-index: 2;
     /* We will control visibility with opacity on the slide background now */
     transition: opacity 0.3s ease-in-out;
@@ -386,10 +394,7 @@ By default, they are hidden and non-interactive.
 
 .swiper {
 
-    box-sizing: border-box;
-
     & ol {
-        /* Place the swiper list into the central column */
 
         overflow: visible; /* Let the swiper handle the overflow logic */
         display: flex;

@@ -132,14 +132,16 @@ export function createSwiper(options) {
 
         slideIdMap = initialItems.map(item => item.dataset.slideId);
 
-        // Create a new filmstrip container and move the original list inside it.
+        // The list's parent is now the `.swiper` container, which acts as our viewport.
+        const viewportElement = listElement.parentElement;
+
+        // Create a new filmstrip container and insert it between the viewport and the list.
         filmstripElement = document.createElement('div');
         filmstripElement.classList.add('swiper-filmstrip');
-        listElement.parentElement.insertBefore(filmstripElement, listElement);
+        viewportElement.insertBefore(filmstripElement, listElement);
 
-        // The parent of the filmstrip is the element that should hide the overflow.
-        filmstripElement.parentElement.style.overflow = 'hidden';
-        filmstripElement.parentElement.style.position = 'relative';
+        viewportElement.style.overflow = 'hidden';
+        viewportElement.style.position = 'relative';
         filmstripElement.appendChild(listElement);
 
         // Create CLONE_COUNT clones before and after the original list.
@@ -337,7 +339,8 @@ export function createSwiper(options) {
             setupInfiniteList();
 
             // Calculate the offset needed to center the active slide.
-            const containerSize = IS_HORIZONTAL ? filmstripElement.parentElement.offsetWidth : filmstripElement.parentElement.offsetHeight;
+            const viewportElement = filmstripElement.parentElement;
+            const containerSize = IS_HORIZONTAL ? viewportElement.offsetWidth : viewportElement.offsetHeight;
             centerOffset = (containerSize / 2) - (itemSize / 2);
 
             // Authoritative Initial Position Calculation:
@@ -417,7 +420,7 @@ export function createSwiper(options) {
          */
         getElement() {
 
-            return filmstripElement;
+            return filmstripElement.parentElement; // Return the main .swiper container
         },
 
         /**
