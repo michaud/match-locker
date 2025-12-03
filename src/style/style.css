@@ -732,10 +732,6 @@ By default, they are hidden and non-interactive.
     }
 }
 
-.details-image.open {
-    
-}
-
 .tell-um summary::marker,
 :is(::-webkit-details-marker) {
     content: "+ ";
