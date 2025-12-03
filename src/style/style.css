@@ -205,6 +205,7 @@ Visibility control for vertical swipers.
 By default, they are hidden and non-interactive.
 */
 .slider-vertical {
+
     position: absolute;
     z-index: 2;
     /* We will control visibility with opacity on the slide background now */
@@ -213,15 +214,15 @@ By default, they are hidden and non-interactive.
     height: 680px;
 
     & .slide {
+
         display: grid;
         align-items: end;
     }
 
     & .slide img {
-        display: block;
+
         height: auto;
         width: 100%;
-        object-fit: contain;
     }
 
     & .swiper-filmstrip {
