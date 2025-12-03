@@ -18,6 +18,9 @@ const start = () => {
     const GAME_MENU_SLIDE_HEIGHT = 160;
     const GAME_MENU_CLONE_COUNT = 10;
 
+    let menuDragHandler = null;
+    let gameDragAndTapHandler = null;
+
     const DisplayStyle = Object.freeze({
         BLOCK: 'block',
         FLEX: 'flex',

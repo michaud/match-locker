@@ -139,9 +139,11 @@ input[type="checkbox"] {
 
     & img {
         display: block;
-        height: 100%;
+        height: auto;
         width: 100%;
         object-fit: contain;
+        user-select: none;
+        -webkit-user-drag: none;
         /* Ensures the image covers the slide area */
     }
 }
@@ -212,18 +214,6 @@ By default, they are hidden and non-interactive.
     transition: opacity 0.3s ease-in-out;
     width: 960px;
     height: 680px;
-
-    & .slide {
-
-        display: grid;
-        align-items: end;
-    }
-
-    & .slide img {
-
-        height: auto;
-        width: 100%;
-    }
 
     & .swiper-filmstrip {
 

@@ -74,10 +74,12 @@ export function createDragHandler(screen, getSwipers, onTapCallback, onDragStart
 
     const handlePointerUp = (event) => {
 
+        if (!state.isDown) return; // If this handler didn't start the drag, do nothing.
+
         state.isDown = false;
         window.removeEventListener('pointermove', handlePointerMove);
         window.removeEventListener('pointerup', handlePointerUp);
-
+        
         if (state.direction === null && onTapCallback) { // Only call onTap if no drag occurred
 
             onTapCallback(event); // Pass the original event to the callback

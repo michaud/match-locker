@@ -16,6 +16,7 @@ export function createDragAndTapHandler(callbacks) {
     } = callbacks;
 
     let dragHandler = null;
+    let currentDragSwiper = null; // Keep track of the swiper being dragged
 
     const handleMatchAttempt = () => {
 
@@ -89,24 +90,25 @@ export function createDragAndTapHandler(callbacks) {
 
             // This function is called by drag.js when a drag gesture is confirmed.
             // We use it to set up a one-time listener for when the eventual snap completes.
-            const handleSnap = (event) => {
-
-                domElements.gameScreen.style.cursor = 'grab';
-                domElements.gameScreen.classList.remove('is-dragging');
+            const handleSnap = () => {
+                if (domElements.gameScreen) {
+                    domElements.gameScreen.style.cursor = 'grab';
+                    domElements.gameScreen.classList.remove('is-dragging');
+                }
 
                 // Delegate all "drag end" cleanup to the new module.
                 matchVisualizer.onDragEnd();
 
-                // A drag/swipe is a purely visual action and does not update the application state.
-                // The 'navigation' source is now handled directly in app.js.
-                // Clean up the listener to prevent it from firing again.
+                // Clean up the listener from the specific swiper that triggered it.
+                // This avoids race conditions with subsequent drags.
                 dragSwiper.off('snapComplete', handleSnap);
             };
-
             dragSwiper.on('snapComplete', handleSnap);
         };
 
-        dragHandler = createDragHandler(domElements.gameScreen, getSwipersForDragHandler, handleMatchAttempt, onDragStart);
+        if (!dragHandler) {
+            dragHandler = createDragHandler(domElements.gameScreen, getSwipersForDragHandler, handleMatchAttempt, onDragStart);
+        }
         dragHandler.attach();
     };
 
@@ -114,8 +116,7 @@ export function createDragAndTapHandler(callbacks) {
 
         if (dragHandler) {
 
-            dragHandler.detach();
-            dragHandler = null;
+            dragHandler.detach(); // Don't nullify, just detach listeners
         }
     };
 
