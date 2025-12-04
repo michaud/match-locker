@@ -575,6 +575,11 @@ const start = () => {
             });
             const gameMenuContainer = startScreen.querySelector('.game-menu');
 
+            const cleanInfoPanel = () => {
+                const allDescriptionPanels = gameMenuContainer.querySelectorAll('.game-description .description');
+                allDescriptionPanels.forEach(panel => panel.classList.remove('show'));
+            };
+
             const menuSwiper = createSwiper({
                 listSelector: '.game-menu ol',
                 direction: 'horizontal',
@@ -588,6 +593,14 @@ const start = () => {
             const onMenuTap = async (event) => { // This is the onTapCallback
                 // This callback is only executed by drag.js if no drag occurred (it was a tap).
                 const playButton = event.target.closest('.button--action.play');
+                const infoButton = event.target.closest('.button--action.info');
+
+                if (infoButton) {
+
+                    cleanInfoPanel();
+                    const gameDescriptionPanel = infoButton.closest('.game-description');
+                    gameDescriptionPanel.querySelector('.description').classList.toggle('show');
+                }
 
                 if (playButton) {
                     // Find the parent .game-button to get the data-game-file attribute.
@@ -624,6 +637,8 @@ const start = () => {
             menuDragHandler.attach();
 
             gameMenuContainer.addEventListener('pointerdown', () => {
+
+                cleanInfoPanel();
                 gameMenuContainer.style.cursor = 'grabbing';
             });
 

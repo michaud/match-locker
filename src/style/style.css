@@ -60,7 +60,7 @@ input[type="checkbox"] {
 }
 
 /* This is the main viewport for our carousels */
-.screen>* {
+.screen > * {
     box-sizing: border-box;
     display: none;
     /* Hide all screen elements by default */
@@ -136,7 +136,7 @@ input[type="checkbox"] {
     user-select: none;
     -webkit-user-drag: none;
 
-    & img {
+    img {
         display: block;
         object-fit: contain;
         user-select: none;
@@ -191,6 +191,7 @@ input[type="checkbox"] {
 
 /* Horizontal list (.leftnright) */
 .slider-horizontal {
+
     position: absolute;
     /* Positioned behind the vertical list */
     transition: opacity 0.3s ease-in-out;
@@ -212,7 +213,7 @@ By default, they are hidden and non-interactive.
     width: 960px;
     height: 680px;
 
-    & .swiper-filmstrip {
+    .swiper-filmstrip {
 
         flex-direction: column;
 
@@ -249,6 +250,7 @@ By default, they are hidden and non-interactive.
 }
 
 .sub-nav button {
+
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 10px 20px;
@@ -261,7 +263,7 @@ By default, they are hidden and non-interactive.
     /* Re-enable pointer events specifically for the buttons */
     pointer-events: auto;
 
-    & span {
+    span {
         display: none;
     }
 }
@@ -286,13 +288,13 @@ By default, they are hidden and non-interactive.
 
 .sub-nav.game {
 
-    &>button:first-child {
+    > button:first-child {
         border-radius: 0 0 10px 0;
         border-top-width: 0;
         border-left-width: 0;
     }
 
-    &>button:last-child {
+    > button:last-child {
         border-radius: 0 0 0 10px;
         border-top-width: 0;
         border-right-width: 0;
@@ -303,12 +305,13 @@ By default, they are hidden and non-interactive.
 
     width: 100%;
 
-    & .left-right {
+    .left-right {
 
         display: flex;
         flex-direction: column;
 
-        & button:first-child {
+        button:first-child {
+
             grid-row: 1;
             border-radius: 0 10px 0 0;
             border-bottom-width: 0;
@@ -317,7 +320,7 @@ By default, they are hidden and non-interactive.
             border-right-width: 1px;
         }
 
-        & button:last-child {
+        button:last-child {
 
             grid-row: 2;
             border-radius: 0;
@@ -328,7 +331,7 @@ By default, they are hidden and non-interactive.
         }
     }
 
-    & .up-down {
+    .up-down {
 
         display: flex;
         flex-direction: column;
@@ -336,7 +339,7 @@ By default, they are hidden and non-interactive.
         right: 0;
         top: 0;
 
-        & button:first-child {
+        button:first-child {
             grid-row: 1;
             border-radius: 10px 0 0 0;
             border-bottom-width: 0;
@@ -344,12 +347,12 @@ By default, they are hidden and non-interactive.
             border-top-width: 1px;
             border-right-width: 0;
 
-            & div {
+            div {
                 transform: rotate(90deg);
             }
         }
 
-        & button:last-child {
+        button:last-child {
 
             grid-row: 2;
             border-radius: 0;
@@ -358,7 +361,7 @@ By default, they are hidden and non-interactive.
             border-top-width: 0;
             border-right-width: 0;
 
-            & div {
+            div {
                 transform: rotate(90deg);
             }
         }
@@ -387,7 +390,7 @@ By default, they are hidden and non-interactive.
 
     margin-block-start: 2rem;
 
-    & li {
+    li {
         width: 240px;
         height: 160px;
     }
@@ -395,7 +398,7 @@ By default, they are hidden and non-interactive.
 
 .swiper {
 
-    & ol {
+    ol {
 
         overflow: visible; /* Let the swiper handle the overflow logic */
         display: flex;
@@ -405,7 +408,7 @@ By default, they are hidden and non-interactive.
         /* Remove scrollbar properties as swiper will handle it */
     }
 
-    & .swiper-filmstrip {
+    .swiper-filmstrip {
         display: flex;
     }
 }
@@ -428,36 +431,44 @@ By default, they are hidden and non-interactive.
     background-image: radial-gradient(circle farthest-corner at 40px 40px, #1a1e50, hsl(236 51% 14% / 1), #1a1e50);
     user-select: none;
 
-
-
-    & span {
+    span {
 
         display: block;
     }
 
-    & .title {
+    .title {
+
+        min-height: 3.5rem;
+        padding: 1rem;
         font-size: 1rem;
         font-weight: bold;
         text-align: left;
-        padding: 1rem;
     }
 
-    & .description {
+    .description {
+        position: absolute;
+        width: 40ch;
+        padding: 2.5rem 1rem 1rem 1rem;
+        left: 50%;
+        transform-origin: center;
+        transform: translateX(-50%);
+        top: -12px;
+        z-index: 1;
         /* Hide by default, but allow transition */
         opacity: 0;
         transition: opacity 0.3s ease-in-out;
         pointer-events: none;
         font-weight: normal;
         text-align: left;
-        position: absolute;
-        z-index: 1;
-        width: 22ch;
-        padding: 2.5rem 1rem 1rem 1rem;
         background-color: #1a1e50;
         border-radius: 0 0 1rem 1rem;
+
+        &.show {
+            opacity: 1;
+        }
     }
 
-    & .action-buttons {
+    .action-buttons {
         /* Hide by default, but allow transition */
         display: grid;
         opacity: 1;
@@ -504,7 +515,7 @@ By default, they are hidden and non-interactive.
     z-index: 20;
     grid-column: 2;
 
-    &>button {
+    > button {
         padding: 0.5rem;
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -514,7 +525,7 @@ By default, they are hidden and non-interactive.
         text-align: left;
     }
 
-    & button:hover {
+    button:hover {
         background: rgba(255, 255, 255, .4);
     }
 }
@@ -581,7 +592,7 @@ By default, they are hidden and non-interactive.
     transition: top 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
     font-size: 1.5rem;
 
-    & p {
+    p {
         margin: 0;
     }
 }
@@ -718,7 +729,7 @@ By default, they are hidden and non-interactive.
     grid-template-columns: auto 1fr;
     align-items: center;
 
-    & span {
+    span {
         margin-left: 1rem;
     }
 }
@@ -736,18 +747,18 @@ By default, they are hidden and non-interactive.
 }
 
 .tell-um  {
-    & .details-image.closed {
+    .details-image.closed {
         display: none;
     }
 }
 
 .tell-um[open]  {
 
-    & .details-image.open {
+    .details-image.open {
         display: none;
     }
 
-    & .details-image.closed {
+    .details-image.closed {
         display: block;
     }
 
