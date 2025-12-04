@@ -573,6 +573,7 @@ const start = () => {
                 li.appendChild(button);
                 gameMenu.appendChild(li);
             });
+
             const gameMenuContainer = startScreen.querySelector('.game-menu');
 
             const cleanInfoPanel = () => {
