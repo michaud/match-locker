@@ -129,18 +129,15 @@ input[type="checkbox"] {
 /* Apply to the SVG elements directly now */
 .slide {
 
-    display: block;
+    display: grid;
     width: 960px;
     height: 680px;
+    justify-content: center;
     user-select: none;
-    /* Prevents image selection during drag */
     -webkit-user-drag: none;
-    /* Prevents image ghosting during drag in WebKit */
 
     & img {
         display: block;
-        height: auto;
-        width: 100%;
         object-fit: contain;
         user-select: none;
         -webkit-user-drag: none;
@@ -391,8 +388,8 @@ By default, they are hidden and non-interactive.
     margin-block-start: 2rem;
 
     & li {
-        width: 15rem;
-        height: 10rem;
+        width: 240px;
+        height: 160px;
     }
 }
 
@@ -408,13 +405,6 @@ By default, they are hidden and non-interactive.
         /* Remove scrollbar properties as swiper will handle it */
     }
 
-    & li {
-        display: grid;
-        /* Fixed width is crucial for the swiper's calculations */
-        /* Prevent items from shrinking when the container is full */
-        flex-shrink: 0;
-    }
-
     & .swiper-filmstrip {
         display: flex;
     }
@@ -423,6 +413,7 @@ By default, they are hidden and non-interactive.
 .game-button {
 
     display: grid;
+    min-height: 8rem;
     gap: .75rem;
     padding: 0;
     margin-inline: .5rem;

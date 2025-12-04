@@ -326,18 +326,18 @@ export function createSwiper(options) {
                 return false; // Indicate failure
             }
 
-            // Apply the explicit size to all slide elements (li).
-            // This ensures the visual size matches the calculated itemSize.
-            const slideElements = listElement.querySelectorAll('li');
-            slideElements.forEach(li => {
-                // Apply both width and height if they are provided.
-                if (slideWidth) {
-                    li.style.width = `${slideWidth}px`;
-                }
-                if (slideHeight) {
-                    li.style.height = `${slideHeight}px`;
-                }
-            });
+            // // Apply the explicit size to all slide elements (li).
+            // // This ensures the visual size matches the calculated itemSize.
+            // const slideElements = listElement.querySelectorAll('li');
+            // slideElements.forEach(li => {
+            //     // Apply both width and height if they are provided.
+            //     if (slideWidth) {
+            //         li.style.width = `${slideWidth}px`;
+            //     }
+            //     if (slideHeight) {
+            //         li.style.height = `${slideHeight}px`;
+            //     }
+            // });
 
             // Create the filmstrip first.
             setupInfiniteList();
