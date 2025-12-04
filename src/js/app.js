@@ -20,6 +20,7 @@ const start = () => {
 
     let menuDragHandler = null;
     let gameDragAndTapHandler = null;
+    let navigationHandler = null;
 
     const DisplayStyle = Object.freeze({
         BLOCK: 'block',
@@ -262,13 +263,29 @@ const start = () => {
     /**
      * Removes DOM elements and clears state from any previously running game.
      */
-    function cleanupPreviousGame() {
-
-        const existingSliderLists = gameScreen.querySelectorAll('ol.slider-horizontal, ol.slider-vertical');
-        existingSliderLists.forEach(list => list.remove());
-        activeGame.swiperInstances.clear();
-        activeGame.worldMap.clear();
-    }
+    const teardownCurrentGame = () => {
+        // 1. Unregister event listeners from swiper instances before clearing them.
+        if (activeGame && activeGame.swiperInstances) {
+            activeGame.swiperInstances.forEach(swiper => {
+                swiper.off('snapComplete', onGameSwiperSnapComplete);
+            });
+        }
+    
+        // 2. Remove all swiper-related DOM elements from the game screen.
+        const swiperContainers = gameScreen.querySelectorAll('.swiper');
+        swiperContainers.forEach(container => container.remove());
+    
+        // 3. Reset the activeGame state object to its initial, empty state.
+        activeGame = {
+            playerState: null,
+            gameState: null,
+            puzzleData: [],
+            layout: {},
+            slideGroups: [],
+            worldMap: new Map(),
+            swiperInstances: new Map()
+        };
+    };
 
     /**
      * Creates and initializes all swiper instances based on the game layout.
@@ -446,7 +463,7 @@ const start = () => {
      */
     async function initializeGame(gameData) {
 
-        cleanupPreviousGame();
+        teardownCurrentGame();
 
         const { newPuzzleData, layout, slideGroups } = processGameData(gameData);
 
@@ -579,7 +596,7 @@ const start = () => {
                         const gameFile = gameButton.dataset.gameFile;
                         playButton.disabled = true;
                         await loadGame(gameFile);
-                        navigateTo(gameScreen);
+                        screenStateMachine.transitionTo('game');
                         // Re-enable after a short delay to prevent double-clicks during screen transition
                         setTimeout(() => { playButton.disabled = false; }, 500);
                     }
@@ -702,70 +719,111 @@ const start = () => {
     let activeScreen = startScreen;
     let previousScreen = null;
 
-    function navigateTo(targetScreen) {
+    const screenStateMachine = {
+        currentState: null,
+        states: {
+            start: {
+                onEnter: () => {
+                    startScreen.style.display = screenDisplayMap.get(startScreen);
+                    topNav.style.display = DisplayStyle.GRID;
+                    puzzleNav.style.display = DisplayStyle.NONE;
+                    if (menuDragHandler) menuDragHandler.attach();
+                },
+                configureMenu: () => {
+                    settingsButton.style.display = 'grid';
+                    quitGameButton.style.display = 'none';
+                    backButton.style.display = 'none';
+                },
+                onExit: () => {
+                    startScreen.style.display = DisplayStyle.NONE;
+                    if (menuDragHandler) menuDragHandler.detach();
+                },
+            },
+            game: {
+                onEnter: () => {
+                    gameScreen.style.display = screenDisplayMap.get(gameScreen);
+                    topNav.style.display = DisplayStyle.GRID;
+                    puzzleNav.style.display = DisplayStyle.GRID;
+                    if (gameDragAndTapHandler) gameDragAndTapHandler.attach();
+                    if (navigationHandler) navigationHandler.attach();
+                },
+                configureMenu: () => {
+                    quitGameButton.style.display = 'block';
+                    settingsButton.style.display = 'block';
+                    backButton.style.display = 'none';
+                    // Show submit button only if the setting is correct and there's at least one match
+                    if (settingsState.puzzleCompletion === 'user-submits' && getActivePuzzleForCurrentLocation() && (activeGame.gameState.playerMatchesByPuzzle.get(getActivePuzzleForCurrentLocation().id)?.size || 0) > 0) {
+                        submitButton.style.display = 'block';
+                    }
+                },
+                onExit: () => {
+                    gameScreen.style.display = DisplayStyle.NONE;
+                    if (gameDragAndTapHandler) gameDragAndTapHandler.detach();
+                    if (navigationHandler) navigationHandler.detach();
+                },
+            },
+            settings: {
+                onEnter: () => {
+                    settingsScreen.style.display = screenDisplayMap.get(settingsScreen);
+                    topNav.style.display = DisplayStyle.GRID;
+                    puzzleNav.style.display = DisplayStyle.NONE;
+                },
+                configureMenu: () => {
+                    backButton.style.display = 'block';
+                    settingsButton.style.display = 'none';
+                    quitGameButton.style.display = 'none';
+                },
+                onExit: () => {
+                    settingsScreen.style.display = DisplayStyle.NONE;
+                },
+            },
+            info: {
+                onEnter: () => {
+                    infoScreen.style.display = screenDisplayMap.get(infoScreen);
+                    topNav.style.display = DisplayStyle.GRID;
+                    puzzleNav.style.display = DisplayStyle.NONE;
+                },
+                configureMenu: () => {
+                    backButton.style.display = 'block';
+                    settingsButton.style.display = 'none';
+                    quitGameButton.style.display = 'none';
+                },
+                onExit: () => {
+                    infoScreen.style.display = DisplayStyle.NONE;
+                },
+            },
+        },
+        transitionTo(newState) {
+            if (this.currentState && this.states[this.currentState] && this.states[this.currentState].onExit) {
+                this.states[this.currentState].onExit();
+            }
+            this.currentState = newState;
+            if (this.states[this.currentState] && this.states[this.currentState].onEnter) {
+                this.states[this.currentState].onEnter();
+            }
+        },
+        configureMenu() {
+            // Default all buttons to hidden before configuring for the current state.
+            submitButton.style.display = 'none';
+            quitGameButton.style.display = 'none';
+            settingsButton.style.display = 'none';
+            backButton.style.display = 'none';
 
-        // Hide the previously active screen
-        if (activeScreen) {
-            previousScreen = activeScreen;
-            activeScreen.style.display = DisplayStyle.NONE;
-        }
-
-        // Show the new screen and handle screen-specific side effects
-        targetScreen.style.display = screenDisplayMap.get(targetScreen) || DisplayStyle.BLOCK;
-        activeScreen = targetScreen;
-
-        // Handle visibility of navigation elements based on the active screen
-        switch (targetScreen) {
-            case leadInScreen:
-                topNav.style.display = DisplayStyle.NONE;
-                puzzleNav.style.display = DisplayStyle.NONE;
-                break;
-            case gameScreen:
-                topNav.style.display = DisplayStyle.GRID;
-                puzzleNav.style.display = DisplayStyle.GRID;
-                break;
-            case startScreen:
-            case settingsScreen:
-            case infoScreen:
-                topNav.style.display = DisplayStyle.GRID;
-                puzzleNav.style.display = DisplayStyle.NONE;
-                break;
-        }
-    }
+            const currentStateConfig = this.states[this.currentState];
+            if (currentStateConfig && currentStateConfig.configureMenu) {
+                currentStateConfig.configureMenu();
+            }
+        },
+    };
 
     menuButton.addEventListener('click', () => {
 
         const isVisible = menuPopout.style.display === 'flex';
         menuPopout.style.display = isVisible ? 'none' : 'flex';
 
-        // Default all buttons to hidden, then show them based on the current screen state.
-        submitButton.style.display = 'none';
-        quitGameButton.style.display = 'none';
-        settingsButton.style.display = 'none';
-        backButton.style.display = 'none';
-
-        if (activeScreen === startScreen) {
-
-            settingsButton.style.display = 'grid';
-
-        } else if (activeScreen === gameScreen) {
-
-            quitGameButton.style.display = 'block';
-            settingsButton.style.display = 'block';
-            puzzleNav.style.display = 'grid';
-            // Show submit button only if the setting is correct and there's at least one match
-            if (settingsState.puzzleCompletion === 'user-submits' && getActivePuzzleForCurrentLocation() && (activeGame.gameState.playerMatchesByPuzzle.get(getActivePuzzleForCurrentLocation().id)?.size || 0) > 0) {
-
-                submitButton.style.display = 'block';
-            }
-
-        } else if (activeScreen === settingsScreen) {
-
-            backButton.style.display = 'block';
-
-        } else if (activeScreen === infoScreen) {
-
-            backButton.style.display = 'block';
+        // If we just made the menu visible, configure its contents based on the current screen state.
+        if (!isVisible) {
+            screenStateMachine.configureMenu();
         }
     });
 
@@ -774,23 +832,10 @@ const start = () => {
         menuPopout.style.display = 'none';
         puzzleNav.style.display = 'none';
 
-        // Clear all data associated with the game session.
-        activeGame = {
-            playerState: null,
-            gameState: {
-                playerMatchesByPuzzle: new Map(),
-                solvedPuzzles: new Set()
-            },
-            puzzleData: [],
-            layout: {},
-            slideGroups: [],
-            worldMap: new Map(),
-            swiperInstances: new Map()
-        };
+        // Completely tear down the current game session.
+        teardownCurrentGame();
 
-        cleanupPreviousGame(); // Also remove DOM elements and swiper instances.
-
-        navigateTo(startScreen);
+        screenStateMachine.transitionTo('start');
     });
 
     submitButton.addEventListener('click', () => {
@@ -834,37 +879,34 @@ const start = () => {
 
     settingsButton.addEventListener('click', () => {
 
-        navigateTo(settingsScreen);
+        screenStateMachine.transitionTo('settings');
         menuPopout.style.display = 'none';
     });
 
     infoButton.addEventListener('click', () => {
 
         menuPopout.style.display = 'none';
-
-        if (activeScreen === infoScreen) {
+        
+        if (screenStateMachine.currentState === 'info') {
             // If we are already on the info screen, go back.
-            if (previousScreen) {
-
-                navigateTo(previousScreen);
-            }
-
+            // The most logical "back" is to the game if active, otherwise start.
+            const targetState = activeGame.playerState ? 'game' : 'start';
+            screenStateMachine.transitionTo(targetState);
         } else {
-
             // Otherwise, render and navigate to the info screen.
             renderInfoScreen();
-            navigateTo(infoScreen);
+            screenStateMachine.transitionTo('info');
         }
     });
 
     backButton.addEventListener('click', () => {
 
         menuPopout.style.display = 'none';
-
-        // Explicitly handle back navigation to avoid stale previousScreen references.
-        // This logic assumes 'back' from settings/info always returns to the game screen if a game is active.
-        if (activeScreen === settingsScreen || activeScreen === infoScreen) {
-            navigateTo(gameScreen);
+        
+        // 'back' from settings/info should return to the game if a game is active, otherwise to start.
+        if (screenStateMachine.currentState === 'settings' || screenStateMachine.currentState === 'info') {
+            const targetState = activeGame.playerState ? 'game' : 'start';
+            screenStateMachine.transitionTo(targetState);
         }
     });
 
@@ -873,7 +915,9 @@ const start = () => {
         toaster.classList.remove('is-visible');
         gameScreen.classList.remove('disabled'); // Re-enable game interaction
         puzzleNav.style.display = 'none';
-        navigateTo(startScreen);
+        // When leaving the win screen, the game is over.
+        teardownCurrentGame();
+        screenStateMachine.transitionTo('start');
     });
 
     // --- Settings Logic ---
@@ -895,17 +939,14 @@ const start = () => {
 
     // --- Initialize Interaction Handlers ---
     // These are done once. The modules will internally get the latest `activeGame` state when needed.
-    const navigationHandler = createNavigationHandler({
+    navigationHandler = createNavigationHandler({
         getGame: () => activeGame,
         domElements: { prevButton, nextButton, upButton, downButton },
         onStateUpdate: (newState) => {
             updateStateAndRender({ ...newState, isJump: true });
         },
     });
-
-    navigationHandler.attach();
-
-    const dragAndTapHandler = createDragAndTapHandler({
+    gameDragAndTapHandler = createDragAndTapHandler({
         getGame: () => activeGame,
         getSettings: () => settingsState,
         checkPuzzleSolved: checkActivePuzzleSolved,
@@ -916,9 +957,6 @@ const start = () => {
         // For swipes and same-slider nav, it's not a jump.
         onStateUpdate: (newState) => updateStateAndRender(newState),
     });
-    // The drag handler is attached when a game is loaded, as it depends on game-specific elements.
-    // For now, we will attach it here. A more advanced implementation might attach/detach per game.
-    dragAndTapHandler.attach();
 
     // Initialize the lead-in screen after all other setup is complete and just before showing it.
     // Gemini: Don't remove, just hide lead-in for now
@@ -928,18 +966,18 @@ const start = () => {
     // Gemini: Don't remove, just hide lead-in for now
     // startScreen.style.display = 'none';
     // leadInScreen.style.display = 'block';
-    startScreen.style.display = screenDisplayMap.get(startScreen);
     leadInScreen.style.display = 'none';
     gameScreen.style.display = 'none';
     settingsScreen.style.display = 'none';
     infoScreen.style.display = 'none';
-    topNav.style.display = 'none';
 
     // --- Screen and Menu Navigation Logic ---
     previousScreen = startScreen;
 
-    // Start the application by initializing the start screen
-    initializeStartScreen();
+    // Initialize the start screen and its handlers, then enter the initial state.
+    initializeStartScreen().then(() => {
+        screenStateMachine.transitionTo('start');
+    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
