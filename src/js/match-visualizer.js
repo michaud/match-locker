@@ -102,7 +102,7 @@ export function createMatchVisualizer(callbacks) {
         const currentHostSlideId = hostSwiper.getCurrentSlideId();
         const currentGuestSlideId = guestSwiper.getCurrentSlideId();
 
-        if (puzzleMatches.get(currentHostSlideId) === currentGuestSlideId || puzzleMatches.get(currentGuestSlideId) === currentHostSlideId) {
+        if (puzzleMatches.get(currentHostSlideId) === currentGuestSlideId) {
 
             document.querySelectorAll(`[data-slide-id="${currentHostSlideId}"], [data-slide-id="${currentGuestSlideId}"]`).forEach(el => el.classList.add('is-matched'));
         }

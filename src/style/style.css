@@ -143,50 +143,29 @@ input[type="checkbox"] {
         -webkit-user-drag: none;
         /* Ensures the image covers the slide area */
     }
+
+    /* Style for a matched slide */
+    &.is-matched {
+        box-sizing: border-box;
+        /* Ensures border is inside the element dimensions */
+        outline: 5px solid rgba(78 96 161 / .5);
+        outline-color: rgba(78 96 161 / .5);
+        border-radius: 10px;
+        outline-offset: -5px;
+        opacity: 1;
+        transition: outline-color 0.3s ease-in-out;
+    }
 }
 
-/* Disable pointer events on game screen when a modal/toaster is active */
-.game-screen.disabled {
-    pointer-events: none;
-}
-
-/* Style for a matched slide */
-.is-matched .slide {
-    box-sizing: border-box;
-    /* Ensures border is inside the element dimensions */
-    outline: 5px solid rgba(78 96 161 / .5);
-    outline-color: rgba(78 96 161 / .5);
-    border-radius: 10px;
-    outline-offset: -5px;
-    opacity: 1;
-    transition: outline-color 0.3s ease-in-out;
-}
-
-.is-dragging .is-matched .slide {
+.is-dragging .slide.is-matched {
 
     outline-color: rgba(78 96 161 / 0.0);
 }
 
 
-.slider-horizontal .is-matched-colored .slide {
-    border-left: solid var(--match-color, transparent);
-    border-bottom-left-radius: var(--match-border-radius);
-    border-bottom-right-radius: var(--match-border-radius);
-    border-top-left-radius: var(--match-border-radius);
-    border-top-right-radius: var(--match-border-radius);
-    border-right: var(--match-border-radius) solid var(--match-color, transparent);
-    box-sizing: border-box;
-}
-
-.slider-vertical .is-matched-colored .slide {
-    border-bottom-left-radius: var(--match-border-radius);
-    border-bottom-right-radius: var(--match-border-radius);
-    border-top-left-radius: var(--match-border-radius);
-    border-top-right-radius: var(--match-border-radius);
-
-    border-top: var(--match-border-radius) solid var(--match-color, transparent);
-    border-bottom: var(--match-border-radius) solid var(--match-color, transparent);
-    box-sizing: border-box;
+/* Disable pointer events on game screen when a modal/toaster is active */
+.game-screen.disabled {
+    pointer-events: none;
 }
 
 /* Horizontal list (.leftnright) */
@@ -198,6 +177,17 @@ input[type="checkbox"] {
     z-index: 1;
     width: 960px;
     height: 680px;
+
+    .slide.is-matched-colored {
+        border-left: solid var(--match-color, transparent);
+        border-bottom-left-radius: var(--match-border-radius);
+        border-bottom-right-radius: var(--match-border-radius);
+        border-top-left-radius: var(--match-border-radius);
+        border-top-right-radius: var(--match-border-radius);
+        border-right: var(--match-border-radius) solid var(--match-color, transparent);
+        box-sizing: border-box;
+    }
+
 }
 
 /*
@@ -221,6 +211,18 @@ By default, they are hidden and non-interactive.
             flex-direction: column;
         }
     }
+
+    .slide.is-matched-colored {
+        border-bottom-left-radius: var(--match-border-radius);
+        border-bottom-right-radius: var(--match-border-radius);
+        border-top-left-radius: var(--match-border-radius);
+        border-top-right-radius: var(--match-border-radius);
+
+        border-top: var(--match-border-radius) solid var(--match-color, transparent);
+        border-bottom: var(--match-border-radius) solid var(--match-color, transparent);
+        box-sizing: border-box;
+    }
+
 }
 
 .sub-nav {
