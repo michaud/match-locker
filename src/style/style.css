@@ -1,28 +1,29 @@
 :root {
+
     --match-border-radius: .5rem;
 }
 
-/* Basic Reset and Body Styling */
 body,
 html {
+
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    /* Prevents scrollbars on the body */
     background-color: #111;
-    /* Dark background for contrast */
     font-family: sans-serif;
     color: white;
 }
 
 body {
+
     display: grid;
     justify-content: center;
 }
 
 label {
+
     padding: .75rem 0;
 }
 
@@ -33,6 +34,7 @@ input[type="checkbox"] {
     appearance: none;
 
     &::after {
+
         content: '';
         display: inline-block;
         width: 1.7rem;
@@ -43,8 +45,8 @@ input[type="checkbox"] {
     }
 
     &:checked::after {
+
         background-color: rgb(125 99 73);
-        ;
     }
 
     &::before {
@@ -61,12 +63,13 @@ input[type="checkbox"] {
 
 /* This is the main viewport for our carousels */
 .screen > * {
+
     box-sizing: border-box;
     display: none;
-    /* Hide all screen elements by default */
 }
 
 .screen {
+
     position: relative;
     width: 960px;
     height: 680px;
@@ -75,25 +78,27 @@ input[type="checkbox"] {
 }
 
 .start-screen {
+
     display: grid;
     width: 960px;
     height: 680px;
     grid-template-rows: auto auto 1fr;
-    /* The start screen is visible by default */
 }
 
 .game-screen {
+
     display: grid;
-    /* This allows absolute positioning of children relative to the screen */
     position: relative;
 }
 
 #logo-start {
+
     margin: 0 auto;
     margin-block-start: 2rem;
 }
 
 .button--action {
+
     background: rgba(255, 255, 255, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 10px 20px;
@@ -105,28 +110,21 @@ input[type="checkbox"] {
     transition: background 0.3s ease;
 }
 
-/* Common styles for both lists */
 .swiper-container ol {
+
     list-style: none;
     margin: 0;
     padding: 0;
     position: absolute;
-    /* We will use transform to move the lists for better performance */
-    /* This calculation centers the first image inside the 960x680 container */
-    /* (container_width - image_width) / 2 */
-    /* (960 - 960) / 2 = 0 for X */
-    /* (680 - 680) / 2 = 0 for Y */
+
     transform: translate(0px, 0px);
 
-    /* Styling for list items and images */
     li {
         flex-shrink: 0;
         /* Prevents flex items from shrinking */
     }
 }
 
-
-/* Apply to the SVG elements directly now */
 .slide {
 
     display: grid;
@@ -137,17 +135,17 @@ input[type="checkbox"] {
     -webkit-user-drag: none;
 
     img {
+
         display: block;
         object-fit: contain;
         user-select: none;
         -webkit-user-drag: none;
-        /* Ensures the image covers the slide area */
     }
 
-    /* Style for a matched slide */
     &.is-matched {
-        box-sizing: border-box;
-        /* Ensures border is inside the element dimensions */
+
+        box-sizing: border-box;/*??*/
+
         outline: 5px solid rgba(78 96 161 / .5);
         outline-color: rgba(78 96 161 / .5);
         border-radius: 10px;
@@ -165,20 +163,20 @@ input[type="checkbox"] {
 
 /* Disable pointer events on game screen when a modal/toaster is active */
 .game-screen.disabled {
+
     pointer-events: none;
 }
 
-/* Horizontal list (.leftnright) */
 .slider-horizontal {
 
     position: absolute;
-    /* Positioned behind the vertical list */
-    transition: opacity 0.3s ease-in-out;
     z-index: 1;
+    transition: opacity 0.3s ease-in-out;
     width: 960px;
     height: 680px;
 
     .slide.is-matched-colored {
+
         border-left: solid var(--match-color, transparent);
         border-bottom-left-radius: var(--match-border-radius);
         border-bottom-right-radius: var(--match-border-radius);
@@ -190,15 +188,10 @@ input[type="checkbox"] {
 
 }
 
-/*
-Visibility control for vertical swipers.
-By default, they are hidden and non-interactive.
-*/
 .slider-vertical {
 
     position: absolute;
     z-index: 2;
-    /* We will control visibility with opacity on the slide background now */
     transition: opacity 0.3s ease-in-out;
     width: 960px;
     height: 680px;
@@ -208,11 +201,13 @@ By default, they are hidden and non-interactive.
         flex-direction: column;
 
         & ol {
+
             flex-direction: column;
         }
     }
 
     .slide.is-matched-colored {
+
         border-bottom-left-radius: var(--match-border-radius);
         border-bottom-right-radius: var(--match-border-radius);
         border-top-left-radius: var(--match-border-radius);
@@ -234,14 +229,12 @@ By default, they are hidden and non-interactive.
     z-index: 10;
 
     &.puzzle {
+
         display: grid;
         grid-template-columns: auto 1fr auto;
         bottom: 0;
         user-select: none;
-        /* Make the container itself non-interactive */
         pointer-events: none;
-        /* This allows clicks/drags to pass through the empty space */
-
     }
 
     &.game {
@@ -266,37 +259,44 @@ By default, they are hidden and non-interactive.
     pointer-events: auto;
 
     span {
+
         display: none;
     }
 }
 
 .sub-nav button:hover {
+
     background: rgba(255, 255, 255, .4);
 }
 
 .sub-nav button:disabled {
+
     background: rgba(50, 50, 50, 0.2);
     color: rgba(255, 255, 255, 0.1);
     cursor: not-allowed;
 }
 
 .sub-nav button:first-child {
+
     grid-column: 1;
 }
 
 .sub-nav button:last-child {
+
     grid-column: 3;
 }
 
 .sub-nav.game {
 
     > button:first-child {
+
         border-radius: 0 0 10px 0;
         border-top-width: 0;
         border-left-width: 0;
     }
 
     > button:last-child {
+
         border-radius: 0 0 0 10px;
         border-top-width: 0;
         border-right-width: 0;
@@ -342,6 +342,7 @@ By default, they are hidden and non-interactive.
         top: 0;
 
         button:first-child {
+
             grid-row: 1;
             border-radius: 10px 0 0 0;
             border-bottom-width: 0;
@@ -350,6 +351,7 @@ By default, they are hidden and non-interactive.
             border-right-width: 0;
 
             div {
+
                 transform: rotate(90deg);
             }
         }
@@ -364,6 +366,7 @@ By default, they are hidden and non-interactive.
             border-right-width: 0;
 
             div {
+
                 transform: rotate(90deg);
             }
         }
@@ -371,6 +374,7 @@ By default, they are hidden and non-interactive.
 }
 
 .screen-title {
+
     margin-inline: auto;
     margin-block: 1.5rem;
     min-height: 6rem;
@@ -384,8 +388,8 @@ By default, they are hidden and non-interactive.
 }
 
 .screen-title span {
-    display: block;
 
+    display: block;
 }
 
 .game-menu {
@@ -393,6 +397,7 @@ By default, they are hidden and non-interactive.
     margin-block-start: 2rem;
 
     li {
+
         width: 240px;
         height: 160px;
     }
@@ -407,10 +412,10 @@ By default, they are hidden and non-interactive.
         margin: 0;
         padding: 0;
         list-style: none;
-        /* Remove scrollbar properties as swiper will handle it */
     }
 
     .swiper-filmstrip {
+
         display: flex;
     }
 }
@@ -466,31 +471,34 @@ By default, they are hidden and non-interactive.
         border-radius: 0 0 1rem 1rem;
 
         &.show {
+
             opacity: 1;
         }
     }
 
     .action-buttons {
-        /* Hide by default, but allow transition */
+
         display: grid;
-        opacity: 1;
-        transition: opacity 0.3s ease-in-out;
-        grid-template-columns: 1fr 1fr;
-        bottom: -.875rem;
-        z-index: 2;
         position: absolute;
         width: 100%;
+        bottom: -.875rem;
+        z-index: 2;
+        grid-template-columns: 1fr 1fr;
+        opacity: 1;
+        transition: opacity 0.3s ease-in-out;
     }
 }
 
 .game-button .description.is-visible {
+
     opacity: 1;
     pointer-events: auto;
 }
 
 .game-menu li.is-active-slide .action-buttons {
+
     opacity: 1;
-    pointer-events: auto; /* Interactive when visible */
+    pointer-events: auto;
 }
 
 .game-description {
@@ -501,23 +509,25 @@ By default, they are hidden and non-interactive.
 }
 
 .button--action.info {
+
     background-color: green;
     border-radius: 0 0 0 1rem;
 }
+
 .button--action.play {
+
     background-color: #a52a2a;
     border-radius: 0 0 1rem 0;
 }
 
-
 .menu-popout {
 
     display: none;
-    /* Initially hidden */
     z-index: 20;
     grid-column: 2;
 
     > button {
+
         padding: 0.5rem;
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -528,12 +538,13 @@ By default, they are hidden and non-interactive.
     }
 
     button:hover {
+
         background: rgba(255, 255, 255, .4);
     }
 }
 
-/* Settings Screen Styles */
 .settings-screen {
+
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
@@ -541,6 +552,7 @@ By default, they are hidden and non-interactive.
 }
 
 .settings-options {
+
     color: white;
     font-size: 1.5rem;
     margin-top: 2rem;
@@ -548,12 +560,14 @@ By default, they are hidden and non-interactive.
 }
 
 .setting-option {
+
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .setting-option select {
+
     font-size: 1.2rem;
     padding: 0.5rem;
     background: #333;
@@ -563,6 +577,7 @@ By default, they are hidden and non-interactive.
 }
 
 .back-button {
+
     margin-top: 3rem;
     font-size: 1.5rem;
     padding: 1rem 2rem;
@@ -573,15 +588,14 @@ By default, they are hidden and non-interactive.
     cursor: pointer;
 }
 
-/* Toaster Notification */
 .toaster {
+
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1rem;
     position: absolute;
     top: -150px;
-    /* Start off-screen */
     left: 50%;
     transform: translateX(-50%);
     background-image: url(../style/Leonhard_Euler_2.jpg);
@@ -595,16 +609,18 @@ By default, they are hidden and non-interactive.
     font-size: 1.5rem;
 
     p {
+
         margin: 0;
     }
 }
 
 .toaster.is-visible {
+
     top: 0;
-    /* Slide into view */
 }
 
 .toaster-back-button {
+
     font-size: 1rem;
     padding: 0.5rem 1.5rem;
     background: #444;
@@ -616,6 +632,7 @@ By default, they are hidden and non-interactive.
 
 .info-content,
 .info-puzzle {
+
     padding-inline: 4rem;
     font-size: 1.25rem;
     line-height: 1.5;
@@ -623,6 +640,7 @@ By default, they are hidden and non-interactive.
 }
 
 .info-puzzle {
+
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
@@ -630,6 +648,7 @@ By default, they are hidden and non-interactive.
 
 /* Layout Visualizer Styles (for Info Screen) */
 .layout-svg {
+
     background-color: #1e1e1e;
     border: 1px solid #333;
     border-radius: 8px;
@@ -640,6 +659,7 @@ By default, they are hidden and non-interactive.
 }
 
 .slide-rect {
+
     stroke: #555;
     stroke-width: 1;
     fill: #3c3c3c;
@@ -648,26 +668,30 @@ By default, they are hidden and non-interactive.
 }
 
 .horizontal-slide {
+
     fill: rgba(74, 74, 74, 0.5);
 }
 
 .vertical-slide {
+
     fill: rgba(74, 74, 74, 0.5);
 }
 
 .slide-text {
+
     font-size: 8px;
     fill: #d4d4d4;
     pointer-events: none;
 }
 
 .visually-hidden {
+
     opacity: 0;
-    /* Ensure it's not interactive when hidden */
     pointer-events: none;
 }
 
 .highlight-slot {
+
     fill: rgba(86, 156, 214, 0.3);
     stroke: #569cd6;
     stroke-width: 2;
@@ -676,23 +700,25 @@ By default, they are hidden and non-interactive.
 }
 
 .highlight-slot.is-active-puzzle-slot {
+
     stroke: #f0ad4e;
-    /* A distinct orange color */
     stroke-width: 3;
 }
 
 .info-sections {
-    overflow-y: auto;
-    scrollbar-gutter: stable;
+
     display: block;
     position: absolute;
     top: 9rem;
+    left: 0;
     right: 0;
     bottom: 0;
-    left: 0;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
 }
 
 .puzzle-status-indicator {
+
     position: absolute;
     display: none;
     /* must be grid for display*/
@@ -703,13 +729,14 @@ By default, they are hidden and non-interactive.
     justify-content: center;
     pointer-events: none;
 
-    /* Allow clicks to pass through */
     &.is-visible {
+
         display: grid;
     }
 }
 
 .puzzle-status {
+
     background: rgba(0, 0, 0, 0.6);
     color: #0f0;
     padding: 0.5rem 1rem;
@@ -720,24 +747,28 @@ By default, they are hidden and non-interactive.
 }
 
 .tell-um {
+
     font-size: 1.5rem;
     margin-block: 2rem;
     margin-inline: 4rem;
 }
 
 .tell-um summary {
+
     font-size: 2rem;
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: center;
 
     span {
+
         margin-left: 1rem;
     }
 }
 
 .tell-um summary::marker,
 :is(::-webkit-details-marker) {
+
     content: "+ ";
     font-family: monospace;
     color: red;
@@ -745,22 +776,28 @@ By default, they are hidden and non-interactive.
 }
 
 .tell-um[open]:first-of-type summary::marker {
+
     content: "− ";
 }
 
 .tell-um  {
+
     .details-image.closed {
+
         display: none;
     }
 }
 
 .tell-um[open]  {
 
+
     .details-image.open {
+
         display: none;
     }
 
     .details-image.closed {
+
         display: block;
     }
 
@@ -778,12 +815,14 @@ By default, they are hidden and non-interactive.
 }
 
 #logo-big-bg {
+
     pointer-events: none;
 }
 
 
 #tell-swipe-right,
 #tell-swipe-up {
+
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
 }
@@ -798,6 +837,7 @@ By default, they are hidden and non-interactive.
 
 /* Animation states */
 .leadin-screen.start-animation #logo-big-bg {
+
     animation: fadeOut 0.5s ease-in-out 2s forwards;
 }
 
@@ -805,20 +845,24 @@ By default, they are hidden and non-interactive.
 .leadin-screen.start-animation #slide-match-play,
 .leadin-screen.start-animation #slide-v-play,
 .leadin-screen.start-animation #slide-h-play {
+
     animation: fadeIn 0.5s ease-in-out 2s forwards;
 }
 
 #tell-swipe-right.visible,
 #tell-swipe-up.visible {
+
     opacity: 1;
 }
 
 @keyframes fadeIn {
+
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
 @keyframes fadeOut {
+
     from { opacity: 1; }
     to { opacity: 0; }
 }
