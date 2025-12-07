@@ -264,12 +264,6 @@ const start = () => {
      * Removes DOM elements and clears state from any previously running game.
      */
     const teardownCurrentGame = () => {
-        // 1. Unregister event listeners from swiper instances before clearing them.
-        if (activeGame && activeGame.swiperInstances) {
-            activeGame.swiperInstances.forEach(swiper => {
-                swiper.off('snapComplete', onGameSwiperSnapComplete);
-            });
-        }
     
         // 2. Remove all swiper-related DOM elements from the game screen.
         const swiperContainers = gameScreen.querySelectorAll('.swiper');
@@ -380,7 +374,7 @@ const start = () => {
         if (source === 'navigation') {
             // A programmatic navigation (prev/next button) happened.
             // We need to update the central state to reflect the new position.
-            updateStateAndRender({ currentSliderId: id, currentIndex: index });
+            updateStateAndRender({ currentSliderId: id, currentIndex: index, isJump: true });
         } else if (source === 'drag') {
             // A user drag finished. The swiper is visually in the right place,
             // but we need to synchronize the match visuals based on the new slide alignment.
@@ -573,9 +567,9 @@ const start = () => {
                 li.appendChild(button);
                 gameMenu.appendChild(li);
             });
-
             const gameMenuContainer = startScreen.querySelector('.game-menu');
 
+            
             const cleanInfoPanel = () => {
                 const allDescriptionPanels = gameMenuContainer.querySelectorAll('.game-description .description');
                 allDescriptionPanels.forEach(panel => panel.classList.remove('show'));
@@ -594,6 +588,7 @@ const start = () => {
             const onMenuTap = async (event) => { // This is the onTapCallback
                 // This callback is only executed by drag.js if no drag occurred (it was a tap).
                 const playButton = event.target.closest('.button--action.play');
+
                 const infoButton = event.target.closest('.button--action.info');
 
                 if (infoButton) {
@@ -639,7 +634,6 @@ const start = () => {
 
             gameMenuContainer.addEventListener('pointerdown', () => {
 
-                cleanInfoPanel();
                 gameMenuContainer.style.cursor = 'grabbing';
             });
 
@@ -745,11 +739,6 @@ const start = () => {
                     puzzleNav.style.display = DisplayStyle.NONE;
                     if (menuDragHandler) menuDragHandler.attach();
                 },
-                configureMenu: () => {
-                    settingsButton.style.display = 'grid';
-                    quitGameButton.style.display = 'none';
-                    backButton.style.display = 'none';
-                },
                 onExit: () => {
                     startScreen.style.display = DisplayStyle.NONE;
                     if (menuDragHandler) menuDragHandler.detach();
@@ -763,15 +752,6 @@ const start = () => {
                     if (gameDragAndTapHandler) gameDragAndTapHandler.attach();
                     if (navigationHandler) navigationHandler.attach();
                 },
-                configureMenu: () => {
-                    quitGameButton.style.display = 'block';
-                    settingsButton.style.display = 'block';
-                    backButton.style.display = 'none';
-                    // Show submit button only if the setting is correct and there's at least one match
-                    if (settingsState.puzzleCompletion === 'user-submits' && getActivePuzzleForCurrentLocation() && (activeGame.gameState.playerMatchesByPuzzle.get(getActivePuzzleForCurrentLocation().id)?.size || 0) > 0) {
-                        submitButton.style.display = 'block';
-                    }
-                },
                 onExit: () => {
                     gameScreen.style.display = DisplayStyle.NONE;
                     if (gameDragAndTapHandler) gameDragAndTapHandler.detach();
@@ -784,11 +764,6 @@ const start = () => {
                     topNav.style.display = DisplayStyle.GRID;
                     puzzleNav.style.display = DisplayStyle.NONE;
                 },
-                configureMenu: () => {
-                    backButton.style.display = 'block';
-                    settingsButton.style.display = 'none';
-                    quitGameButton.style.display = 'none';
-                },
                 onExit: () => {
                     settingsScreen.style.display = DisplayStyle.NONE;
                 },
@@ -798,11 +773,6 @@ const start = () => {
                     infoScreen.style.display = screenDisplayMap.get(infoScreen);
                     topNav.style.display = DisplayStyle.GRID;
                     puzzleNav.style.display = DisplayStyle.NONE;
-                },
-                configureMenu: () => {
-                    backButton.style.display = 'block';
-                    settingsButton.style.display = 'none';
-                    quitGameButton.style.display = 'none';
                 },
                 onExit: () => {
                     infoScreen.style.display = DisplayStyle.NONE;
@@ -818,18 +788,6 @@ const start = () => {
                 this.states[this.currentState].onEnter();
             }
         },
-        configureMenu() {
-            // Default all buttons to hidden before configuring for the current state.
-            submitButton.style.display = 'none';
-            quitGameButton.style.display = 'none';
-            settingsButton.style.display = 'none';
-            backButton.style.display = 'none';
-
-            const currentStateConfig = this.states[this.currentState];
-            if (currentStateConfig && currentStateConfig.configureMenu) {
-                currentStateConfig.configureMenu();
-            }
-        },
     };
 
     menuButton.addEventListener('click', () => {
@@ -837,16 +795,39 @@ const start = () => {
         const isVisible = menuPopout.style.display === 'flex';
         menuPopout.style.display = isVisible ? 'none' : 'flex';
 
-        // If we just made the menu visible, configure its contents based on the current screen state.
-        if (!isVisible) {
-            screenStateMachine.configureMenu();
+        // Default all buttons to hidden, then show them based on the current state.
+        submitButton.style.display = 'none';
+        quitGameButton.style.display = 'none';
+        settingsButton.style.display = 'none';
+        backButton.style.display = 'none';
+
+        if (screenStateMachine.currentState === 'start') {
+
+            settingsButton.style.display = 'grid';
+
+        } else if (screenStateMachine.currentState === 'game') {
+
+            quitGameButton.style.display = 'block';
+            settingsButton.style.display = 'block';
+            // Show submit button only if the setting is correct and there's at least one match
+            if (settingsState.puzzleCompletion === 'user-submits' && getActivePuzzleForCurrentLocation() && (activeGame.gameState.playerMatchesByPuzzle.get(getActivePuzzleForCurrentLocation().id)?.size || 0) > 0) {
+
+                submitButton.style.display = 'block';
+            }
+
+        } else if (screenStateMachine.currentState === 'settings') {
+
+            backButton.style.display = 'block';
+
+        } else if (screenStateMachine.currentState === 'info') {
+
+            backButton.style.display = 'block';
         }
     });
 
     quitGameButton.addEventListener('click', () => {
 
         menuPopout.style.display = 'none';
-        puzzleNav.style.display = 'none';
 
         // Completely tear down the current game session.
         teardownCurrentGame();
@@ -930,7 +911,6 @@ const start = () => {
 
         toaster.classList.remove('is-visible');
         gameScreen.classList.remove('disabled'); // Re-enable game interaction
-        puzzleNav.style.display = 'none';
         // When leaving the win screen, the game is over.
         teardownCurrentGame();
         screenStateMachine.transitionTo('start');

@@ -8,6 +8,9 @@ export function createNavigationHandler(callbacks) {
     const navigate = (navKey) => {
 
         const game = getGame();
+
+        console.log('game.playerState.currentSliderId:', game.playerState.currentSliderId)
+
         if (!game || !game.playerState || !game.playerState.currentSliderId) return;
 
         const currentKey = `${game.playerState.currentSliderId}-${game.playerState.currentIndex}`;
@@ -44,17 +47,25 @@ export function createNavigationHandler(callbacks) {
         }
     };
 
+    // Define the listener functions once to ensure they can be removed correctly.
+    const onPrevClick = () => navigate('left');
+    const onNextClick = () => navigate('right');
+    const onUpClick = () => navigate('up');
+    const onDownClick = () => navigate('down');
+
     const attach = () => {
 
-        domElements.prevButton.addEventListener('click', () => navigate('left'));
-        domElements.nextButton.addEventListener('click', () => navigate('right'));
-        domElements.upButton.addEventListener('click', () => navigate('up'));
-        domElements.downButton.addEventListener('click', () => navigate('down'));
+        domElements.prevButton.addEventListener('click', onPrevClick);
+        domElements.nextButton.addEventListener('click', onNextClick);
+        domElements.upButton.addEventListener('click', onUpClick);
+        domElements.downButton.addEventListener('click', onDownClick);
     };
 
     const detach = () => {
-        // In this design, listeners are attached once and live for the app's lifetime.
-        // A detach function is included for completeness if needed later.
+        domElements.prevButton.removeEventListener('click', onPrevClick);
+        domElements.nextButton.removeEventListener('click', onNextClick);
+        domElements.upButton.removeEventListener('click', onUpClick);
+        domElements.downButton.removeEventListener('click', onDownClick);
     };
 
     return { attach, detach };
