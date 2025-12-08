@@ -9,8 +9,6 @@ export function createNavigationHandler(callbacks) {
 
         const game = getGame();
 
-        console.log('game.playerState.currentSliderId:', game.playerState.currentSliderId)
-
         if (!game || !game.playerState || !game.playerState.currentSliderId) return;
 
         const currentKey = `${game.playerState.currentSliderId}-${game.playerState.currentIndex}`;
@@ -23,22 +21,15 @@ export function createNavigationHandler(callbacks) {
         if (!destination) return;
 
         // If the destination is on the same slider, we can use the swiper's internal navigation.
-        // The swiper will animate and then emit a `snapComplete` event. The drag-and-tap handler
-        // will eventually listen for this to update the state, but for now, this simplifies the nav logic.
+        // The swiper will animate and then emit a `snapComplete` event, which is handled in app.js.
         if (destination.sliderId === game.playerState.currentSliderId) {
 
             const swiper = game.swiperInstances.get(destination.sliderId);
 
             if (swiper) {
-
-                if (navKey === 'left' || navKey === 'up') {
-
-                    swiper.prev();
-
-                } else {
-
-                    swiper.next();
-                }
+                // The worldMap has already calculated the correct destination index, including wraparound.
+                // We can just tell the swiper to go there directly.
+                swiper.snapTo(destination.index, false, { source: 'navigation' });
             }
 
         } else {

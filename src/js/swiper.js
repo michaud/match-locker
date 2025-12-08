@@ -104,22 +104,16 @@ export function createSwiper(options) {
     };
 
     const checkWrapAround = () => {
-        const filmstripLength = itemSize * sourceItemCount;
-        // The `currentTranslate` includes `centerOffset`. For wrap logic, we must work with the logical position.
-        const logicalTranslate = currentTranslate - centerOffset;
-
-        // Define a safe zone around the original block. We check if the viewport has moved
-        // beyond one full block length away from the original block's boundaries.
-        const rightBoundary = -(CLONE_COUNT - 1) * filmstripLength;
-        const leftBoundary = -(CLONE_COUNT + 1) * filmstripLength;
-
-        if (logicalTranslate > rightBoundary) {
+        // This function ensures the swiper's position is always within a predictable range
+        // to create the infinite loop effect.
+        const filmstripBlockLength = itemSize * sourceItemCount;
+        const logicalStartPosition = -(filmstripBlockLength * CLONE_COUNT) + centerOffset;
+    
+        // If the current position has drifted too far from the central "original" block,
+        // silently jump it back to the equivalent position within that block.
+        if (Math.abs(currentTranslate - logicalStartPosition) > filmstripBlockLength) {
             filmstripElement.style.transition = 'none';
-            currentTranslate -= filmstripLength; // Silently shift left by one block length
-            filmstripElement.style.transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
-        } else if (logicalTranslate < leftBoundary) {
-            filmstripElement.style.transition = 'none';
-            currentTranslate += filmstripLength; // Silently shift right by one block length
+            currentTranslate = logicalStartPosition + ((currentTranslate - logicalStartPosition) % filmstripBlockLength);
             filmstripElement.style.transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
         }
     };
@@ -266,7 +260,10 @@ export function createSwiper(options) {
                 // Then emit the global event
                 const finalIndex = API.getCurrentIndex(targetTranslate);
                 const finalSlideId = slideIdMap[finalIndex];
-                emit('snapComplete', { index: finalIndex, slideId: finalSlideId, source: options.source || 'programmatic' });
+                emit('snapComplete', { index: finalIndex, slideId: finalSlideId, source: options.source || 'navigation' });
+
+                // After emitting, ensure the swiper is not in a position that will break the next wrap check.
+                checkWrapAround();
 
             } else {
                 // For an animated snap, we use the standard animation function.
@@ -278,7 +275,7 @@ export function createSwiper(options) {
                     const finalIndex = API.getCurrentIndex(targetTranslate);
                     const finalSlideId = slideIdMap[finalIndex];
 
-                    emit('snapComplete', { index: finalIndex, slideId: finalSlideId, source: options.source || 'programmatic' });
+                    emit('snapComplete', { index: finalIndex, slideId: finalSlideId, source: options.source || 'navigation' });
                 };
 
                 animateListTo(

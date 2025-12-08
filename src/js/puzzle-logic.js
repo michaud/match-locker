@@ -149,14 +149,14 @@ export const buildWorldMap = (layout, slideGroups) => {
             const guestNextIndex = (guestConnectionIndex + 1) % guestSlideCount;
 
             if (guestSlider.direction === 'vertical') {
-                // When on the host, 'up' goes to the previous slide on the guest, 'down' to the next.
-                hostNode.up = { sliderId: slot.guest_group_id, index: guestPrevIndex };
-                hostNode.down = { sliderId: slot.guest_group_id, index: guestNextIndex };
+                // Only assign guest navigation if the host doesn't have its own in that direction.
+                if (hostNode.up === null) hostNode.up = { sliderId: slot.guest_group_id, index: guestPrevIndex };
+                if (hostNode.down === null) hostNode.down = { sliderId: slot.guest_group_id, index: guestNextIndex };
 
             } else {
-                // When on the host, 'left' goes to the previous slide on the guest, 'right' to the next.
-                hostNode.left = { sliderId: slot.guest_group_id, index: guestPrevIndex };
-                hostNode.right = { sliderId: slot.guest_group_id, index: guestNextIndex };
+                // Only assign guest navigation if the host doesn't have its own in that direction.
+                if (hostNode.left === null) hostNode.left = { sliderId: slot.guest_group_id, index: guestPrevIndex };
+                if (hostNode.right === null) hostNode.right = { sliderId: slot.guest_group_id, index: guestNextIndex };
             }
 
             hostNode.guest = { sliderId: slot.guest_group_id, index: guestConnectionIndex };

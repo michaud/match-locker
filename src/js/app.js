@@ -166,30 +166,35 @@ const start = () => {
         if (!currentNode) return;
 
         const hostSwiper = game.swiperInstances.get(game.playerState.currentSliderId);
-        hostSwiper.snapTo(game.playerState.currentIndex, !animate);
+        hostSwiper.snapTo(game.playerState.currentIndex, !animate, { source: animate ? 'jump' : 'initialization' });
 
         const guestInfo = currentNode.guest;
         const guestSwiper = guestInfo ? game.swiperInstances.get(guestInfo.sliderId) : null;
-        if (guestSwiper && guestInfo) {
-            guestSwiper.snapTo(guestInfo.index, !animate);
+
+        if (guestSwiper && guestInfo)
+        {
+            guestSwiper.snapTo(guestInfo.index, !animate, { source: animate ? 'jump' : 'initialization' });
         }
 
         // If this was a jump, check if we left a puzzle slot and need to clean up the old swipers.
-        if (oldPlayerState) {
+        if (oldPlayerState)
+        {
             const oldKey = `${oldPlayerState.currentSliderId}-${oldPlayerState.currentIndex}`;
             const oldNode = game.worldMap.get(oldKey);
 
-            if (oldNode && oldNode.guest) {
+            if (oldNode && oldNode.guest)
+            {
                 const oldGuestSwiper = game.swiperInstances.get(oldNode.guest.sliderId);
                 const oldHostSwiper = game.swiperInstances.get(oldPlayerState.currentSliderId);
 
                 // If the old guest is not part of the new context, snap it back to its puzzle alignment.
                 if (oldGuestSwiper && oldGuestSwiper !== hostSwiper && oldGuestSwiper !== guestSwiper) {
-                    oldGuestSwiper.snapTo(oldNode.guest.index, !animate);
+
+                    oldGuestSwiper.snapTo(oldNode.guest.index, !animate, { source: animate ? 'jump' : 'initialization' });
                 }
                 // If the old host is not part of the new context, snap it back to its puzzle alignment.
                 if (oldHostSwiper && oldHostSwiper !== hostSwiper && oldHostSwiper !== guestSwiper) {
-                    oldHostSwiper.snapTo(oldPlayerState.currentIndex, !animate);
+                    oldHostSwiper.snapTo(oldPlayerState.currentIndex, !animate, { source: animate ? 'jump' : 'initialization' });
                 }
             }
         }
@@ -212,14 +217,10 @@ const start = () => {
             return;
         }
 
-        const guestInfo = currentNode.guest;
-        const otherNodeKey = guestInfo ? `${guestInfo.sliderId}-${guestInfo.index}` : (currentNode.isConnection && (currentNode.up || currentNode.left)) ? `${(currentNode.up || currentNode.left).sliderId}-${(currentNode.up || currentNode.left).index}` : null; // prettier-ignore
-        const otherNode = otherNodeKey ? game.worldMap.get(otherNodeKey) : null;
-
-        prevButton.disabled = !(currentNode.left || (otherNode && otherNode.left));
-        nextButton.disabled = !(currentNode.right || (otherNode && otherNode.right));
-        upButton.disabled = !(currentNode.up || (otherNode && otherNode.up));
-        downButton.disabled = !(currentNode.down || (otherNode && otherNode.down));
+        prevButton.disabled = !currentNode.left;
+        nextButton.disabled = !currentNode.right;
+        upButton.disabled = !currentNode.up;
+        downButton.disabled = !currentNode.down;
     };
 
     /**
@@ -370,11 +371,16 @@ const start = () => {
     }
 
     const onGameSwiperSnapComplete = (event) => {
-        const { source, id, index } = event;
+
+        const { source, slideId, index } = event;
+
+        // Ignore snaps that happen during the initial setup of the game.
+        if (source === 'initialization' || source === 'jump') return;
+
         if (source === 'navigation') {
             // A programmatic navigation (prev/next button) happened.
             // We need to update the central state to reflect the new position.
-            updateStateAndRender({ currentSliderId: id, currentIndex: index, isJump: true });
+            updateStateAndRender({ currentSliderId: slideId, currentIndex: index, isJump: true });
         } else if (source === 'drag') {
             // A user drag finished. The swiper is visually in the right place,
             // but we need to synchronize the match visuals based on the new slide alignment.
@@ -569,12 +575,6 @@ const start = () => {
             });
             const gameMenuContainer = startScreen.querySelector('.game-menu');
 
-            
-            const cleanInfoPanel = () => {
-                const allDescriptionPanels = gameMenuContainer.querySelectorAll('.game-description .description');
-                allDescriptionPanels.forEach(panel => panel.classList.remove('show'));
-            };
-
             const menuSwiper = createSwiper({
                 listSelector: '.game-menu ol',
                 direction: 'horizontal',
@@ -588,15 +588,6 @@ const start = () => {
             const onMenuTap = async (event) => { // This is the onTapCallback
                 // This callback is only executed by drag.js if no drag occurred (it was a tap).
                 const playButton = event.target.closest('.button--action.play');
-
-                const infoButton = event.target.closest('.button--action.info');
-
-                if (infoButton) {
-
-                    cleanInfoPanel();
-                    const gameDescriptionPanel = infoButton.closest('.game-description');
-                    gameDescriptionPanel.querySelector('.description').classList.toggle('show');
-                }
 
                 if (playButton) {
                     // Find the parent .game-button to get the data-game-file attribute.
@@ -633,7 +624,6 @@ const start = () => {
             menuDragHandler.attach();
 
             gameMenuContainer.addEventListener('pointerdown', () => {
-
                 gameMenuContainer.style.cursor = 'grabbing';
             });
 
