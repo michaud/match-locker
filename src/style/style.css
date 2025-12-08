@@ -437,17 +437,13 @@ input[type="checkbox"] {
 
     display: grid;
     min-height: 8rem;
-    gap: .75rem;
     padding: 0;
     margin-inline: .5rem;
     font-size: 1.125rem;
     font-weight: bold;
     color: rgb(210 200 188);
     border-radius: .5rem .5rem 1rem 1rem;
-    border-block-start: 0.125rem solid rgba(255, 255, 255, 0.1);
-    border-inline-start: 0.125rem solid rgba(255, 255, 255, 0.1);
-    border-block-end:1rem solid rgba(255, 255, 255, 0.1);
-    border-inline-end: 0.125rem solid rgba(255, 255, 255, 0.1);
+    border: 0.125rem solid rgba(255, 255, 255, 0.1);
     background-image: radial-gradient(circle farthest-corner at 40px 40px, #1a1e50, hsl(236 51% 14% / 1), #1a1e50);
     user-select: none;
 
@@ -494,7 +490,6 @@ input[type="checkbox"] {
         display: grid;
         position: absolute;
         width: 100%;
-        bottom: -.875rem;
         z-index: 2;
         grid-template-columns: 1fr 1fr;
         opacity: 1;
@@ -523,8 +518,10 @@ input[type="checkbox"] {
 
 .button--action.info {
 
-    background-color: green;
+    background-color: rgb(39 44 119);
     border-radius: 0 0 0 1rem;
+    font-weight: bold;
+    font-size: 1.062rem;
 }
 
 .button--action.play {
