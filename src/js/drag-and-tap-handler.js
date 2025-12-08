@@ -26,13 +26,13 @@ export function createDragAndTapHandler(callbacks) {
 
         if (!activePuzzle) return; // Can't make a match if not on a puzzle slot.
 
-        const currentKey = `${game.playerState.currentSliderId}-${game.playerState.currentIndex}`;
+        const currentKey = `${game.playerState.currentSwiperId}-${game.playerState.currentIndex}`;
         const currentNode = game.worldMap.get(currentKey);
 
         if (!currentNode) return;
 
-        const hostSwiper = game.swiperInstances.get(game.playerState.currentSliderId);
-        const guestSwiper = currentNode.guest ? game.swiperInstances.get(currentNode.guest.sliderId) : null;
+        const hostSwiper = game.swiperInstances.get(game.playerState.currentSwiperId);
+        const guestSwiper = currentNode.guest ? game.swiperInstances.get(currentNode.guest.swiperId) : null;
 
         if (!hostSwiper || !guestSwiper) return;
 
@@ -76,10 +76,10 @@ export function createDragAndTapHandler(callbacks) {
 
             if (!game.playerState) return { hostSwiper: null, guestSwiper: null };
 
-            const currentKey = `${game.playerState.currentSliderId}-${game.playerState.currentIndex}`;
+            const currentKey = `${game.playerState.currentSwiperId}-${game.playerState.currentIndex}`;
             const currentNode = game.worldMap.get(currentKey);
-            const hostSwiper = game.swiperInstances.get(game.playerState.currentSliderId);
-            const guestSwiper = currentNode?.guest ? game.swiperInstances.get(currentNode.guest.sliderId) : null;
+            const hostSwiper = game.swiperInstances.get(game.playerState.currentSwiperId);
+            const guestSwiper = currentNode?.guest ? game.swiperInstances.get(currentNode.guest.swiperId) : null;
 
             return { hostSwiper, guestSwiper };
         };

@@ -115,10 +115,10 @@ export const buildWorldMap = (layout, slideGroups) => {
             const nextIndex = (i + 1) % slideCount;
 
             map.set(key, {
-                up: slider.direction === 'vertical' ? { sliderId: slider.id, index: prevIndex } : null,
-                down: slider.direction === 'vertical' ? { sliderId: slider.id, index: nextIndex } : null,
-                left: slider.direction === 'horizontal' ? { sliderId: slider.id, index: prevIndex } : null,
-                right: slider.direction === 'horizontal' ? { sliderId: slider.id, index: nextIndex } : null,
+                up: slider.direction === 'vertical' ? { swiperId: slider.id, index: prevIndex } : null,
+                down: slider.direction === 'vertical' ? { swiperId: slider.id, index: nextIndex } : null,
+                left: slider.direction === 'horizontal' ? { swiperId: slider.id, index: prevIndex } : null,
+                right: slider.direction === 'horizontal' ? { swiperId: slider.id, index: nextIndex } : null,
                 guest: null,
                 isConnection: false
             });
@@ -150,16 +150,16 @@ export const buildWorldMap = (layout, slideGroups) => {
 
             if (guestSlider.direction === 'vertical') {
                 // Only assign guest navigation if the host doesn't have its own in that direction.
-                if (hostNode.up === null) hostNode.up = { sliderId: slot.guest_group_id, index: guestPrevIndex };
-                if (hostNode.down === null) hostNode.down = { sliderId: slot.guest_group_id, index: guestNextIndex };
+                if (hostNode.up === null) hostNode.up = { swiperId: slot.guest_group_id, index: guestPrevIndex };
+                if (hostNode.down === null) hostNode.down = { swiperId: slot.guest_group_id, index: guestNextIndex };
 
             } else {
                 // Only assign guest navigation if the host doesn't have its own in that direction.
-                if (hostNode.left === null) hostNode.left = { sliderId: slot.guest_group_id, index: guestPrevIndex };
-                if (hostNode.right === null) hostNode.right = { sliderId: slot.guest_group_id, index: guestNextIndex };
+                if (hostNode.left === null) hostNode.left = { swiperId: slot.guest_group_id, index: guestPrevIndex };
+                if (hostNode.right === null) hostNode.right = { swiperId: slot.guest_group_id, index: guestNextIndex };
             }
 
-            hostNode.guest = { sliderId: slot.guest_group_id, index: guestConnectionIndex };
+            hostNode.guest = { swiperId: slot.guest_group_id, index: guestConnectionIndex };
         }
 
         if (map.has(guestKey)) {
@@ -169,13 +169,13 @@ export const buildWorldMap = (layout, slideGroups) => {
 
             if (guestSlider.direction === 'vertical') {
 
-                guestNode.left = { sliderId: slot.host_group_id, index: slot.at_index };
-                guestNode.right = { sliderId: slot.host_group_id, index: slot.at_index };
+                guestNode.left = { swiperId: slot.host_group_id, index: slot.at_index };
+                guestNode.right = { swiperId: slot.host_group_id, index: slot.at_index };
 
             } else {
 
-                guestNode.up = { sliderId: slot.host_group_id, index: slot.at_index };
-                guestNode.down = { sliderId: slot.host_group_id, index: slot.at_index };
+                guestNode.up = { swiperId: slot.host_group_id, index: slot.at_index };
+                guestNode.down = { swiperId: slot.host_group_id, index: slot.at_index };
             }
         }
     });

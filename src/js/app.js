@@ -74,8 +74,8 @@ const start = () => {
     // This object will be replaced entirely when a new game is loaded.
     let activeGame = {
         playerState: null,
-        gameState: null,
         puzzleData: [],
+        gameState: null,
         layout: {},
         slideGroups: [],
         worldMap: new Map(),
@@ -119,7 +119,7 @@ const start = () => {
         if (!game.playerState) return null;
 
         const currentSlot = game.layout.puzzle_slots.find(slot =>
-            slot.host_group_id === game.playerState.currentSliderId &&
+            slot.host_group_id === game.playerState.currentSwiperId &&
             slot.at_index === game.playerState.currentIndex
         );
 
@@ -136,16 +136,16 @@ const start = () => {
 
     const updateSwiperVisibility = (game = activeGame) => {
 
-        if (!game.playerState || !game.playerState.currentSliderId) return;
+        if (!game.playerState || !game.playerState.currentSwiperId) return;
 
-        const currentKey = `${game.playerState.currentSliderId}-${game.playerState.currentIndex}`;
+        const currentKey = `${game.playerState.currentSwiperId}-${game.playerState.currentIndex}`;
         const currentNode = game.worldMap.get(currentKey);
 
         if (!currentNode) return;
 
-        const hostSwiper = game.swiperInstances.get(game.playerState.currentSliderId);
+        const hostSwiper = game.swiperInstances.get(game.playerState.currentSwiperId);
         const guestInfo = currentNode.guest;
-        const guestSwiper = guestInfo ? game.swiperInstances.get(guestInfo.sliderId) : null;
+        const guestSwiper = guestInfo ? game.swiperInstances.get(guestInfo.swiperId) : null;
 
         // Set visibility for ALL sliders.
         game.swiperInstances.forEach(swiper => {
@@ -156,20 +156,18 @@ const start = () => {
     };
 
     const snapSwipersToState = (animate = false, game = activeGame, oldPlayerState = null) => {
-
-        if (!game.playerState || !game.playerState.currentSliderId) return;
+        if (!game.playerState || !game.playerState.currentSwiperId) return;
 
         // Snap swipers that are part of the *new* active context
-        const currentKey = `${game.playerState.currentSliderId}-${game.playerState.currentIndex}`;
+        const currentKey = `${game.playerState.currentSwiperId}-${game.playerState.currentIndex}`;
         const currentNode = game.worldMap.get(currentKey);
 
         if (!currentNode) return;
-
-        const hostSwiper = game.swiperInstances.get(game.playerState.currentSliderId);
+        const hostSwiper = game.swiperInstances.get(game.playerState.currentSwiperId);
         hostSwiper.snapTo(game.playerState.currentIndex, !animate, { source: animate ? 'jump' : 'initialization' });
 
         const guestInfo = currentNode.guest;
-        const guestSwiper = guestInfo ? game.swiperInstances.get(guestInfo.sliderId) : null;
+        const guestSwiper = guestInfo ? game.swiperInstances.get(guestInfo.swiperId) : null;
 
         if (guestSwiper && guestInfo)
         {
@@ -179,13 +177,13 @@ const start = () => {
         // If this was a jump, check if we left a puzzle slot and need to clean up the old swipers.
         if (oldPlayerState)
         {
-            const oldKey = `${oldPlayerState.currentSliderId}-${oldPlayerState.currentIndex}`;
+            const oldKey = `${oldPlayerState.currentSwiperId}-${oldPlayerState.currentIndex}`;
             const oldNode = game.worldMap.get(oldKey);
 
             if (oldNode && oldNode.guest)
             {
-                const oldGuestSwiper = game.swiperInstances.get(oldNode.guest.sliderId);
-                const oldHostSwiper = game.swiperInstances.get(oldPlayerState.currentSliderId);
+                const oldGuestSwiper = game.swiperInstances.get(oldNode.guest.swiperId);
+                const oldHostSwiper = game.swiperInstances.get(oldPlayerState.currentSwiperId);
 
                 // If the old guest is not part of the new context, snap it back to its puzzle alignment.
                 if (oldGuestSwiper && oldGuestSwiper !== hostSwiper && oldGuestSwiper !== guestSwiper) {
@@ -202,9 +200,9 @@ const start = () => {
 
     const updateNavigationControls = (game = activeGame) => {
 
-        if (!game.playerState || !game.playerState.currentSliderId) return;
+        if (!game.playerState || !game.playerState.currentSwiperId) return;
 
-        const currentKey = `${game.playerState.currentSliderId}-${game.playerState.currentIndex}`;
+        const currentKey = `${game.playerState.currentSwiperId}-${game.playerState.currentIndex}`;
         const currentNode = game.worldMap.get(currentKey);
 
         if (!currentNode) {
@@ -227,14 +225,14 @@ const start = () => {
      * The single source of truth for updating player state and triggering the corresponding UI updates.
      * This replaces the monolithic `renderFromState` function.
      * @param {object} options
-     * @param {string} options.currentSliderId - The new slider ID.
+     * @param {string} options.currentSwiperId - The new swiper ID.
      * @param {number} options.currentIndex - The new index on the slider.
      * @param {boolean} [options.isJump=false] - True if this is a jump between sliders, requiring a full re-render.
      */
-    const updateStateAndRender = ({ currentSliderId, currentIndex, isJump = false }) => {
+    const updateStateAndRender = ({ currentSwiperId, currentIndex, isJump = false }) => {
         // Determine if the new location is a puzzle slot.
         const newLocationIsPuzzleSlot = !!activeGame.layout.puzzle_slots.find(slot =>
-            slot.host_group_id === currentSliderId &&
+            slot.host_group_id === currentSwiperId &&
             slot.at_index === currentIndex
         );
 
@@ -246,7 +244,7 @@ const start = () => {
         const oldPlayerState = shouldJump ? { ...activeGame.playerState } : null;
 
         // Update the pure state.
-        activeGame.playerState.currentSliderId = currentSliderId;
+        activeGame.playerState.currentSwiperId = currentSwiperId;
         activeGame.playerState.currentIndex = currentIndex;
 
         if (shouldJump) {
@@ -273,8 +271,8 @@ const start = () => {
         // 3. Reset the activeGame state object to its initial, empty state.
         activeGame = {
             playerState: null,
-            gameState: null,
             puzzleData: [],
+            gameState: null,
             layout: {},
             slideGroups: [],
             worldMap: new Map(),
@@ -372,7 +370,7 @@ const start = () => {
 
     const onGameSwiperSnapComplete = (event) => {
 
-        const { source, slideId, index } = event;
+        const { source, swiperId, index } = event;
 
         // Ignore snaps that happen during the initial setup of the game.
         if (source === 'initialization' || source === 'jump') return;
@@ -380,7 +378,7 @@ const start = () => {
         if (source === 'navigation') {
             // A programmatic navigation (prev/next button) happened.
             // We need to update the central state to reflect the new position.
-            updateStateAndRender({ currentSliderId: slideId, currentIndex: index, isJump: true });
+            updateStateAndRender({ currentSwiperId: swiperId, currentIndex: index, isJump: true });
         } else if (source === 'drag') {
             // A user drag finished. The swiper is visually in the right place,
             // but we need to synchronize the match visuals based on the new slide alignment.
@@ -469,7 +467,7 @@ const start = () => {
 
         const newGame = {
             playerState: {
-                currentSliderId: null,
+                currentSwiperId: null,
                 currentIndex: 0
             },
             puzzleData: newPuzzleData,
@@ -500,12 +498,12 @@ const start = () => {
         });
 
         // Identify and set the root horizontal slider as the active one.
-        const guestIds = new Set((newGame.layout.puzzle_slots || []).map(s => s.guest_slider_id));
+        const guestIds = new Set((newGame.layout.puzzle_slots || []).map(s => s.guest_group_id));
         const rootSliderConfig = newGame.layout.sliders.find(s => s.direction === 'horizontal' && !guestIds.has(s.id));
 
         if (rootSliderConfig && newGame.layout.sliders.length > 0) {
 
-            newGame.playerState.currentSliderId = rootSliderConfig.id;
+            newGame.playerState.currentSwiperId = rootSliderConfig.id;
             newGame.playerState.currentIndex = 0;
 
         } else {
@@ -514,8 +512,7 @@ const start = () => {
             // Fallback to the first available horizontal slider if no root is found
             const firstHorizontal = newGame.layout.sliders.find(s => s.direction === 'horizontal');
             if (firstHorizontal) {
-
-                newGame.playerState.currentSliderId = firstHorizontal.id;
+                newGame.playerState.currentSwiperId = firstHorizontal.id;
                 newGame.playerState.currentIndex = 0;
 
             } else {
@@ -678,11 +675,11 @@ const start = () => {
                 navigateTo(gameScreen);
             }
             // Update player context to the clicked slot.
-            activeGame.playerState.currentSliderId = slot.host_group_id;
+            activeGame.playerState.currentSwiperId = slot.host_group_id;
             activeGame.playerState.currentIndex = slot.at_index;
 
             // Re-render the game from the new state. This will handle updating swiper visibility and position.
-            updateStateAndRender({ currentSliderId: slot.host_group_id, currentIndex: slot.at_index, isJump: true });
+            updateStateAndRender({ currentSwiperId: slot.host_group_id, currentIndex: slot.at_index, isJump: true });
         };
 
         const visualizerSvg = createLayoutVisualizer(

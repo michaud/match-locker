@@ -88,17 +88,17 @@ export function createMatchVisualizer(callbacks) {
 
         if (!activePuzzle) return;
 
-        const currentKey = `${game.playerState.currentSliderId}-${game.playerState.currentIndex}`;
+        const currentKey = `${game.playerState.currentSwiperId}-${game.playerState.currentIndex}`;
         const currentNode = game.worldMap.get(currentKey);
 
         if (!currentNode || !currentNode.guest) return;
 
-        const hostSwiper = game.swiperInstances.get(game.playerState.currentSliderId);
-        const guestSwiper = game.swiperInstances.get(currentNode.guest.sliderId);
+        const hostSwiper = game.swiperInstances.get(game.playerState.currentSwiperId);
+        const guestSwiper = game.swiperInstances.get(currentNode.guest.swiperId);
         const puzzleMatches = game.gameState.playerMatchesByPuzzle.get(activePuzzle.id);
 
         if (!puzzleMatches || !hostSwiper || !guestSwiper) return;
-
+        
         const currentHostSlideId = hostSwiper.getCurrentSlideId();
         const currentGuestSlideId = guestSwiper.getCurrentSlideId();
 

@@ -153,7 +153,7 @@ export function createSwiper(options) {
         /**
          * The unique identifier for this swiper instance.
          */
-        id: id,
+        swiperId: id,
 
         /**
          * Initializes the drag sequence.
@@ -217,12 +217,11 @@ export function createSwiper(options) {
 
             const animationCompletionHandler = () => {
 
-                const finalSlideId = slideIdMap[finalIndex];
-
                 emit('snapComplete', {
                     index: finalIndex,
-                    slideId: finalSlideId,
-                    source: 'drag'
+                    swiperId: API.swiperId,
+                    actualSlideId: slideIdMap[finalIndex],
+                    source: 'drag',
                 });
 
                 if (onComplete) onComplete();
@@ -259,8 +258,11 @@ export function createSwiper(options) {
                 }
                 // Then emit the global event
                 const finalIndex = API.getCurrentIndex(targetTranslate);
-                const finalSlideId = slideIdMap[finalIndex];
-                emit('snapComplete', { index: finalIndex, slideId: finalSlideId, source: options.source || 'navigation' });
+                emit('snapComplete', {
+                    index: finalIndex,
+                    swiperId: API.swiperId,
+                    actualSlideId: slideIdMap[finalIndex],
+                    source: options.source || 'navigation' });
 
                 // After emitting, ensure the swiper is not in a position that will break the next wrap check.
                 checkWrapAround();
@@ -273,9 +275,11 @@ export function createSwiper(options) {
                     if (options.onComplete) options.onComplete();
 
                     const finalIndex = API.getCurrentIndex(targetTranslate);
-                    const finalSlideId = slideIdMap[finalIndex];
-
-                    emit('snapComplete', { index: finalIndex, slideId: finalSlideId, source: options.source || 'navigation' });
+                    emit('snapComplete', {
+                        index: finalIndex,
+                        swiperId: API.swiperId,
+                        actualSlideId: slideIdMap[finalIndex],
+                        source: options.source || 'navigation' });
                 };
 
                 animateListTo(

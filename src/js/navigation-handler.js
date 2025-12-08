@@ -9,9 +9,9 @@ export function createNavigationHandler(callbacks) {
 
         const game = getGame();
 
-        if (!game || !game.playerState || !game.playerState.currentSliderId) return;
+        if (!game || !game.playerState || !game.playerState.currentSwiperId) return;
 
-        const currentKey = `${game.playerState.currentSliderId}-${game.playerState.currentIndex}`;
+        const currentKey = `${game.playerState.currentSwiperId}-${game.playerState.currentIndex}`;
         const currentNode = game.worldMap.get(currentKey);
 
         if (!currentNode) return;
@@ -22,9 +22,9 @@ export function createNavigationHandler(callbacks) {
 
         // If the destination is on the same slider, we can use the swiper's internal navigation.
         // The swiper will animate and then emit a `snapComplete` event, which is handled in app.js.
-        if (destination.sliderId === game.playerState.currentSliderId) {
+        if (destination.swiperId === game.playerState.currentSwiperId) {
 
-            const swiper = game.swiperInstances.get(destination.sliderId);
+            const swiper = game.swiperInstances.get(destination.swiperId);
 
             if (swiper) {
                 // The worldMap has already calculated the correct destination index, including wraparound.
@@ -34,7 +34,7 @@ export function createNavigationHandler(callbacks) {
 
         } else {
             // If it's a jump to a different slider, we must update the application state directly.
-            onStateUpdate({ currentSliderId: destination.sliderId, currentIndex: destination.index });
+            onStateUpdate({ currentSwiperId: destination.swiperId, currentIndex: destination.index });
         }
     };
 
