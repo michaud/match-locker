@@ -47,6 +47,7 @@ export function createLayoutVisualizer(layout, slideGroups, options = { showName
 
     const slideElements = document.createDocumentFragment();
     const highlightElements = document.createDocumentFragment();
+    const currentPosHighlightElements = document.createDocumentFragment();
     const bounds = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
     const visited = new Set();
 
@@ -95,6 +96,17 @@ export function createLayoutVisualizer(layout, slideGroups, options = { showName
                 text.textContent = slide.name.substring(0, 10);
                 g.appendChild(text);
             }
+
+            // If this slide is the player's current position, add a highlight for it.
+            if (playerState && groupId === playerState.currentSwiperId && index === playerState.currentIndex) {
+                const currentPosRect = document.createElementNS(SVG_NS, 'rect');
+                currentPosRect.setAttribute('x', x);
+                currentPosRect.setAttribute('y', y);
+                currentPosRect.setAttribute('width', slideWidth);
+                currentPosRect.setAttribute('height', slideHeight);
+                currentPosRect.setAttribute('class', 'current-position-highlight');
+                currentPosHighlightElements.appendChild(currentPosRect);
+            }
             slideElements.appendChild(g);
         });
 
@@ -114,7 +126,7 @@ export function createLayoutVisualizer(layout, slideGroups, options = { showName
             highlightRect.setAttribute('class', 'highlight-slot');
 
             // Check if this is the currently active puzzle slot
-            if (playerState && slot.host_group_id === playerState.currentSliderId && slot.at_index === playerState.currentIndex) {
+            if (playerState && slot.host_group_id === playerState.currentSwiperId && slot.at_index === playerState.currentIndex) {
                 highlightRect.classList.add('is-active-puzzle-slot');
             }
 
@@ -160,6 +172,7 @@ export function createLayoutVisualizer(layout, slideGroups, options = { showName
     const finalGroup = document.createElementNS(SVG_NS, 'g');
     finalGroup.setAttribute('transform', `translate(${offsetX}, ${offsetY})`);
     finalGroup.appendChild(slideElements);
+    finalGroup.appendChild(currentPosHighlightElements); // Add current position highlight first
     finalGroup.appendChild(highlightElements);
 
     const svg = document.createElementNS(SVG_NS, 'svg');
