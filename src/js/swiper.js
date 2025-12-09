@@ -197,7 +197,10 @@ export function createSwiper(options) {
             const transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
             filmstripElement.style.transform = transform;
 
-            emit('drag', { currentTranslate: currentTranslate });
+            emit('drag', {
+                currentTranslate: currentTranslate,
+                visualIndex: API.getVisualIndex()
+            });
         },
 
         /**
