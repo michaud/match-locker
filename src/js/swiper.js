@@ -197,7 +197,7 @@ export function createSwiper(options) {
             const transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
             filmstripElement.style.transform = transform;
 
-            emit('drag');
+            emit('drag', { currentTranslate: currentTranslate });
         },
 
         /**
@@ -351,6 +351,14 @@ export function createSwiper(options) {
 
             filmstripElement.style.transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
             return true; // Indicate success
+        },
+
+        /**
+         * Gets the initial translate value set during initialization.
+         * @returns {number} The initial translate value.
+         */
+        getInitialTranslate() {
+            return -(itemSize * sourceItemCount * CLONE_COUNT) + centerOffset;
         },
 
         /**
