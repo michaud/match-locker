@@ -249,8 +249,8 @@ const start = () => {
 
         if (shouldJump) {
             // A jump requires a full re-render of swiper positions and visibility.
-            updateSwiperVisibility(); // Update visibility first
-            snapSwipersToState(true, activeGame, oldPlayerState); // Then snap, passing old state for cleanup
+            snapSwipersToState(true, activeGame, oldPlayerState); // Snap swipers to their new positions first.
+            updateSwiperVisibility(); // Then, update visibility to ensure animations can play.
             matchVisualizer.synchronizeVisuals(); // Also update matches, as the context may have changed.
         }
 

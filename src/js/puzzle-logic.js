@@ -167,15 +167,15 @@ export const buildWorldMap = (layout, slideGroups) => {
             const guestNode = map.get(guestKey);
             guestNode.isConnection = true;
 
-            if (guestSlider.direction === 'vertical') {
-
-                guestNode.left = { swiperId: slot.host_group_id, index: slot.at_index };
-                guestNode.right = { swiperId: slot.host_group_id, index: slot.at_index };
-
-            } else {
+            if (hostSlider.direction === 'horizontal') { // If host is horizontal, guest is vertical
 
                 guestNode.up = { swiperId: slot.host_group_id, index: slot.at_index };
                 guestNode.down = { swiperId: slot.host_group_id, index: slot.at_index };
+
+            } else {
+
+                guestNode.left = { swiperId: slot.host_group_id, index: slot.at_index };
+                guestNode.right = { swiperId: slot.host_group_id, index: slot.at_index };
             }
         }
     });

@@ -89,15 +89,9 @@ export function createSwiper(options) {
 
             currentTranslate = targetTranslate;
             // Call the completion handler first, so any listeners (like state updates)
+            checkWrapAround(); // Ensure currentTranslate is normalized after animation.
             // fire based on the visually correct final position.
-            if (onComplete) {
-
-                onComplete();
-            }
-            // Only perform the wrap check if this animation wasn't already a wrap correction.
-            if (!isWrapCorrection) {
-                checkWrapAround();
-            }
+            if (onComplete) onComplete();
         }
 
         filmstripElement.addEventListener('transitionend', handleTransitionEnd, { once: true });
@@ -277,7 +271,8 @@ export function createSwiper(options) {
 
                     if (options.onComplete) options.onComplete();
 
-                    const finalIndex = API.getCurrentIndex(targetTranslate);
+                    // Use the now-normalized `currentTranslate` to get the definitive final index.
+                    const finalIndex = API.getCurrentIndex(currentTranslate);
                     emit('snapComplete', {
                         index: finalIndex,
                         swiperId: API.swiperId,
