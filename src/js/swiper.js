@@ -224,10 +224,21 @@ export function createSwiper(options) {
          * @param {string} [options.source='programmatic'] - The source of the snap action.
          */
         snapTo(index, immediate = false, options = {}) {
-            // This is the authoritative function to move the slider.
-            // It must account for the infinite scroll setup.
             const filmstripBlockLength = itemSize * sourceItemCount;
-            const basePosition = -(filmstripBlockLength * CLONE_COUNT); // Start of the original block
+            if (sourceItemCount === 0 || itemSize === 0) {
+                // If the swiper is not properly initialized, we can't snap.
+                if (options.onComplete) options.onComplete();
+                emit('snapComplete', {
+                    index: 0,
+                    swiperId: API.swiperId,
+                    actualSlideId: undefined,
+                    source: options.source || 'navigation'
+                });
+                return;
+            }
+
+            // Calculate the canonical position of the target slide within the central "original" block.
+            const basePosition = -(filmstripBlockLength * CLONE_COUNT);
             const targetTranslate = basePosition - (index * itemSize) + centerOffset;
 
             if (immediate) {
@@ -253,8 +264,20 @@ export function createSwiper(options) {
                 checkWrapAround();
 
             } else {
-                // For an animated snap, we use the standard animation function.
-                // The 'transitionend' handler in animateListTo will handle the wrap-around check.
+                // For an animated snap, find the closest visual representation of the target slide
+                // (including clones) to ensure the shortest possible animation path.
+                const potentialTargets = [
+                    targetTranslate - filmstripBlockLength,
+                    targetTranslate,
+                    targetTranslate + filmstripBlockLength,
+                ];
+
+                // Find the target that is closest to the current position.
+                const closestTarget = potentialTargets.reduce((prev, curr) => {
+                    return (Math.abs(curr - currentTranslate) < Math.abs(prev - currentTranslate) ? curr : prev);
+                });
+
+                // The 'transitionend' handler in animateListTo will handle the final state update and wrap-around check.
                 const animationCompletionHandler = () => {
 
                     if (options.onComplete) options.onComplete();
@@ -269,7 +292,7 @@ export function createSwiper(options) {
                 };
 
                 animateListTo(
-                    targetTranslate,
+                    closestTarget,
                     animationCompletionHandler
                 );
             }

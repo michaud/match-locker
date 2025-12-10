@@ -145,7 +145,12 @@ const start = () => {
 
         if (activePuzzle) {
             // If we are at a puzzle, find the definitive host and guest from the puzzle slot data.
-            const currentSlot = game.layout.puzzle_slots.find(slot => slot.activates_puzzle_id === activePuzzle.id);
+            const { currentSwiperId, currentIndex } = game.playerState;
+            const currentSlot = game.layout.puzzle_slots.find(slot => 
+                (slot.host_group_id === currentSwiperId && slot.at_index === currentIndex) ||
+                (slot.guest_group_id === currentSwiperId && (slot.guest_align_index || 0) === currentIndex)
+            );
+
             if (currentSlot) {
                 if (game.swiperInstances.has(currentSlot.host_group_id)) {
                     visibleSwipers.add(game.swiperInstances.get(currentSlot.host_group_id));

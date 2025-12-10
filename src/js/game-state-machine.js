@@ -47,7 +47,6 @@ export function createGameStateMachine(callbacks) {
                 console.log("GameStateMachine: Entering IDLE_ON_PATH");
                 // Ensure all visuals and controls are correctly set for the current state.
                 matchVisualizer.synchronizeVisuals();
-                updateSwiperVisibility();
                 updateNavigationControls();
                 updatePuzzleStatusIndicator();
                 // Enable user interaction.
@@ -82,7 +81,6 @@ export function createGameStateMachine(callbacks) {
 
                 // Ensure all visuals and controls are correctly set for the current state.
                 matchVisualizer.synchronizeVisuals();
-                updateSwiperVisibility();
                 updateNavigationControls();
                 updatePuzzleStatusIndicator();
                 // Enable user interaction.
@@ -137,6 +135,10 @@ export function createGameStateMachine(callbacks) {
                 }
                 game.playerState.currentIndex = destination.index; // Always update the index
 
+                // Update visibility as soon as the state changes. The CSS transition
+                // will handle the animation, running it concurrently with the swiper's snap animation.
+                updateSwiperVisibility();
+
                 const handleSnapComplete = () => {
                     // The animation is done. Now, determine the new stable state.
                     const { currentSwiperId, currentIndex } = game.playerState;
@@ -165,7 +167,7 @@ export function createGameStateMachine(callbacks) {
                     if (destination.source === 'drag') {
                         targetSwiper.snapTo(destination.index, false, { source: 'drag' });
                     } else {
-                        snapSwipersToState(true, oldPlayerState); // Animate to the new state
+                        snapSwipersToState(true); // Animate to the new state
                     }
                 } else {
                     // If the target swiper doesn't exist, we can't animate.
@@ -264,6 +266,7 @@ export function createGameStateMachine(callbacks) {
         );
 
         snapSwipersToState(false); // Perform the initial, non-animated snap.
+        updateSwiperVisibility(); // Set initial visibility.
         transitionTo(isAtPuzzle ? 'IDLE_AT_PUZZLE' : 'IDLE_ON_PATH');
     }
 
