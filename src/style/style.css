@@ -468,7 +468,7 @@ input[type="checkbox"] {
         left: 50%;
         transform-origin: center;
         transform: translateX(-50%);
-        top: -12px;
+        top: -1px;
         z-index: 1;
         /* Hide by default, but allow transition */
         opacity: 0;

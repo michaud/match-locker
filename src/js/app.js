@@ -807,7 +807,6 @@ const start = () => {
     });
 
     // Set initial state
-    startScreen.style.display = screenDisplayMap.get(startScreen);
     leadInScreen.style.display = 'none';
     startScreen.style.display = screenDisplayMap.get(startScreen);
     gameScreen.style.display = 'none';
@@ -856,7 +855,14 @@ const start = () => {
                 li.appendChild(button);
                 gameMenu.appendChild(li);
             });
+
             const gameMenuContainer = startScreen.querySelector('.game-menu');
+
+            const cleanInfoPanel = () => {
+
+                const allDescriptionPanels = gameMenuContainer.querySelectorAll('.game-description .description');
+                allDescriptionPanels.forEach(panel => panel.classList.remove('show'));
+            };
 
             const menuSwiper = createSwiper({
                 listSelector: '.game-menu ol',
@@ -868,9 +874,22 @@ const start = () => {
                 throwMultiplier: 0.85,
             });
 
-            const onMenuTap = async (event) => { // This is the onTapCallback
-                // This callback is only executed by drag.js if no drag occurred (it was a tap).
+            const onMenuTap = async (event) => {
+
                 const playButton = event.target.closest('.button--action.play');
+                const infoButton = event.target.closest('.button--action.info');
+
+                if (infoButton) {
+
+                    const gameDescriptionPanel = infoButton.closest('.game-description');
+                    const descriptionElement = gameDescriptionPanel.querySelector('.description');
+                    const wasVisible = descriptionElement.classList.contains('show');
+
+                    cleanInfoPanel();
+                    if (!wasVisible) {
+                        descriptionElement.classList.add('show');
+                    }
+                }
 
                 if (playButton) {
                     // Find the parent .game-button to get the data-game-file attribute.
@@ -890,11 +909,13 @@ const start = () => {
                 // This function is called by drag.js when a drag gesture is confirmed.
                 // We use it to set up a one-time listener for when the eventual snap completes.
                 const handleSnap = () => {
+
                     gameMenuContainer.style.cursor = 'grab';
                     gameMenuContainer.classList.remove('is-dragging');
                     // Clean up the listener to prevent it from firing again.
                     dragSwiper.off('snapComplete', handleSnap);
                 };
+
                 dragSwiper.on('snapComplete', handleSnap);
             };
 
@@ -904,9 +925,11 @@ const start = () => {
                 onMenuTap,
                 onMenuDragStart
             );
+
             menuDragHandler.attach();
 
             gameMenuContainer.addEventListener('pointerdown', () => {
+
                 gameMenuContainer.style.cursor = 'grabbing';
             });
 
