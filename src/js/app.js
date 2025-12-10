@@ -809,6 +809,7 @@ const start = () => {
     // Set initial state
     startScreen.style.display = screenDisplayMap.get(startScreen);
     leadInScreen.style.display = 'none';
+    startScreen.style.display = screenDisplayMap.get(startScreen);
     gameScreen.style.display = 'none';
     settingsScreen.style.display = 'none';
     infoScreen.style.display = 'none';
