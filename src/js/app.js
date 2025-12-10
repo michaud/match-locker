@@ -1,5 +1,6 @@
 // Gemini: Don't remove, just hide lead-in for now
 //import { initLeadInScreen } from './leadin-screen.js';
+import { createGameStateMachine } from './game-state-machine.js';
 import { createSwiper } from './swiper.js';
 import { processGameData, buildWorldMap, isPuzzleSolved } from './puzzle-logic.js';
 import { createLayoutVisualizer } from './visualiser.js';
@@ -19,8 +20,7 @@ const start = () => {
     const GAME_MENU_CLONE_COUNT = 10;
 
     let menuDragHandler = null;
-    let gameDragAndTapHandler = null;
-    let navigationHandler = null;
+    let gameStateMachine = null;
 
     const DisplayStyle = Object.freeze({
         BLOCK: 'block',
@@ -222,47 +222,15 @@ const start = () => {
     };
 
     /**
-     * The single source of truth for updating player state and triggering the corresponding UI updates.
-     * This replaces the monolithic `renderFromState` function.
-     * @param {object} options
-     * @param {string} options.currentSwiperId - The new swiper ID.
-     * @param {number} options.currentIndex - The new index on the slider.
-     * @param {boolean} [options.isJump=false] - True if this is a jump between sliders, requiring a full re-render.
-     */
-    const updateStateAndRender = ({ currentSwiperId, currentIndex, isJump = false }) => {
-        // Determine if the new location is a puzzle slot.
-        const newLocationIsPuzzleSlot = !!activeGame.layout.puzzle_slots.find(slot =>
-            slot.host_group_id === currentSwiperId &&
-            slot.at_index === currentIndex
-        );
-
-        // A navigation event that lands on a puzzle slot should be treated as a jump
-        // to ensure visibility and state are fully re-evaluated.
-        const shouldJump = isJump || newLocationIsPuzzleSlot;
-
-        // Store the old state before updating, but only if it's a jump.
-        const oldPlayerState = shouldJump ? { ...activeGame.playerState } : null;
-
-        // Update the pure state.
-        activeGame.playerState.currentSwiperId = currentSwiperId;
-        activeGame.playerState.currentIndex = currentIndex;
-
-        if (shouldJump) {
-            // A jump requires a full re-render of swiper positions and visibility.
-            snapSwipersToState(true, activeGame, oldPlayerState); // Snap swipers to their new positions first.
-            updateSwiperVisibility(); // Then, update visibility to ensure animations can play.
-            matchVisualizer.synchronizeVisuals(); // Also update matches, as the context may have changed.
-        }
-
-        // These are needed for both jumps and simple swipes/navs.
-        updateNavigationControls();
-        updatePuzzleStatusIndicator();
-    };
-
-    /**
      * Removes DOM elements and clears state from any previously running game.
      */
     const teardownCurrentGame = () => {
+
+        // 1. Destroy the state machine to detach its listeners.
+        if (gameStateMachine) {
+            gameStateMachine.destroy();
+            gameStateMachine = null;
+        }
     
         // 2. Remove all swiper-related DOM elements from the game screen.
         const swiperContainers = gameScreen.querySelectorAll('.swiper');
@@ -285,7 +253,7 @@ const start = () => {
      * @param {object} newGame - The new game state object.
      * @returns {Map} A map of the created swiper instances.
      */
-    function createSwipersFromLayout(newGame, onSnapComplete) {
+    function createSwipersFromLayout(newGame) {
         return new Promise((resolve, reject) => {
             const sliderConfigs = newGame.layout.sliders;
             if (!sliderConfigs || sliderConfigs.length === 0) {
@@ -354,7 +322,6 @@ const start = () => {
                         console.error(`Failed to create swiper for #${listId}.`);
                         failedSwipers++;
                     } else {
-                        swiper.on('snapComplete', onSnapComplete);
                         newGame.swiperInstances.set(sliderConfig.id, swiper);
                     }
     
@@ -366,25 +333,6 @@ const start = () => {
                 });
             });
         });
-    }
-
-    const onGameSwiperSnapComplete = (event) => {
-
-        const { source, swiperId, index } = event;
-
-        // Ignore snaps that happen during the initial setup of the game.
-        if (source === 'initialization' || source === 'jump') return;
-
-        if (source === 'navigation') {
-            // A programmatic navigation (prev/next button) happened.
-            // We need to update the central state to reflect the new position.
-            updateStateAndRender({ currentSwiperId: swiperId, currentIndex: index, isJump: true });
-        } else if (source === 'drag') {
-            // A user drag finished. The swiper is visually in the right place,
-            // but we need to synchronize the match visuals based on the new slide alignment.
-            // The central state doesn't change here, as a swipe doesn't change the "active" puzzle slot.
-            matchVisualizer.synchronizeVisuals();
-        }
     }
 
     const updatePuzzleStatusIndicator = (game = activeGame) => {
@@ -483,11 +431,44 @@ const start = () => {
 
         // Create swipers and add them to the new game state. This function also modifies the DOM.
         try {
-            await createSwipersFromLayout(newGame, onGameSwiperSnapComplete);
+            await createSwipersFromLayout(newGame);
         } catch (e) {
             console.error("Game initialization failed:", e.message);
             return null; // Indicate that game initialization failed
         }
+
+        // Create interaction handlers here, AFTER the game state is processed.
+        const navigationHandler = createNavigationHandler({
+            getGame: () => newGame,
+            domElements: { prevButton, nextButton, upButton, downButton },
+        });
+
+        const gameDragAndTapHandler = createDragAndTapHandler({
+            getGame: () => newGame,
+            matchVisualizer: matchVisualizer,
+            domElements: { gameScreen },
+            // The onTap callback is now provided by the state machine's config
+            // to ensure proper decoupling.
+            onTap: () => { if (gameStateMachine) gameStateMachine.handleTap(); }
+        });
+
+        // Create the game state machine, passing in all necessary callbacks and instances.
+        // Note: We pass a function to get the game state (`() => newGame`) so the machine
+        // always has access to the correct, current game object.
+        gameStateMachine = createGameStateMachine({
+            getGame: () => newGame,
+            updateSwiperVisibility: () => updateSwiperVisibility(newGame),
+            snapSwipersToState: (animate, oldState) => snapSwipersToState(animate, newGame, oldState),
+            updateNavigationControls: () => updateNavigationControls(newGame),
+            updatePuzzleStatusIndicator: () => updatePuzzleStatusIndicator(newGame),
+            getSettings: () => settingsState,
+            checkPuzzleSolved: () => checkActivePuzzleSolved(newGame),
+            checkGameWin: () => checkGameWinCondition(newGame),
+            matchVisualizer: matchVisualizer,
+            domElements: { prevButton, nextButton, upButton, downButton, gameScreen },
+            interactionHandlers: { gameDragAndTapHandler, navigationHandler }
+        });
+
 
         // Stop any pointer events that start on the nav from bubbling to the gameScreen
         puzzleNav.addEventListener('pointerdown', (event) => {
@@ -521,117 +502,11 @@ const start = () => {
             }
         }
 
-        // Perform the initial render using the targeted functions.
-        // This replaces the final call to the old renderFromState.
-        updateSwiperVisibility(newGame);
-        snapSwipersToState(false, newGame);
-        updateNavigationControls(newGame);
-        updatePuzzleStatusIndicator(newGame);
+        // Start the state machine, which will transition to the correct initial state.
+        gameStateMachine.start();
 
         // Return the fully constructed state object for the new game.
         return newGame;
-    }
-
-    async function initializeStartScreen() {
-
-        try {
-
-            const response = await fetch('games/games.json');
-
-            if (!response.ok) {
-
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const games = await response.json();
-
-            gameMenu.innerHTML = ''; // Clear static content
-
-            games.forEach(game => {
-
-                const li = document.createElement('li');
-                const button = document.createElement('div');
-                button.className = 'game-button';
-                button.dataset.gameFile = game.file;
-
-                button.innerHTML = `
-                    <div class="title">${game.title}</div>
-                    <div class="game-description">
-                        <div class="action-buttons">
-                            <button class="button--action info">info</button>
-                            <button class="button--action play">
-                                <svg width="35" version="1.1" viewBox="0 0 23.918 12.641" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="m2.7079 10.765q-0.48261 0-0.50942-0.63006 0-0.63007 0.50942-0.63007h1.354q0.49601 0 0.69709-0.28151 0.21449-0.28152 0.21449-0.60325v-3.7804q0-0.33514-0.21449-0.61666-0.20108-0.29492-0.71049-0.26811h-2.5739v8.0568q0 0.63006-0.73731 0.63006t-0.73731-0.64346v-8.5126q0-0.4692 0.24131-0.63006 0.2413-0.16087 0.58984-0.16087h3.472q0.34855 0 0.69709 0.12065 0.36195 0.12065 0.73731 0.33514 0.32174 0.2279 0.50941 0.64347 0.20109 0.40217 0.20109 0.9518v3.968q0 1.0993-0.7105 1.5685-0.75071 0.4826-1.4344 0.4826zm6.5155-0.52282q0 0.63007-0.73731 0.63007-0.75071 0-0.75071-0.63007v-9.6118q0-0.63007 0.75071-0.63007 0.73731 0 0.73731 0.63007zm3.4456 0.52282q-0.41558 0-0.79093-0.10724-0.37536-0.12065-0.72391-0.33514v0.0134q-0.65687-0.41557-0.65687-1.5282v-0.65687q0-0.54963 0.18768-0.9518 0.20108-0.41557 0.54963-0.65687h-0.01341q0.33514-0.2279 0.7105-0.33514 0.37536-0.12065 0.7239-0.12065h2.9626v-1.2467q0-0.33514-0.21449-0.60326-0.20108-0.28151-0.69709-0.28151h-1.5685q-0.50941 0-0.71049 0.2547-0.18768 0.2413-0.18768 0.57644v0.10725q0 0.69709-0.75072 0.69709-0.75071 0-0.75071-0.69709v-0.12065q0-0.54963 0.18768-0.92499 0.20108-0.37536 0.53622-0.63006h-0.0134q0.34854-0.2279 0.7239-0.37536 0.38876-0.14746 0.73731-0.14746h2.0376q0.33514 0 0.7105 0.14746 0.38876 0.14746 0.7239 0.37536h-0.01341q0.34855 0.2547 0.53623 0.67028 0.18768 0.40217 0.18768 0.93839v5.3756q0 0.64346-0.73731 0.64346-0.14746 0-0.28152-0.0134-0.12065-0.01341-0.2279-0.06703-0.09383-0.06703-0.16086-0.17427-0.05363-0.12065-0.05363-0.30833l-0.0134-2.9358h-2.7079q-0.29493 0-0.45579 0.06703-0.16087 0.06703-0.25471 0.21449-0.10724 0.2279-0.16087 0.36195-0.04021 0.12065-0.04021 0.28152v0.52282q0 0.34854 0.20108 0.53622 0.21449 0.17427 0.7239 0.17427h1.5014q0.49601 0 0.49601 0.63007 0 0.26811-0.12065 0.45579-0.12065 0.17427-0.37536 0.17427zm6.1535 1.8768q-0.4692 0-0.49601-0.63006 0-0.63006 0.49601-0.63006h0.58985q0.46919 0 0.61665-0.28152l0.18768-0.49601 0.06703-0.21449-2.6141-6.8503v0.01341q-0.10725-0.32174 0.04021-0.54963 0.16087-0.2279 0.48261-0.33514 0.2413-0.06703 0.38876-0.06703 0.38876 0 0.4826 0.45579l1.059 2.6409 0.89818 2.1985 1.4344-4.8126q0.12065-0.4826 0.56303-0.4826 0.10725 0 0.34855 0.06703 0.32173 0.09384 0.45579 0.30833 0.14746 0.21449 0.06703 0.50941-0.60326 2.0511-1.2333 4.1289-0.61666 2.0779-1.2199 4.1155-0.06703 0.14747-0.21449 0.29493-0.13405 0.16086-0.36195 0.29492-0.22789 0.14746-0.56303 0.2279-0.33514 0.09383-0.77753 0.09383z" style="fill:#fff"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="description">
-                            <p>${game.description}</p>
-                        </div>
-                    </div>
-                `;
-
-                li.appendChild(button);
-                gameMenu.appendChild(li);
-            });
-            const gameMenuContainer = startScreen.querySelector('.game-menu');
-
-            const menuSwiper = createSwiper({
-                listSelector: '.game-menu ol',
-                direction: 'horizontal',
-                id: 'game-menu-swiper',
-                slideWidth: GAME_MENU_SLIDE_WIDTH,
-                slideHeight: GAME_MENU_SLIDE_HEIGHT,
-                cloneCount: GAME_MENU_CLONE_COUNT,
-                throwMultiplier: 0.85,
-            });
-
-            const onMenuTap = async (event) => { // This is the onTapCallback
-                // This callback is only executed by drag.js if no drag occurred (it was a tap).
-                const playButton = event.target.closest('.button--action.play');
-
-                if (playButton) {
-                    // Find the parent .game-button to get the data-game-file attribute.
-                    const gameButton = playButton.closest('.game-button');
-                    if (gameButton && gameButton.dataset.gameFile && !playButton.disabled) {
-                        const gameFile = gameButton.dataset.gameFile;
-                        playButton.disabled = true;
-                        await loadGame(gameFile);
-                        screenStateMachine.transitionTo('game');
-                        // Re-enable after a short delay to prevent double-clicks during screen transition
-                        setTimeout(() => { playButton.disabled = false; }, 500);
-                    }
-                }
-            };
-
-            const onMenuDragStart = (dragSwiper) => {
-                // This function is called by drag.js when a drag gesture is confirmed.
-                // We use it to set up a one-time listener for when the eventual snap completes.
-                const handleSnap = () => {
-                    gameMenuContainer.style.cursor = 'grab';
-                    gameMenuContainer.classList.remove('is-dragging');
-                    // Clean up the listener to prevent it from firing again.
-                    dragSwiper.off('snapComplete', handleSnap);
-                };
-                dragSwiper.on('snapComplete', handleSnap);
-            };
-
-            const menuDragHandler = createDragHandler(
-                gameMenuContainer,
-                () => ({ hostSwiper: menuSwiper, guestSwiper: null }), // Only this swiper is draggable
-                onMenuTap,
-                onMenuDragStart
-            );
-            menuDragHandler.attach();
-
-            gameMenuContainer.addEventListener('pointerdown', () => {
-                gameMenuContainer.style.cursor = 'grabbing';
-            });
-
-        } catch (error) {
-
-            console.error("Could not initialize start screen:", error);
-        }
     }
 
     const renderInfoScreen = () => {
@@ -715,14 +590,22 @@ const start = () => {
     };
 
     // --- State-based Screen Navigation ---
-    // Gemini: Don't remove, just hide lead-in for now
-    // let activeScreen = leadInScreen;
     let activeScreen = startScreen;
-    let previousScreen = null;
 
     const screenStateMachine = {
-        currentState: null,
+        currentState: 'leadin',
         states: {
+            leadin: {
+                onEnter: () => {
+                    leadInScreen.style.display = screenDisplayMap.get(leadInScreen);
+                    topNav.style.display = DisplayStyle.NONE;
+                    puzzleNav.style.display = DisplayStyle.NONE;
+                    initLeadInScreen(leadInScreen, () => screenStateMachine.transitionTo('start'));
+                },
+                onExit: () => {
+                    leadInScreen.style.display = DisplayStyle.NONE;
+                },
+            },
             start: {
                 onEnter: () => {
                     startScreen.style.display = screenDisplayMap.get(startScreen);
@@ -740,13 +623,9 @@ const start = () => {
                     gameScreen.style.display = screenDisplayMap.get(gameScreen);
                     topNav.style.display = DisplayStyle.GRID;
                     puzzleNav.style.display = DisplayStyle.GRID;
-                    if (gameDragAndTapHandler) gameDragAndTapHandler.attach();
-                    if (navigationHandler) navigationHandler.attach();
                 },
                 onExit: () => {
                     gameScreen.style.display = DisplayStyle.NONE;
-                    if (gameDragAndTapHandler) gameDragAndTapHandler.detach();
-                    if (navigationHandler) navigationHandler.detach();
                 },
             },
             settings: {
@@ -924,42 +803,114 @@ const start = () => {
         matchVisualizer.setStrategy(settingsState.matchVisualization);
     });
 
-    // --- Initialize Interaction Handlers ---
-    // These are done once. The modules will internally get the latest `activeGame` state when needed.
-    navigationHandler = createNavigationHandler({
-        getGame: () => activeGame,
-        domElements: { prevButton, nextButton, upButton, downButton },
-        onStateUpdate: (newState) => {
-            updateStateAndRender({ ...newState, isJump: true });
-        },
-    });
-    gameDragAndTapHandler = createDragAndTapHandler({
-        getGame: () => activeGame,
-        getSettings: () => settingsState,
-        checkPuzzleSolved: checkActivePuzzleSolved,
-        checkGameWin: checkGameWinCondition,
-        getActivePuzzle: getActivePuzzleForCurrentLocation,
-        matchVisualizer: matchVisualizer,
-        domElements: { gameScreen },
-        // For swipes and same-slider nav, it's not a jump.
-        onStateUpdate: (newState) => updateStateAndRender(newState),
-    });
-
-    // Initialize the lead-in screen after all other setup is complete and just before showing it.
-    // Gemini: Don't remove, just hide lead-in for now
-    //initLeadInScreen(leadInScreen, () => navigateTo(startScreen));
-
     // Set initial state
-    // Gemini: Don't remove, just hide lead-in for now
-    // startScreen.style.display = 'none';
-    // leadInScreen.style.display = 'block';
-    leadInScreen.style.display = 'none';
+    startScreen.style.display = 'grid';
+    //leadInScreen.style.display = 'none';
     gameScreen.style.display = 'none';
     settingsScreen.style.display = 'none';
     infoScreen.style.display = 'none';
 
-    // --- Screen and Menu Navigation Logic ---
-    previousScreen = startScreen;
+    async function initializeStartScreen() {
+
+        try {
+
+            const response = await fetch('games/games.json');
+
+            if (!response.ok) {
+
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const games = await response.json();
+
+            gameMenu.innerHTML = ''; // Clear static content
+
+            games.forEach(game => {
+
+                const li = document.createElement('li');
+                const button = document.createElement('div');
+                button.className = 'game-button';
+                button.dataset.gameFile = game.file;
+
+                button.innerHTML = `
+                    <div class="title">${game.title}</div>
+                    <div class="game-description">
+                        <div class="action-buttons">
+                            <button class="button--action info">info</button>
+                            <button class="button--action play">
+                                <svg width="35" version="1.1" viewBox="0 0 23.918 12.641" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="m2.7079 10.765q-0.48261 0-0.50942-0.63006 0-0.63007 0.50942-0.63007h1.354q0.49601 0 0.69709-0.28151 0.21449-0.28152 0.21449-0.60325v-3.7804q0-0.33514-0.21449-0.61666-0.20108-0.29492-0.71049-0.26811h-2.5739v8.0568q0 0.63006-0.73731 0.63006t-0.73731-0.64346v-8.5126q0-0.4692 0.24131-0.63006 0.2413-0.16087 0.58984-0.16087h3.472q0.34855 0 0.69709 0.12065 0.36195 0.12065 0.73731 0.33514 0.32174 0.2279 0.50941 0.64347 0.20109 0.40217 0.20109 0.9518v3.968q0 1.0993-0.7105 1.5685-0.75071 0.4826-1.4344 0.4826zm6.5155-0.52282q0 0.63007-0.73731 0.63007-0.75071 0-0.75071-0.63007v-9.6118q0-0.63007 0.75071-0.63007 0.73731 0 0.73731 0.63007zm3.4456 0.52282q-0.41558 0-0.79093-0.10724-0.37536-0.12065-0.72391-0.33514v0.0134q-0.65687-0.41557-0.65687-1.5282v-0.65687q0-0.54963 0.18768-0.9518 0.20108-0.41557 0.54963-0.65687h-0.01341q0.33514-0.2279 0.7105-0.33514 0.37536-0.12065 0.7239-0.12065h2.9626v-1.2467q0-0.33514-0.21449-0.60326-0.20108-0.28151-0.69709-0.28151h-1.5685q-0.50941 0-0.71049 0.2547-0.18768 0.2413-0.18768 0.57644v0.10725q0 0.69709-0.75072 0.69709-0.75071 0-0.75071-0.69709v-0.12065q0-0.54963 0.18768-0.92499 0.20108-0.37536 0.53622-0.63006h-0.0134q0.34854-0.2279 0.7239-0.37536 0.38876-0.14746 0.73731-0.14746h2.0376q0.33514 0 0.7105 0.14746 0.38876 0.14746 0.7239 0.37536h-0.01341q0.34855 0.2547 0.53623 0.67028 0.18768 0.40217 0.18768 0.93839v5.3756q0 0.64346-0.73731 0.64346-0.14746 0-0.28152-0.0134-0.12065-0.01341-0.2279-0.06703-0.09383-0.06703-0.16086-0.17427-0.05363-0.12065-0.05363-0.30833l-0.0134-2.9358h-2.7079q-0.29493 0-0.45579 0.06703-0.16087 0.06703-0.25471 0.21449-0.10724 0.2279-0.16087 0.36195-0.04021 0.12065-0.04021 0.28152v0.52282q0 0.34854 0.20108 0.53622 0.21449 0.17427 0.7239 0.17427h1.5014q0.49601 0 0.49601 0.63007 0 0.26811-0.12065 0.45579-0.12065 0.17427-0.37536 0.17427zm6.1535 1.8768q-0.4692 0-0.49601-0.63006 0-0.63006 0.49601-0.63006h0.58985q0.46919 0 0.61665-0.28152l0.18768-0.49601 0.06703-0.21449-2.6141-6.8503v0.01341q-0.10725-0.32174 0.04021-0.54963 0.16087-0.2279 0.48261-0.33514 0.2413-0.06703 0.38876-0.06703 0.38876 0 0.4826 0.45579l1.059 2.6409 0.89818 2.1985 1.4344-4.8126q0.12065-0.4826 0.56303-0.4826 0.10725 0 0.34855 0.06703 0.32173 0.09384 0.45579 0.30833 0.14746 0.21449 0.06703 0.50941-0.60326 2.0511-1.2333 4.1289-0.61666 2.0779-1.2199 4.1155-0.06703 0.14747-0.21449 0.29493-0.13405 0.16086-0.36195 0.29492-0.22789 0.14746-0.56303 0.2279-0.33514 0.09383-0.77753 0.09383z" style="fill:#fff"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="description">
+                            <p>${game.description}</p>
+                        </div>
+                    </div>
+                `;
+
+                li.appendChild(button);
+                gameMenu.appendChild(li);
+            });
+            const gameMenuContainer = startScreen.querySelector('.game-menu');
+
+            const menuSwiper = createSwiper({
+                listSelector: '.game-menu ol',
+                direction: 'horizontal',
+                id: 'game-menu-swiper',
+                slideWidth: GAME_MENU_SLIDE_WIDTH,
+                slideHeight: GAME_MENU_SLIDE_HEIGHT,
+                cloneCount: GAME_MENU_CLONE_COUNT,
+                throwMultiplier: 0.85,
+            });
+
+            const onMenuTap = async (event) => { // This is the onTapCallback
+                // This callback is only executed by drag.js if no drag occurred (it was a tap).
+                const playButton = event.target.closest('.button--action.play');
+
+                if (playButton) {
+                    // Find the parent .game-button to get the data-game-file attribute.
+                    const gameButton = playButton.closest('.game-button');
+                    if (gameButton && gameButton.dataset.gameFile && !playButton.disabled) {
+                        const gameFile = gameButton.dataset.gameFile;
+                        playButton.disabled = true;
+                        await loadGame(gameFile);
+                        screenStateMachine.transitionTo('game');
+                        // Re-enable after a short delay to prevent double-clicks during screen transition
+                        setTimeout(() => { playButton.disabled = false; }, 500);
+                    }
+                }
+            };
+
+            const onMenuDragStart = (dragSwiper) => {
+                // This function is called by drag.js when a drag gesture is confirmed.
+                // We use it to set up a one-time listener for when the eventual snap completes.
+                const handleSnap = () => {
+                    gameMenuContainer.style.cursor = 'grab';
+                    gameMenuContainer.classList.remove('is-dragging');
+                    // Clean up the listener to prevent it from firing again.
+                    dragSwiper.off('snapComplete', handleSnap);
+                };
+                dragSwiper.on('snapComplete', handleSnap);
+            };
+
+            menuDragHandler = createDragHandler(
+                gameMenuContainer,
+                () => ({ hostSwiper: menuSwiper, guestSwiper: null }), // Only this swiper is draggable
+                onMenuTap,
+                onMenuDragStart
+            );
+            menuDragHandler.attach();
+
+            gameMenuContainer.addEventListener('pointerdown', () => {
+                gameMenuContainer.style.cursor = 'grabbing';
+            });
+
+        } catch (error) {
+
+            console.error("Could not initialize start screen:", error);
+        }
+    }
 
     // Initialize the start screen and its handlers, then enter the initial state.
     initializeStartScreen().then(() => {

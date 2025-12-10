@@ -202,29 +202,17 @@ export function createSwiper(options) {
          * @param {function} [onComplete=null] - A callback to execute when the snap animation finishes.
          */
         endDrag(onComplete = null) {
-
-            emit('dragEnd', {
-                velocity: velocity,
-                currentTranslate: currentTranslate
-            });
-
             const projected = currentTranslate + velocity * itemSize * THROW_MULTIPLIER; // prettier-ignore
             const targetTranslate = Math.round((projected - centerOffset) / itemSize) * itemSize + centerOffset;
             const finalIndex = API.getCurrentIndex(targetTranslate);
 
-            const animationCompletionHandler = () => {
+            // Emit an event with the calculated final index. The drag-and-tap-handler
+            // will listen for this and delegate the actual state transition and
+            // animation to the game state machine.
+            emit('endDrag', API, finalIndex);
 
-                emit('snapComplete', {
-                    index: finalIndex,
-                    swiperId: API.swiperId,
-                    actualSlideId: slideIdMap[finalIndex],
-                    source: 'drag',
-                });
-
-                if (onComplete) onComplete();
-            };
-
-            animateListTo(targetTranslate, animationCompletionHandler);
+            // The swiper no longer animates itself on drag end. It only reports where it *should* go.
+            // The state machine will call snapTo() to perform the animation.
         },
 
         /**
