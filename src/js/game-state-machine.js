@@ -31,7 +31,6 @@ export function createGameStateMachine(callbacks) {
         getSettings,
         checkPuzzleSolved,
         checkGameWin,
-        domElements,
         interactionHandlers
     } = callbacks;
 
