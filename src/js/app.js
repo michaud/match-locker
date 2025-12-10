@@ -1,5 +1,5 @@
 // Gemini: Don't remove, just hide lead-in for now
-//import { initLeadInScreen } from './leadin-screen.js';
+import { initLeadInScreen } from './leadin-screen.js';
 import { createGameStateMachine } from './game-state-machine.js';
 import { createSwiper } from './swiper.js';
 import { processGameData, buildWorldMap, isPuzzleSolved } from './puzzle-logic.js';
@@ -547,18 +547,22 @@ const start = () => {
 
         // Add the layout visualizer
         const handleVisualizerSlotClick = (slot) => {
-
             // Navigate to the game screen if not already there.
-            if (activeScreen !== gameScreen) {
-
-                navigateTo(gameScreen);
+            if (screenStateMachine.currentState !== 'game') {
+                screenStateMachine.transitionTo('game');
             }
-            // Update player context to the clicked slot.
-            activeGame.playerState.currentSwiperId = slot.host_group_id;
-            activeGame.playerState.currentIndex = slot.at_index;
 
-            // Re-render the game from the new state. This will handle updating swiper visibility and position.
-            updateStateAndRender({ currentSwiperId: slot.host_group_id, currentIndex: slot.at_index, isJump: true });
+            // Create a destination object for the state machine.
+            const destination = {
+                swiperId: slot.host_group_id,
+                index: slot.at_index,
+                source: 'visualizer-jump'
+            };
+
+            // Tell the game state machine to handle the transition.
+            if (gameStateMachine) {
+                gameStateMachine.transitionTo('TRANSITIONING', { destination });
+            }
         };
 
         const visualizerSvg = createLayoutVisualizer(
@@ -590,10 +594,9 @@ const start = () => {
     };
 
     // --- State-based Screen Navigation ---
-    let activeScreen = startScreen;
 
     const screenStateMachine = {
-        currentState: 'leadin',
+        currentState: 'start',
         states: {
             leadin: {
                 onEnter: () => {
@@ -804,8 +807,8 @@ const start = () => {
     });
 
     // Set initial state
-    startScreen.style.display = 'grid';
-    //leadInScreen.style.display = 'none';
+    startScreen.style.display = screenDisplayMap.get(startScreen);
+    leadInScreen.style.display = 'none';
     gameScreen.style.display = 'none';
     settingsScreen.style.display = 'none';
     infoScreen.style.display = 'none';
