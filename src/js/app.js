@@ -118,9 +118,11 @@ const start = () => {
 
         if (!game.playerState) return null;
 
-        const currentSlot = game.layout.puzzle_slots.find(slot =>
-            slot.host_group_id === game.playerState.currentSwiperId &&
-            slot.at_index === game.playerState.currentIndex
+        const { currentSwiperId, currentIndex } = game.playerState;
+
+        const currentSlot = game.layout.puzzle_slots.find(slot => 
+            (slot.host_group_id === currentSwiperId && slot.at_index === currentIndex) ||
+            (slot.guest_group_id === currentSwiperId && (slot.guest_align_index || 0) === currentIndex)
         );
 
         if (!currentSlot) return null;
@@ -136,21 +138,32 @@ const start = () => {
 
     const updateSwiperVisibility = (game = activeGame) => {
 
-        if (!game.playerState || !game.playerState.currentSwiperId) return;
+        if (!game.playerState) return;
 
-        const currentKey = `${game.playerState.currentSwiperId}-${game.playerState.currentIndex}`;
-        const currentNode = game.worldMap.get(currentKey);
+        let visibleSwipers = new Set();
+        const activePuzzle = getActivePuzzleForCurrentLocation(game);
 
-        if (!currentNode) return;
-
-        const hostSwiper = game.swiperInstances.get(game.playerState.currentSwiperId);
-        const guestInfo = currentNode.guest;
-        const guestSwiper = guestInfo ? game.swiperInstances.get(guestInfo.swiperId) : null;
+        if (activePuzzle) {
+            // If we are at a puzzle, find the definitive host and guest from the puzzle slot data.
+            const currentSlot = game.layout.puzzle_slots.find(slot => slot.activates_puzzle_id === activePuzzle.id);
+            if (currentSlot) {
+                if (game.swiperInstances.has(currentSlot.host_group_id)) {
+                    visibleSwipers.add(game.swiperInstances.get(currentSlot.host_group_id));
+                }
+                if (game.swiperInstances.has(currentSlot.guest_group_id)) {
+                    visibleSwipers.add(game.swiperInstances.get(currentSlot.guest_group_id));
+                }
+            }
+        } else {
+            // If not at a puzzle, only the current swiper is visible.
+            if (game.swiperInstances.has(game.playerState.currentSwiperId)) {
+                visibleSwipers.add(game.swiperInstances.get(game.playerState.currentSwiperId));
+            }
+        }
 
         // Set visibility for ALL sliders.
         game.swiperInstances.forEach(swiper => {
-            // A swiper is visible only if it is the current host or the current guest.
-            const isVisible = (swiper === hostSwiper) || (swiper === guestSwiper);
+            const isVisible = visibleSwipers.has(swiper);
             swiper.getElement().classList.toggle('visually-hidden', !isVisible);
         });
     };

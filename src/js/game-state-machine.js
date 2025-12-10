@@ -43,6 +43,7 @@ export function createGameStateMachine(callbacks) {
          */
         IDLE_ON_PATH: {
             onEnter() {
+
                 console.log("GameStateMachine: Entering IDLE_ON_PATH");
                 // Ensure all visuals and controls are correctly set for the current state.
                 matchVisualizer.synchronizeVisuals();
@@ -53,11 +54,13 @@ export function createGameStateMachine(callbacks) {
                 getGame().swiperInstances.forEach(swiper => {
                     swiper.on('endDrag', handleSwiperEndDrag);
                 });
+
                 interactionHandlers.navigationHandler.on('navigate', handleNavigationRequest);
                 interactionHandlers.gameDragAndTapHandler.attach();
                 interactionHandlers.navigationHandler.attach();
             },
             onExit() {
+
                 getGame().swiperInstances.forEach(swiper => {
                     swiper.off('endDrag', handleSwiperEndDrag);
                 });
@@ -75,6 +78,8 @@ export function createGameStateMachine(callbacks) {
         IDLE_AT_PUZZLE: {
             onEnter() {
                 console.log("GameStateMachine: Entering IDLE_AT_PUZZLE");
+                //console.log('getGame().worldMap:', JSON.stringify(Array.from(getGame().worldMap.entries())))
+
                 // Ensure all visuals and controls are correctly set for the current state.
                 matchVisualizer.synchronizeVisuals();
                 updateSwiperVisibility();
@@ -134,9 +139,12 @@ export function createGameStateMachine(callbacks) {
 
                 const handleSnapComplete = () => {
                     // The animation is done. Now, determine the new stable state.
-                    const isAtPuzzle = !!game.layout.puzzle_slots.find(slot =>
-                        slot.host_group_id === game.playerState.currentSwiperId &&
-                        slot.at_index === game.playerState.currentIndex
+                    const { currentSwiperId, currentIndex } = game.playerState;
+                    const isAtPuzzle = !!game.layout.puzzle_slots.find(slot => 
+                        // It's a puzzle if we are on the host swiper at the host index...
+                        (slot.host_group_id === currentSwiperId && slot.at_index === currentIndex) ||
+                        // ...OR if we are on the guest swiper at the guest alignment index.
+                        (slot.guest_group_id === currentSwiperId && (slot.guest_align_index || 0) === currentIndex)
                     );
 
                     // Clean up the listener from the swiper that just finished.
