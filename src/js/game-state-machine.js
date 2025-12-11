@@ -125,9 +125,6 @@ export function createGameStateMachine(callbacks) {
                     return;
                 }
 
-                // A swipe only updates the index of the current swiper.
-                game.playerState.currentIndex = destination.index;
-
                 const handleSnapComplete = () => {
                     const swiper = game.swiperInstances.get(destination.swiperId);
                     if (swiper) swiper.off('snapComplete', handleSnapComplete);
