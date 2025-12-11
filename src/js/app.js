@@ -479,6 +479,7 @@ const start = () => {
             snapSwipersToState: (animate, oldState) => snapSwipersToState(animate, newGame, oldState),
             updateNavigationControls: () => updateNavigationControls(newGame),
             updatePuzzleStatusIndicator: () => updatePuzzleStatusIndicator(newGame),
+            getActivePuzzle: () => getActivePuzzleForCurrentLocation(newGame),
             getSettings: () => settingsState,
             checkPuzzleSolved: () => checkActivePuzzleSolved(newGame),
             checkGameWin: () => checkGameWinCondition(newGame),

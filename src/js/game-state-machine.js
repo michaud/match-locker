@@ -11,6 +11,7 @@
  * @param {function} callbacks.updateNavigationControls - Enables/disables nav buttons.
  * @param {function} callbacks.updatePuzzleStatusIndicator - Shows/hides the "SOLVED" badge.
  * @param {object} callbacks.matchVisualizer - The match visualizer instance.
+ * @param {function} callbacks.getActivePuzzle - Function that returns the puzzle at the current location, or null.
  * @param {function} callbacks.checkPuzzleSolved - Function to check if the current puzzle is solved.
  * @param {function} callbacks.checkGameWin - Function to check if the entire game is won.
  * @param {object} callbacks.domElements - A collection of frequently used DOM elements.
@@ -28,6 +29,7 @@ export function createGameStateMachine(callbacks) {
         updateNavigationControls,
         updatePuzzleStatusIndicator,
         matchVisualizer,
+        getActivePuzzle,
         getSettings,
         checkPuzzleSolved,
         checkGameWin,
@@ -103,76 +105,97 @@ export function createGameStateMachine(callbacks) {
             }
         },
         /**
-         * The game is animating between states (e.g., after a drag or nav click).
+         * The game is animating a slide change within a single swiper after a drag/fling.
          * - All user input (drag, tap, navigation) is disabled to prevent race conditions.
-         * - This state is responsible for running the animation and transitioning
-         *   to the correct new IDLE state upon completion.
+         * - This state does NOT change swiper visibility.
          */
-        TRANSITIONING: {
+        SWIPING: {
             onEnter(context) {
-                console.log("GameStateMachine: Entering TRANSITIONING with context:", context);
+                console.log("GameStateMachine: Entering SWIPING with context:", context);
                 const game = getGame();
                 const { destination } = context;
 
-                matchVisualizer.onDragEnd(); // Clean up any drag-specific visuals.
-                // CRITICAL: Lock all user input upon entering the transition.
+                // Lock UI and clean up drag visuals
                 interactionHandlers.gameDragAndTapHandler.detach();
                 interactionHandlers.navigationHandler.detach();
+                matchVisualizer.onDragEnd();
 
                 if (!destination || !game.playerState) {
-                    // If there's no destination, it might be a failed drag or other issue.
-                    // Just go back to a stable state to be safe.
-                    transitionTo('IDLE_ON_PATH');
+                    transitionTo('IDLE_ON_PATH'); // Failsafe
                     return;
                 }
 
-                const oldPlayerState = { ...game.playerState };
-
-                // A drag doesn't change the "active" swiper, only its index.
-                // A navigation click can change both.
-                if (destination.source !== 'drag') {
-                    game.playerState.currentSwiperId = destination.swiperId;
-                }
-                game.playerState.currentIndex = destination.index; // Always update the index
-
-                // Update visibility as soon as the state changes. The CSS transition
-                // will handle the animation, running it concurrently with the swiper's snap animation.
-                updateSwiperVisibility();
+                // A swipe only updates the index of the current swiper.
+                game.playerState.currentIndex = destination.index;
 
                 const handleSnapComplete = () => {
-                    // The animation is done. Now, determine the new stable state.
-                    const { currentSwiperId, currentIndex } = game.playerState;
-                    const isAtPuzzle = !!game.layout.puzzle_slots.find(slot => 
-                        // It's a puzzle if we are on the host swiper at the host index...
-                        (slot.host_group_id === currentSwiperId && slot.at_index === currentIndex) ||
-                        // ...OR if we are on the guest swiper at the guest alignment index.
-                        (slot.guest_group_id === currentSwiperId && (slot.guest_align_index || 0) === currentIndex)
-                    );
-
-                    // Clean up the listener from the swiper that just finished.
                     const swiper = game.swiperInstances.get(destination.swiperId);
-                    if (swiper) {
-                        swiper.off('snapComplete', handleSnapComplete);
-                    }
+                    if (swiper) swiper.off('snapComplete', handleSnapComplete);
 
+                    // After a swipe, the player is still at the same slot, so the puzzle status doesn't change.
+                    const isAtPuzzle = !!getActivePuzzle();
                     transitionTo(isAtPuzzle ? 'IDLE_AT_PUZZLE' : 'IDLE_ON_PATH');
                 };
 
                 const targetSwiper = game.swiperInstances.get(destination.swiperId);
                 if (targetSwiper) {
                     targetSwiper.on('snapComplete', handleSnapComplete);
-
-                    // A drag has already moved the swiper visually, so we just need to snap it.
-                    // A navigation click needs to snap all swipers from their previous state.
-                    if (destination.source === 'drag') {
-                        targetSwiper.snapTo(destination.index, false, { useFling: true });
-                    } else {
-                        snapSwipersToState(true); // Animate to the new state
-                    }
+                    // A swipe uses the fling calculation.
+                    targetSwiper.snapTo(destination.index, false, { useFling: true });
                 } else {
-                    // If the target swiper doesn't exist, we can't animate.
-                    // Immediately transition back to a safe state to avoid getting stuck.
-                    transitionTo('IDLE_ON_PATH');
+                    transitionTo('IDLE_ON_PATH'); // Failsafe
+                }
+            },
+            onExit() { /* No action needed on exit */ }
+        },
+        /**
+         * The game is animating a move between different slots (e.g., after a nav click).
+         * - All user input is disabled.
+         * - This state IS responsible for updating swiper visibility.
+         */
+        NAVIGATING: {
+            onEnter(context) {
+                console.log("GameStateMachine: Entering NAVIGATING with context:", context);
+                const game = getGame();
+                const { destination } = context;
+
+                // Lock UI
+                interactionHandlers.gameDragAndTapHandler.detach();
+                interactionHandlers.navigationHandler.detach();
+
+                if (!destination || !game.playerState) {
+                    transitionTo('IDLE_ON_PATH'); // Failsafe
+                    return;
+                }
+
+                // A navigation click can change the active swiper and its index.
+                game.playerState.currentSwiperId = destination.swiperId;
+                game.playerState.currentIndex = destination.index;
+
+                // Update visibility for the new location.
+                updateSwiperVisibility();
+
+                const handleSnapComplete = () => {
+                    // Find the swiper that was just animated. It could be a host or guest.
+                    const swiper = game.swiperInstances.get(destination.swiperId);
+                    if (swiper) swiper.off('snapComplete', handleSnapComplete);
+
+                    // Determine the new stable state based on the destination.
+                    const isAtPuzzle = !!getActivePuzzle();
+                    transitionTo(isAtPuzzle ? 'IDLE_AT_PUZZLE' : 'IDLE_ON_PATH');
+                };
+
+                // We need to listen for the snap complete on the swiper that is actually moving.
+                // In a navigation, this could be different from the one in playerState if we are
+                // moving from a path onto a guest swiper.
+                const targetSwiper = game.swiperInstances.get(destination.swiperId);
+                if (targetSwiper) {
+                    // The snapSwipersToState function will snap all relevant swipers, but we only
+                    // need to listen for completion on the one that is the navigation target.
+                    targetSwiper.on('snapComplete', handleSnapComplete);
+                    snapSwipersToState(true); // Animate all relevant swipers to the new state.
+                } else {
+                    transitionTo('IDLE_ON_PATH'); // Failsafe
                 }
             },
             onExit() { /* No action needed on exit */ }
@@ -182,7 +205,7 @@ export function createGameStateMachine(callbacks) {
     const handleMatchAttempt = () => {
         const game = getGame();
         const settings = getSettings();
-        const activePuzzle = callbacks.getActivePuzzle(); // Use the direct callback
+        const activePuzzle = getActivePuzzle();
 
         if (!activePuzzle) return;
 
@@ -228,8 +251,8 @@ export function createGameStateMachine(callbacks) {
             index: finalIndex,
             source: 'drag'
         };
-        // A drag has ended, so we transition the game state.
-        transitionTo('TRANSITIONING', { destination });
+        // A drag has ended, so we transition to the SWIPING state.
+        transitionTo('SWIPING', { destination });
     };
 
     const handleNavigationRequest = ({ direction }) => {
@@ -246,8 +269,8 @@ export function createGameStateMachine(callbacks) {
 
         if (!destination) return;
 
-        // A navigation request has been received, so we transition the game state.
-        transitionTo('TRANSITIONING', { destination });
+        // A navigation request has been received, so we transition to the NAVIGATING state.
+        transitionTo('NAVIGATING', { destination });
     };
 
     /**
@@ -260,10 +283,7 @@ export function createGameStateMachine(callbacks) {
             return;
         }
 
-        const isAtPuzzle = !!game.layout.puzzle_slots.find(slot =>
-            slot.host_group_id === game.playerState.currentSwiperId &&
-            slot.at_index === game.playerState.currentIndex
-        );
+        const isAtPuzzle = !!getActivePuzzle();
 
         snapSwipersToState(false); // Perform the initial, non-animated snap.
         updateSwiperVisibility(); // Set initial visibility.
