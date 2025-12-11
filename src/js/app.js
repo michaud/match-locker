@@ -52,7 +52,7 @@ const start = () => {
     const settingsButton = menuPopout.querySelector('#button-settings');
     const backButton = menuPopout.querySelector('#button-back');
     const quitGameButton = menuPopout.querySelector('#button-quit');
-    const infoButton = topNav.querySelector('#info-button');
+    const infoButton = document.querySelector('.button-info'); // todo get element at the right level 
     const infoPuzzleSection = infoScreen.querySelector('.info-puzzle');
 
     // Toaster elements
@@ -695,7 +695,7 @@ const start = () => {
 
         if (screenStateMachine.currentState === 'start') {
 
-            settingsButton.style.display = 'grid';
+            settingsButton.style.display = 'block';
 
         } else if (screenStateMachine.currentState === 'game') {
 
