@@ -165,7 +165,7 @@ export function createGameStateMachine(callbacks) {
                     // A drag has already moved the swiper visually, so we just need to snap it.
                     // A navigation click needs to snap all swipers from their previous state.
                     if (destination.source === 'drag') {
-                        targetSwiper.snapTo(destination.index, false, { source: 'drag' });
+                        targetSwiper.snapTo(destination.index, false, { useFling: true });
                     } else {
                         snapSwipersToState(true); // Animate to the new state
                     }
@@ -222,7 +222,7 @@ export function createGameStateMachine(callbacks) {
         }
     };
 
-    const handleSwiperEndDrag = (swiper, finalIndex) => {
+    const handleSwiperEndDrag = ({ swiper, finalIndex }) => {
         const destination = {
             swiperId: swiper.swiperId,
             index: finalIndex,

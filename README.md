@@ -46,6 +46,8 @@ Next, with a puzzle defined, in the Match Editor, we can select which two slide 
 ### Layout with puzzle slots
 Until now we have defined all the elements and how they interact. Now that we have puzzles we can define the layout of the puzzles but also of the game! 
 
+
+
 #### puzzle slot
 A puzzle slot is a place on two swipers where their slots overlap and where we can match the slides.
 Lets call a slide group in a puzzle in the layout a swiper. A swiper has the slides of a slide group. Imagine for each slide in the slide group, in the swiper, we have a slot. Slot 1, slot 2, slot 3 ... When we swipe through the slides, the position of the slides changes in the slots but the slots stay the same. A puzzle slot is a place on two swipers where their slots overlap and where we can match the slides.
@@ -54,3 +56,11 @@ With the indices We can set the position of where first swiper overlaps with the
 
 To understand the implications of the index and the guest align index you can play with the numbers and see the result on the Layout Visualisation
 
+we have swipers. The player swipes to let slides appear in the game screen. we have horizontal swipers and vertical swipers. we can imagine th position of the initial slides in the swiper to be slots in the swiper. Where the horizontal swiper and the vertical swiper overlaps we have a puzzle-slot. When the player swipes, the slides move in the swiper to different slots. But the slots stay the same, just a series of positions.
+
+the player can swipe the slides in the swiper and navigate the slots on the swipers.
+
+- Swipe the slides happens by dragging and flinging. The slides in the swiper animate to a destination and then snap to the center of the viewport.
+- Navigating the slots happens with the navigation buttons. Up and down left and right when possible!!When the player navigates to a slot on a swiper that is not a puzzle slot, dependent on the direction of the swiper you can only navigate vertical OR horizontal. If the Swipers overlap making a puzzleslot the player can navigate both horizontally AND vertically 
+
+the swiping and navigating are SEPERATE ... BUT ... when we navigate the slots the swiper DOES show the movement of the slides to illustrate the movement over the slots

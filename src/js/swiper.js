@@ -209,19 +209,29 @@ export function createSwiper(options) {
             // Emit an event with the calculated final index. The drag-and-tap-handler
             // will listen for this and delegate the actual state transition and
             // animation to the game state machine.
-            emit('endDrag', API, finalIndex);
+            emit('endDrag', {
+                swiper: API,
+                finalIndex: finalIndex
+            });
 
             // The swiper no longer animates itself on drag end. It only reports where it *should* go.
             // The state machine will call snapTo() to perform the animation.
         },
+        
+        /**
+         * Snaps the list to a specific item index.
+         * @param {number} index - The zero-based index of the target item.
 
+        /**
+         * Snaps the list to a specific item index.
+         * @param {number} index - The zero-based index of the target item.
         /**
          * Snaps the list to a specific item index.
          * @param {number} index - The zero-based index of the target item.
          * @param {boolean} [immediate=false] - If true, jump without animation.
          * @param {object} [options={}] - Additional options.
          * @param {function} [options.onComplete=null] - A callback to execute when the snap animation finishes.
-         * @param {string} [options.source='programmatic'] - The source of the snap action.
+         * @param {boolean} [options.useFling=false] - If true, calculate target based on current velocity.
          */
         snapTo(index, immediate = false, options = {}) {
             const filmstripBlockLength = itemSize * sourceItemCount;
@@ -232,7 +242,7 @@ export function createSwiper(options) {
                     index: 0,
                     swiperId: API.swiperId,
                     actualSlideId: undefined,
-                    source: options.source || 'navigation'
+                    source: 'snap-fail'
                 });
                 return;
             }
@@ -258,12 +268,36 @@ export function createSwiper(options) {
                     index: finalIndex,
                     swiperId: API.swiperId,
                     actualSlideId: slideIdMap[finalIndex],
-                    source: options.source || 'navigation' });
+                    source: 'immediate-snap'
+                });
 
                 // After emitting, ensure the swiper is not in a position that will break the next wrap check.
                 checkWrapAround();
 
             } else {
+                // Define the completion handler here so it's in scope for both fling and regular snaps.
+                const animationCompletionHandler = () => {
+
+                    if (options.onComplete) options.onComplete();
+
+                    // Use the now-normalized `currentTranslate` to get the definitive final index.
+                    const finalIndex = API.getCurrentIndex(currentTranslate);
+                    emit('snapComplete', {
+                        index: finalIndex,
+                        swiperId: API.swiperId,
+                        actualSlideId: slideIdMap[finalIndex],
+                        source: 'animated-snap'
+                    });
+                };
+
+                // If useFling is true, we calculate the target based on the last known velocity.
+                // This restores the "fling" effect for drags.
+                if (options.useFling) {
+                    const projected = currentTranslate + velocity * itemSize * THROW_MULTIPLIER;
+                    const flingTarget = Math.round((projected - centerOffset) / itemSize) * itemSize + centerOffset;
+                    animateListTo(flingTarget, animationCompletionHandler);
+                    return; // Exit here to avoid the "closest target" logic below.
+                }
                 // For an animated snap, find the closest visual representation of the target slide
                 // (including clones) to ensure the shortest possible animation path.
                 const potentialTargets = [
@@ -276,20 +310,6 @@ export function createSwiper(options) {
                 const closestTarget = potentialTargets.reduce((prev, curr) => {
                     return (Math.abs(curr - currentTranslate) < Math.abs(prev - currentTranslate) ? curr : prev);
                 });
-
-                // The 'transitionend' handler in animateListTo will handle the final state update and wrap-around check.
-                const animationCompletionHandler = () => {
-
-                    if (options.onComplete) options.onComplete();
-
-                    // Use the now-normalized `currentTranslate` to get the definitive final index.
-                    const finalIndex = API.getCurrentIndex(currentTranslate);
-                    emit('snapComplete', {
-                        index: finalIndex,
-                        swiperId: API.swiperId,
-                        actualSlideId: slideIdMap[finalIndex],
-                        source: options.source || 'navigation' });
-                };
 
                 animateListTo(
                     closestTarget,
