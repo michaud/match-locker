@@ -202,20 +202,23 @@ export function createSwiper(options) {
          * @param {function} [onComplete=null] - A callback to execute when the snap animation finishes.
          */
         endDrag(onComplete = null) {
-            const projected = currentTranslate + velocity * itemSize * THROW_MULTIPLIER; // prettier-ignore
-            const targetTranslate = Math.round((projected - centerOffset) / itemSize) * itemSize + centerOffset;
-            const finalIndex = API.getCurrentIndex(targetTranslate);
-
-            // Emit an event with the calculated final index. The drag-and-tap-handler
-            // will listen for this and delegate the actual state transition and
-            // animation to the game state machine.
-            emit('endDrag', {
-                swiper: API,
-                finalIndex: finalIndex
-            });
-
-            // The swiper no longer animates itself on drag end. It only reports where it *should* go.
-            // The state machine will call snapTo() to perform the animation.
+            // If there are listeners for 'endDrag', it means an external controller (like the state machine)
+            // is managing the animation. In that case, just emit the event with the destination.
+            if (listeners.has('endDrag') && listeners.get('endDrag').length > 0) {
+                const projected = currentTranslate + velocity * itemSize * THROW_MULTIPLIER;
+                const targetTranslate = Math.round((projected - centerOffset) / itemSize) * itemSize + centerOffset;
+                const finalIndex = API.getCurrentIndex(targetTranslate);
+                emit('endDrag', {
+                    swiper: API,
+                    finalIndex: finalIndex
+                });
+            } else {
+                // If there are no listeners, this is a standalone swiper (like the menu).
+                // It should handle its own animation.
+                const projected = currentTranslate + velocity * itemSize * THROW_MULTIPLIER;
+                const targetTranslate = Math.round((projected - centerOffset) / itemSize) * itemSize + centerOffset;
+                animateListTo(targetTranslate, onComplete);
+            }
         },
         
         /**
