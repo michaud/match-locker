@@ -52,7 +52,8 @@ const start = () => {
     const settingsButton = menuPopout.querySelector('#button-settings');
     const backButton = menuPopout.querySelector('#button-back');
     const quitGameButton = menuPopout.querySelector('#button-quit');
-    const infoButton = document.querySelector('.button-info'); // todo get element at the right level 
+    const infoButton = gameScreen.querySelector('.button-info'); 
+    const infoScreenInfoButton = infoScreen.querySelector('.button-info'); 
     const infoPuzzleSection = infoScreen.querySelector('.info-puzzle');
 
     // Toaster elements
@@ -785,6 +786,15 @@ const start = () => {
             // Otherwise, render and navigate to the info screen.
             renderInfoScreen();
             screenStateMachine.transitionTo('info');
+        }
+    });
+
+    infoScreenInfoButton.addEventListener('click', () => {
+        if (screenStateMachine.currentState === 'info') {
+            // If we are already on the info screen, go back.
+            // The most logical "back" is to the game if active, otherwise start.
+            const targetState = activeGame.playerState ? 'game' : 'start';
+            screenStateMachine.transitionTo(targetState);
         }
     });
 
