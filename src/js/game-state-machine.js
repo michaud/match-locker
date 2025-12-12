@@ -20,6 +20,7 @@
 export function createGameStateMachine(callbacks) {
 
     let currentState = null;
+    let debug = false;
 
     // Unpack callbacks for easier access
     const {
@@ -46,7 +47,7 @@ export function createGameStateMachine(callbacks) {
         IDLE_ON_PATH: {
             onEnter() {
 
-                console.log("GameStateMachine: Entering IDLE_ON_PATH");
+                debug && console.log("GameStateMachine: Entering IDLE_ON_PATH");
                 // Ensure all visuals and controls are correctly set for the current state.
                 matchVisualizer.synchronizeVisuals();
                 updateNavigationControls();
@@ -78,8 +79,8 @@ export function createGameStateMachine(callbacks) {
          */
         IDLE_AT_PUZZLE: {
             onEnter() {
-                console.log("GameStateMachine: Entering IDLE_AT_PUZZLE");
-                //console.log('getGame().worldMap:', JSON.stringify(Array.from(getGame().worldMap.entries())))
+                debug && console.log("GameStateMachine: Entering IDLE_AT_PUZZLE");
+                debug && console.log('getGame().worldMap:', JSON.stringify(Array.from(getGame().worldMap.entries())))
 
                 // Ensure all visuals and controls are correctly set for the current state.
                 matchVisualizer.synchronizeVisuals();
@@ -111,7 +112,7 @@ export function createGameStateMachine(callbacks) {
          */
         SWIPING: {
             onEnter(context) {
-                console.log("GameStateMachine: Entering SWIPING with context:", context);
+                debug && console.log("GameStateMachine: Entering SWIPING with context:", context);
                 const game = getGame();
                 const { destination } = context;
 
@@ -152,7 +153,7 @@ export function createGameStateMachine(callbacks) {
          */
         NAVIGATING: {
             onEnter(context) {
-                console.log("GameStateMachine: Entering NAVIGATING with context:", context);
+                debug && console.log("GameStateMachine: Entering NAVIGATING with context:", context);
                 const game = getGame();
                 const { destination } = context;
 
@@ -169,14 +170,14 @@ export function createGameStateMachine(callbacks) {
                 game.playerState.currentSwiperId = destination.swiperId;
                 game.playerState.currentIndex = destination.index;
 
-                console.log(`%c[DEBUG] NAVIGATING: Destination Swiper ID: ${destination.swiperId}`, 'color: #FFD700;');
-                console.log(`%c[DEBUG] NAVIGATING: New Player State Swiper ID: ${game.playerState.currentSwiperId}`, 'color: #FFD700;');
+                debug && console.log(`%c[DEBUG] NAVIGATING: Destination Swiper ID: ${destination.swiperId}`, 'color: #FFD700;');
+                debug && console.log(`%c[DEBUG] NAVIGATING: New Player State Swiper ID: ${game.playerState.currentSwiperId}`, 'color: #FFD700;');
 
                 // Update visibility for the new location.
                 const done = updateSwiperVisibility();
 
                 const handleSnapComplete = () => {
-                    console.log('%c[DEBUG] NAVIGATING: handleSnapComplete called!', 'color: #98FB98;');
+                    debug && console.log('%c[DEBUG] NAVIGATING: handleSnapComplete called!', 'color: #98FB98;');
 
                     const swiper = game.swiperInstances.get(destination.swiperId);
                     if (swiper) swiper.off('snapComplete', handleSnapComplete);
