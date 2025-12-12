@@ -87,11 +87,12 @@ export function createSwiper(options) {
 
         const handleTransitionEnd = () => {
 
+            // Set the final translate value before calling any callbacks.
             currentTranslate = targetTranslate;
-            // Call the completion handler first, so any listeners (like state updates)
-            checkWrapAround(); // Ensure currentTranslate is normalized after animation.
-            // fire based on the visually correct final position.
+
             if (onComplete) onComplete();
+
+            checkWrapAround(); // Ensure currentTranslate is normalized after animation.
         }
 
         filmstripElement.addEventListener('transitionend', handleTransitionEnd, { once: true });
@@ -280,8 +281,12 @@ export function createSwiper(options) {
             } else {
                 // Define the completion handler here so it's in scope for both fling and regular snaps.
                 const animationCompletionHandler = () => {
+                    console.log(`%c[DEBUG] SWIPER (${API.swiperId}): animationCompletionHandler called.`, 'color: #87CEFA;');
 
-                    if (options.onComplete) options.onComplete();
+                    if (options.onComplete) {
+                        console.log(`%c[DEBUG] SWIPER (${API.swiperId}): Executing options.onComplete callback.`, 'color: #87CEFA;');
+                        options.onComplete();
+                    }
 
                     // Use the now-normalized `currentTranslate` to get the definitive final index.
                     const finalIndex = API.getCurrentIndex(currentTranslate);

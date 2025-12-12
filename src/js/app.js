@@ -174,7 +174,7 @@ const start = () => {
         });
     };
 
-    const snapSwipersToState = (animate = false, game = activeGame, oldPlayerState = null) => {
+    const snapSwipersToState = (animate = false, game = activeGame, onComplete = null) => {
         if (!game.playerState || !game.playerState.currentSwiperId) return;
 
         // Snap swipers that are part of the *new* active context
@@ -183,37 +183,16 @@ const start = () => {
 
         if (!currentNode) return;
         const hostSwiper = game.swiperInstances.get(game.playerState.currentSwiperId);
-        hostSwiper.snapTo(game.playerState.currentIndex, !animate, { source: animate ? 'jump' : 'initialization' });
+        // Pass the onComplete callback to the primary swiper being snapped.
+        hostSwiper.snapTo(game.playerState.currentIndex, !animate, { onComplete: onComplete });
 
         const guestInfo = currentNode.guest;
         const guestSwiper = guestInfo ? game.swiperInstances.get(guestInfo.swiperId) : null;
 
         if (guestSwiper && guestInfo)
         {
-            guestSwiper.snapTo(guestInfo.index, !animate, { source: animate ? 'jump' : 'initialization' });
-        }
-
-        // If this was a jump, check if we left a puzzle slot and need to clean up the old swipers.
-        if (oldPlayerState)
-        {
-            const oldKey = `${oldPlayerState.currentSwiperId}-${oldPlayerState.currentIndex}`;
-            const oldNode = game.worldMap.get(oldKey);
-
-            if (oldNode && oldNode.guest)
-            {
-                const oldGuestSwiper = game.swiperInstances.get(oldNode.guest.swiperId);
-                const oldHostSwiper = game.swiperInstances.get(oldPlayerState.currentSwiperId);
-
-                // If the old guest is not part of the new context, snap it back to its puzzle alignment.
-                if (oldGuestSwiper && oldGuestSwiper !== hostSwiper && oldGuestSwiper !== guestSwiper) {
-
-                    oldGuestSwiper.snapTo(oldNode.guest.index, !animate, { source: animate ? 'jump' : 'initialization' });
-                }
-                // If the old host is not part of the new context, snap it back to its puzzle alignment.
-                if (oldHostSwiper && oldHostSwiper !== hostSwiper && oldHostSwiper !== guestSwiper) {
-                    oldHostSwiper.snapTo(oldPlayerState.currentIndex, !animate, { source: animate ? 'jump' : 'initialization' });
-                }
-            }
+            // The guest swiper animates, but we don't need a callback from it.
+            guestSwiper.snapTo(guestInfo.index, !animate);
         }
     };
 
@@ -477,7 +456,7 @@ const start = () => {
         gameStateMachine = createGameStateMachine({
             getGame: () => newGame,
             updateSwiperVisibility: () => updateSwiperVisibility(newGame),
-            snapSwipersToState: (animate, oldState) => snapSwipersToState(animate, newGame, oldState),
+            snapSwipersToState: (animate, onComplete) => snapSwipersToState(animate, newGame, onComplete),
             updateNavigationControls: () => updateNavigationControls(newGame),
             updatePuzzleStatusIndicator: () => updatePuzzleStatusIndicator(newGame),
             getActivePuzzle: () => getActivePuzzleForCurrentLocation(newGame),
@@ -581,7 +560,7 @@ const start = () => {
 
             // Tell the game state machine to handle the transition.
             if (gameStateMachine) {
-                gameStateMachine.transitionTo('TRANSITIONING', { destination });
+                gameStateMachine.transitionTo('NAVIGATING', { destination });
             }
         };
 

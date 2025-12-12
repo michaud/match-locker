@@ -169,11 +169,15 @@ export function createGameStateMachine(callbacks) {
                 game.playerState.currentSwiperId = destination.swiperId;
                 game.playerState.currentIndex = destination.index;
 
+                console.log(`%c[DEBUG] NAVIGATING: Destination Swiper ID: ${destination.swiperId}`, 'color: #FFD700;');
+                console.log(`%c[DEBUG] NAVIGATING: New Player State Swiper ID: ${game.playerState.currentSwiperId}`, 'color: #FFD700;');
+
                 // Update visibility for the new location.
-                updateSwiperVisibility();
+                const done = updateSwiperVisibility();
 
                 const handleSnapComplete = () => {
-                    // Find the swiper that was just animated. It could be a host or guest.
+                    console.log('%c[DEBUG] NAVIGATING: handleSnapComplete called!', 'color: #98FB98;');
+
                     const swiper = game.swiperInstances.get(destination.swiperId);
                     if (swiper) swiper.off('snapComplete', handleSnapComplete);
 
@@ -181,19 +185,11 @@ export function createGameStateMachine(callbacks) {
                     const isAtPuzzle = !!getActivePuzzle();
                     transitionTo(isAtPuzzle ? 'IDLE_AT_PUZZLE' : 'IDLE_ON_PATH');
                 };
-
-                // We need to listen for the snap complete on the swiper that is actually moving.
-                // In a navigation, this could be different from the one in playerState if we are
-                // moving from a path onto a guest swiper.
-                const targetSwiper = game.swiperInstances.get(destination.swiperId);
-                if (targetSwiper) {
-                    // The snapSwipersToState function will snap all relevant swipers, but we only
-                    // need to listen for completion on the one that is the navigation target.
-                    targetSwiper.on('snapComplete', handleSnapComplete);
-                    snapSwipersToState(true); // Animate all relevant swipers to the new state.
-                } else {
-                    transitionTo('IDLE_ON_PATH'); // Failsafe
-                }
+                // Force the browser to render the visibility change before starting the animation.
+                // This prevents a race condition where the transitionend event might not fire.
+                requestAnimationFrame(() => {
+                    snapSwipersToState(true, handleSnapComplete);
+                });
             },
             onExit() { /* No action needed on exit */ }
         }
