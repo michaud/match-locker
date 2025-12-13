@@ -22,6 +22,8 @@ const start = () => {
     let menuDragHandler = null;
     let gameStateMachine = null;
 
+    const defaultStartScreen = 'about';
+
     const DisplayStyle = Object.freeze({
         BLOCK: 'block',
         FLEX: 'flex',
@@ -35,6 +37,7 @@ const start = () => {
     const gameScreen = mainScreen.querySelector('.game-screen');
     const settingsScreen = mainScreen.querySelector('.settings-screen');
     const infoScreen = mainScreen.querySelector('.info-screen');
+    const aboutScreen = mainScreen.querySelector('.about-screen');
 
     const gameMenu = startScreen.querySelector('.game-menu ol');
     const topNav = mainScreen.querySelector('.sub-nav.game');
@@ -88,7 +91,8 @@ const start = () => {
         [startScreen, DisplayStyle.GRID],
         [gameScreen, DisplayStyle.BLOCK],
         [settingsScreen, DisplayStyle.FLEX],
-        [infoScreen, DisplayStyle.BLOCK]
+        [infoScreen, DisplayStyle.BLOCK],
+        [aboutScreen, DisplayStyle.BLOCK]
     ]);
 
     const showWinToaster = () => {
@@ -595,8 +599,8 @@ const start = () => {
     // --- State-based Screen Navigation ---
 
     const screenStateMachine = {
-//        currentState: 'leadin',
-        currentState: 'start',
+
+        currentState: defaultStartScreen,
         states: {
             leadin: {
                 onEnter: () => {
@@ -649,6 +653,16 @@ const start = () => {
                 },
                 onExit: () => {
                     infoScreen.style.display = DisplayStyle.NONE;
+                },
+            },
+            about: {
+                onEnter: () => {
+                    aboutScreen.style.display = screenDisplayMap.get(aboutScreen);
+                    topNav.style.display = DisplayStyle.GRID;
+                    puzzleNav.style.display = DisplayStyle.NONE;
+                },
+                onExit: () => {
+                    aboutScreen.style.display = DisplayStyle.NONE;
                 },
             },
         },
@@ -817,12 +831,11 @@ const start = () => {
 
     // Set initial state
     leadInScreen.style.display = 'none';
-//    leadInScreen.style.display = screenDisplayMap.get(leadInScreen);
-//    startScreen.style.display = 'none';
-    startScreen.style.display = screenDisplayMap.get(startScreen);
+    startScreen.style.display = 'none';
     gameScreen.style.display = 'none';
     settingsScreen.style.display = 'none';
     infoScreen.style.display = 'none';
+    aboutScreen.style.display = 'none';
 
     async function initializeStartScreen() {
 
@@ -952,8 +965,8 @@ const start = () => {
 
     // Initialize the start screen and its handlers, then enter the initial state.
     initializeStartScreen().then(() => {
-//        screenStateMachine.transitionTo('leadin');
-        screenStateMachine.transitionTo('start');
+
+        screenStateMachine.transitionTo(defaultStartScreen);
     });
 }
 
