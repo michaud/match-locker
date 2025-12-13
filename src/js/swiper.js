@@ -11,6 +11,8 @@
  */
 export function createSwiper(options) {
 
+    let debug = false;
+
     const {
         listSelector,
         direction,
@@ -281,10 +283,12 @@ export function createSwiper(options) {
             } else {
                 // Define the completion handler here so it's in scope for both fling and regular snaps.
                 const animationCompletionHandler = () => {
-                    console.log(`%c[DEBUG] SWIPER (${API.swiperId}): animationCompletionHandler called.`, 'color: #87CEFA;');
+
+                    debug && console.log(`%c[DEBUG] SWIPER (${API.swiperId}): animationCompletionHandler called.`, 'color: #87CEFA;');
 
                     if (options.onComplete) {
-                        console.log(`%c[DEBUG] SWIPER (${API.swiperId}): Executing options.onComplete callback.`, 'color: #87CEFA;');
+
+                        debug && console.log(`%c[DEBUG] SWIPER (${API.swiperId}): Executing options.onComplete callback.`, 'color: #87CEFA;');
                         options.onComplete();
                     }
 

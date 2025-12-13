@@ -19,8 +19,8 @@
  */
 export function createGameStateMachine(callbacks) {
 
-    let currentState = null;
     let debug = false;
+    let currentState = null;
 
     // Unpack callbacks for easier access
     const {
@@ -305,7 +305,7 @@ export function createGameStateMachine(callbacks) {
         // Explicitly detach all handlers when the game is torn down.
         interactionHandlers.gameDragAndTapHandler.detach();
         interactionHandlers.navigationHandler.detach();
-        console.log("GameStateMachine destroyed.");
+        debug && console.log("GameStateMachine destroyed.");
     }
 
     function handleTap() {
