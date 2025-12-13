@@ -326,7 +326,7 @@ input[type="checkbox"] {
         border-left-width: 1px;
         border-top-width: 1px;
         border-right-width: 0;
-        border-radius: 0;
+        border-radius: 0 0 10px 0;
     }
 
     .left-right {
@@ -658,6 +658,12 @@ input[type="checkbox"] {
     gap: 2rem;
 }
 
+.layout-svg-container {
+
+    padding-top: 1rem;
+    display: grid;
+}
+
 /* Layout Visualizer Styles (for Info Screen) */
 .layout-svg {
 
@@ -665,7 +671,6 @@ input[type="checkbox"] {
     border: 1px solid #333;
     border-radius: 8px;
     overflow: visible;
-    margin-top: 1rem;
     max-width: 100%;
     height: auto;
 }
