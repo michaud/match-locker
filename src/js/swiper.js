@@ -7,6 +7,7 @@
  * @param {string} options.listSelector - The CSS selector for the list element.
  * @param {'horizontal' | 'vertical'} options.direction - The swipe direction.
  * @param {string} [options.id] - An optional unique identifier for the swiper instance.
+ * @param {number} [options.dragFactor=1] - Multiplier for drag distance to reduce sensitivity.
  * @returns {object} A public API to control the swiper instance.
  */
 export function createSwiper(options) {
@@ -19,6 +20,7 @@ export function createSwiper(options) {
         slideWidth = null,
         slideHeight = null,
         throwMultiplier = 0.7,
+        dragFactor = 1,
         viewportMatchesSlide = false,
         id = null, // Capture the ID
         cloneCount = 10,
@@ -190,7 +192,7 @@ export function createSwiper(options) {
             lastMoveTime = now;
             lastMovePos = position;
 
-            currentTranslate = startTranslate + delta;
+            currentTranslate = startTranslate + (delta * dragFactor);
             const transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
             filmstripElement.style.transform = transform;
 

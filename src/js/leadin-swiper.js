@@ -10,6 +10,7 @@ import { wrap } from './utils.js'; // This utility is used by the main swiper as
  * @param {number} [options.initialIndex=0] - The data-index of the slide that should be initially visible.
  * @param {string} options.playSlideId - The data-slide-id of the slide that represents the "play" position.
  * @param {number} [options.throwMultiplier=0.7] - Multiplier for swipe velocity to determine snap distance.
+ * @param {number} [options.dragFactor=1] - Multiplier for drag distance to reduce sensitivity.
  * @param {function} [options.onActiveStateChange] - Callback (isActive, swiperId) when swiper becomes active/inactive.
  * @param {string} [options.id] - An optional unique identifier for the swiper instance.
  * @returns {object} A public API to control the swiper instance.
@@ -23,6 +24,7 @@ export function createLeadInSwiper(options) {
         initialOverlapIndex = 0,
         playSlideId,
         throwMultiplier = 0.7,
+        dragFactor = 1,
         onActiveStateChange = () => {},
         id = null,
         endDragDisabled = false,
@@ -158,7 +160,7 @@ export function createLeadInSwiper(options) {
             }
             lastMoveTime = now;
             lastMovePos = position;
-            currentTranslate = startTranslate + delta;
+            currentTranslate = startTranslate + (delta * dragFactor);
             element.style.transform = IS_HORIZONTAL ? `translateX(${currentTranslate}px)` : `translateY(${currentTranslate}px)`;
             checkWrapAround(); // Check and reset during drag
             emit('drag');

@@ -4,8 +4,9 @@
         font-family: Gugi;
         src: url(/style/Gugi-Regular.ttf) format("truetype");
     }
-}
 
+    --content-screen-background: rgba(0 0 0 / 0.6);
+}
 
 body,
 html {
@@ -77,7 +78,7 @@ input[type="checkbox"] {
     width: 960px;
     height: 680px;
     overflow: hidden;
-    background-color: black;
+    background: radial-gradient(ellipse farthest-corner at 72% 98%, #00204f00 30%, #2f0a7763, #22075300 60%), linear-gradient(to right top, hsl(216 100% 13% / 1), hsl(238 74% 14% / 1) 35%, hsl(239 73% 17% / 1) 45%, hsl(261 84% 10% / 1));
 }
 
 .start-screen {
@@ -86,7 +87,14 @@ input[type="checkbox"] {
     width: 100%;
     height: 100%;
     grid-template-rows: auto auto 1fr;
-    background: radial-gradient(ellipse farthest-corner at 72% 98%, #00204f00 30%, #2f0a7763, #22075300 60%), linear-gradient(to right top, hsl(216 100% 13% / 1), hsl(238 74% 14% / 1) 35%, hsl(239 73% 17% / 1) 45%, hsl(261 84% 10% / 1));
+}
+.about-screen {
+
+    display: grid;
+    width: 100%;
+    height: 100%;
+    grid-template-rows: auto auto 1fr;
+    background: var(--content-screen-background);
 }
 
 .game-screen {
@@ -95,6 +103,7 @@ input[type="checkbox"] {
     width: 100%;
     height: 100%;
     position: relative;
+    background: var(--content-screen-background);
 }
 
 .settings-screen {
@@ -106,8 +115,17 @@ input[type="checkbox"] {
     align-items: center;
     justify-content: flex-start;
     padding-top: 1.5rem;
+    background: var(--content-screen-background);
 }
 
+.info-screen {
+
+    display: grid;
+    width: 100%;
+    height: 100%;
+
+    background: var(--content-screen-background);
+}
 
 #logo-start {
 
@@ -261,9 +279,14 @@ input[type="checkbox"] {
         position: absolute;
         top: 0;
     }
+
+    &.about {
+
+        grid-row:3;
+    }
 }
 
-.sub-nav button {
+button {
 
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -852,6 +875,10 @@ input[type="checkbox"] {
     transition: opacity 0.5s ease-in-out;
 }
 
+.leadin-screen {
+
+    background-color:rgb(6 7 19);
+}
 /* Set initial opacities before animation starts */
 .leadin-screen:not(.start-animation) #tell-swipe-icons,
 .leadin-screen:not(.start-animation) #slide-match-play,

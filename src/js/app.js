@@ -22,7 +22,7 @@ const start = () => {
     let menuDragHandler = null;
     let gameStateMachine = null;
 
-    const defaultStartScreen = 'about';
+    const defaultStartScreen = 'leadin';
 
     const DisplayStyle = Object.freeze({
         BLOCK: 'block',
@@ -54,10 +54,11 @@ const start = () => {
     const submitButton = menuPopout.querySelector('#button-submit');
     const settingsButton = menuPopout.querySelector('#button-settings');
     const backButton = menuPopout.querySelector('#button-back');
+    const aboutButton = menuPopout.querySelector('#button-about');
     const quitGameButton = menuPopout.querySelector('#button-quit');
     const infoButton = gameScreen.querySelector('.button-info'); 
     const infoScreenInfoButton = infoScreen.querySelector('.button-info'); 
-    const infoPuzzleSection = infoScreen.querySelector('.info-puzzle');
+        const infoPuzzleSection = infoScreen.querySelector('.info-puzzle');
 
     // Toaster elements
     const toaster = document.querySelector('.toaster');
@@ -91,30 +92,41 @@ const start = () => {
         [startScreen, DisplayStyle.GRID],
         [gameScreen, DisplayStyle.BLOCK],
         [settingsScreen, DisplayStyle.FLEX],
-        [infoScreen, DisplayStyle.BLOCK],
-        [aboutScreen, DisplayStyle.BLOCK]
+        [infoScreen, DisplayStyle.GRID],
+        [aboutScreen, DisplayStyle.GRID]
     ]);
 
     const showWinToaster = () => {
+
         toaster.classList.add('is-visible');
         gameScreen.classList.add('disabled'); // Disable game interaction
     };
 
     async function loadGame(url) {
+
         try {
+
             const response = await fetch(url);
+
             if (!response.ok) {
+
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
+
             const gameData = await response.json();
             const initializedGame = await initializeGame(gameData);
+
             if (initializedGame) {
+
                 activeGame = initializedGame;
+
             } else {
+
                 console.error("Game could not be loaded due to initialization errors.");
                 // Optionally, show a user-facing error or navigate back to the start screen.
             }
         } catch (error) {
+
             console.error("Could not load game:", error);
         }
     }
@@ -316,6 +328,7 @@ const start = () => {
                         slideHeight: sliderConfig.direction === 'vertical' ? GAME_SLIDE_HEIGHT : null,
                         viewportMatchesSlide: true,
                         cloneCount: GAME_CLONE_COUNT,
+                        dragFactor: 0.6, // Slower movement during drag
                     };
     
                     const swiper = createSwiper(swiperOptions);
@@ -687,6 +700,7 @@ const start = () => {
         quitGameButton.style.display = 'none';
         settingsButton.style.display = 'none';
         backButton.style.display = 'none';
+        aboutButton.style.display = 'block';
 
         if (screenStateMachine.currentState === 'start') {
 
@@ -761,9 +775,16 @@ const start = () => {
         }
     });
 
+
     settingsButton.addEventListener('click', () => {
 
         screenStateMachine.transitionTo('settings');
+        menuPopout.style.display = 'none';
+    });
+
+    aboutButton.addEventListener('click', () => {
+
+        screenStateMachine.transitionTo('about');
         menuPopout.style.display = 'none';
     });
 

@@ -32,6 +32,8 @@ export function initLeadInScreen(screen, navigateToStartScreen) {
             direction: 'vertical',
             itemSize: 50.8, // Height of a rect + spacing
             playSlideId: 'leadin-v-play',
+            throwMultiplier: 0.7, // Slower swipe on release
+            dragFactor: 0.4, // Slower movement during drag
             initialOverlapIndex: 3, // Start one slide down to avoid initial overlap
         });
 
@@ -41,6 +43,8 @@ export function initLeadInScreen(screen, navigateToStartScreen) {
             direction: 'horizontal',
             itemSize: 69.320833, // Width of a rect + spacing
             playSlideId: 'leadin-h-play',
+            throwMultiplier: 0.7, // Slower swipe on release
+            dragFactor: 0.4, // Slower movement during drag
             initialOverlapIndex: 3, // Start one slide down to avoid initial overlap
         });
 
