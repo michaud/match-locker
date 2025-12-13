@@ -595,6 +595,7 @@ const start = () => {
     // --- State-based Screen Navigation ---
 
     const screenStateMachine = {
+//        currentState: 'leadin',
         currentState: 'start',
         states: {
             leadin: {
@@ -816,6 +817,8 @@ const start = () => {
 
     // Set initial state
     leadInScreen.style.display = 'none';
+//    leadInScreen.style.display = screenDisplayMap.get(leadInScreen);
+//    startScreen.style.display = 'none';
     startScreen.style.display = screenDisplayMap.get(startScreen);
     gameScreen.style.display = 'none';
     settingsScreen.style.display = 'none';
@@ -949,6 +952,7 @@ const start = () => {
 
     // Initialize the start screen and its handlers, then enter the initial state.
     initializeStartScreen().then(() => {
+//        screenStateMachine.transitionTo('leadin');
         screenStateMachine.transitionTo('start');
     });
 }
