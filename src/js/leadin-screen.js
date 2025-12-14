@@ -24,6 +24,7 @@ export function initLeadInScreen(screen, navigateToStartScreen) {
     // before we try to initialize the swipers on its elements.
     requestAnimationFrame(() => {
         let activeSwiperId = null;
+        let hiddenElements = [];
 
         // Initialize swipers FIRST, but without the callback yet.
         const leadinVSwiper = createLeadInSwiper({
@@ -55,6 +56,18 @@ export function initLeadInScreen(screen, navigateToStartScreen) {
 
         const handleSwiperActiveStateChange = (isActive, swiperId) => {
             if (isActive) {
+                playButtonRect.style.visibility = 'hidden';
+                hiddenElements = []; // Clear previous state on new drag start
+                const activeSwiper = (swiperId === 'leadin-v') ? leadinVSwiper : leadinHSwiper;
+
+                // Bring the active swiper to the front by appending it to its parent.
+                // In SVG, the last element in the document order is rendered on top.
+                const activeElement = activeSwiper.getElement();
+                if (activeElement.parentElement) {
+                    // This moves the active swiper's <g> element to be the last child of its container,
+                    // ensuring it draws on top of the inactive swiper.
+                    activeElement.parentElement.appendChild(activeElement);
+                }
                 activeSwiperId = swiperId;
                 const inactiveSwiper = (swiperId === 'leadin-v') ? leadinHSwiper : leadinVSwiper;
                 if (inactiveSwiper) {
@@ -63,24 +76,31 @@ export function initLeadInScreen(screen, navigateToStartScreen) {
 
                     // Use querySelectorAll to hide ALL instances of the overlapping slide (original and clones).
 
-                    inactiveSwiper.getElement().querySelectorAll(`[data-slide-id="${inactivePlaySlideId}"]`).forEach(slide => {
-                        slide.style.visibility = 'hidden';
-                    });
+                    // This implements the specific instruction for the horizontal swipe.
+                    if (swiperId === 'leadin-h' && inactivePlaySlideId === 'leadin-v-play') {
+                        inactiveSwiper.getElement().querySelectorAll(`[id="rect130"],[id="rect47"], [id="rect247"], [id="play-button-bg"], [data-slide-id="leadin-v-play"]`).forEach(el => {
+                                el.style.visibility = 'hidden';
+                                hiddenElements.push(el);
+                        });
+                    } else {
+                        // Use the existing logic for the vertical swipe, as it was working correctly.
+                        inactiveSwiper.getElement().querySelectorAll(`[data-slide-id="${inactivePlaySlideId}"]`).forEach(slideGroup => {
+                            slideGroup.style.visibility = 'hidden';
+                            hiddenElements.push(slideGroup);
+                        });
+                    }
                 }
             } else {
+                playButtonRect.style.visibility = 'visible';
                 // Only reset visibility if the swiper that just finished was the active one.
                 // This prevents a rapid sequence of drags from prematurely showing the other swiper.
                 if (activeSwiperId === swiperId) {
                     activeSwiperId = null;
-                    // Restore visibility for ALL slides in both swipers to ensure a clean state.
-                    // Use querySelectorAll to ensure all instances (clones) are made visible again.
-                    leadinVSwiper.getElement().querySelectorAll(`[data-slide-id]`).forEach(slide => {
-                        slide.style.visibility = 'visible';
+                    // Restore visibility only for the elements that were hidden during this specific interaction.
+                    hiddenElements.forEach(element => {
+                        element.style.visibility = 'visible';
                     });
-
-                    leadinHSwiper.getElement().querySelectorAll(`[data-slide-id]`).forEach(slide => {
-                        slide.style.visibility = 'visible';
-                    });
+                    hiddenElements = []; // Clear the array after use
                 }
             }
         };
