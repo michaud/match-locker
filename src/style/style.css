@@ -918,3 +918,28 @@ button {
     from { opacity: 1; }
     to { opacity: 0; }
 }
+
+.no-leadin {
+
+    /* display: grid; */
+    display: none;
+    position: absolute;
+    bottom: 5.5rem;
+    left: 6.5rem;
+    width: 13rem;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+
+    span {
+
+        display: inline-block;
+        font-weight: bold;
+        padding-inline-end: 1rem;
+    }
+
+    & input[type="checkbox"] {
+
+        vertical-align: sub;
+    }
+}
+
