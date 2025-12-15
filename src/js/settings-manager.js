@@ -15,6 +15,7 @@ const defaultSettings = {
 };
 
 let settingsState = {};
+
 const listeners = new Map();
 
 function loadSettings() {

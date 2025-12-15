@@ -157,6 +157,9 @@ const start = () => {
         getActivePuzzle: getActivePuzzleForCurrentLocation,
     });
 
+    // Set the initial strategy from loaded settings
+    matchVisualizer.setStrategy(currentSettings.matchVisualization);
+
     const updateSwiperVisibility = (game = activeGame) => {
 
         if (!game.playerState) return;
