@@ -97,7 +97,7 @@ const start = () => {
         [gameScreen, DisplayStyle.BLOCK],
         [settingsScreen, DisplayStyle.FLEX],
         [infoScreen, DisplayStyle.GRID],
-        [aboutScreen, DisplayStyle.GRID]
+        [aboutScreen, DisplayStyle.FLEX]
     ]);
 
     const showWinToaster = () => {
@@ -708,29 +708,30 @@ const start = () => {
         submitButton.style.display = 'none';
         quitGameButton.style.display = 'none';
         settingsButton.style.display = 'none';
+        aboutButton.style.display = 'none';
         backButton.style.display = 'none';
-        aboutButton.style.display = 'block';
 
         if (screenStateMachine.currentState === 'start') {
 
             settingsButton.style.display = 'block';
+            aboutButton.style.display = 'block';
 
         } else if (screenStateMachine.currentState === 'game') {
 
             quitGameButton.style.display = 'block';
             settingsButton.style.display = 'block';
+            aboutButton.style.display = 'block';
+
             // Show submit button only if the setting is correct and there's at least one match
             if (currentSettings.puzzleCompletion === 'user-submits' && getActivePuzzleForCurrentLocation() && (activeGame.gameState.playerMatchesByPuzzle.get(getActivePuzzleForCurrentLocation().id)?.size || 0) > 0) {
 
                 submitButton.style.display = 'block';
             }
 
-        } else if (screenStateMachine.currentState === 'settings') {
+        } else if (screenStateMachine.currentState === 'settings' || screenStateMachine.currentState === 'info' || screenStateMachine.currentState === 'about') {
 
-            backButton.style.display = 'block';
-
-        } else if (screenStateMachine.currentState === 'info') {
-
+            settingsButton.style.display = 'block';
+            aboutButton.style.display = 'block';
             backButton.style.display = 'block';
         }
     });
@@ -822,15 +823,21 @@ const start = () => {
         }
     });
 
-    backButton.addEventListener('click', () => {
-
+    const handleBackButton = () => {
         menuPopout.style.display = 'none';
-        
-        // 'back' from settings/info should return to the game if a game is active, otherwise to start.
-        if (screenStateMachine.currentState === 'settings' || screenStateMachine.currentState === 'info') {
-            const targetState = activeGame.playerState ? 'game' : 'start';
-            screenStateMachine.transitionTo(targetState);
-        }
+        // 'back' from settings/info/about should return to the game if a game is active, otherwise to start.
+        const targetState = activeGame.playerState ? 'game' : 'start';
+        screenStateMachine.transitionTo(targetState);
+    };
+
+    // Add listeners for all back buttons
+    mainScreen.querySelectorAll('.back-button').forEach(button => {
+        button.addEventListener('click', handleBackButton);
+    });
+
+    backButton.addEventListener('click', () => {
+        // This is the back button in the popout menu
+        handleBackButton();
     });
 
     toasterBackButton.addEventListener('click', () => {
