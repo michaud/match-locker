@@ -849,12 +849,19 @@ const start = () => {
 
     showSlideNamesCheckbox.addEventListener('change', (event) => {
         settingsManager.updateSetting('showSlideNames', event.target.checked);
+        // If we are on the info screen, re-render it to show/hide slide names
+        if (screenStateMachine.currentState === 'info') {
+            renderInfoScreen();
+        }
     });
 
     matchVisualizationSelect.addEventListener('change', (event) => {
         const newStrategy = event.target.value;
         settingsManager.updateSetting('matchVisualization', newStrategy);
         matchVisualizer.setStrategy(newStrategy);
+        // Immediately update the visuals to reflect the new strategy
+        // This is necessary if the user changes the setting while at a puzzle.
+        matchVisualizer.synchronizeVisuals();
     });
 
     skipLeadinSettingsCheckbox.addEventListener('change', (event) => {
