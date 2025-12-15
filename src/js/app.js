@@ -62,7 +62,7 @@ const start = () => {
     const quitGameButton = menuPopout.querySelector('#button-quit');
     const infoButton = gameScreen.querySelector('.button-info'); 
     const infoScreenInfoButton = infoScreen.querySelector('.button-info'); 
-        const infoPuzzleSection = infoScreen.querySelector('.info-puzzle');
+    const infoPuzzleSection = infoScreen.querySelector('.info-puzzle');
 
     // Toaster elements
     const toaster = document.querySelector('.toaster');
