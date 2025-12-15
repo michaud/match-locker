@@ -213,7 +213,7 @@ input[type="checkbox"] {
 
     .slide.is-matched-colored {
 
-        border-left: solid var(--match-color, transparent);
+        border-left: var(--match-border-radius) solid var(--match-color, transparent);
         border-bottom-left-radius: var(--match-border-radius);
         border-bottom-right-radius: var(--match-border-radius);
         border-top-left-radius: var(--match-border-radius);
