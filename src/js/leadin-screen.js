@@ -1,7 +1,7 @@
 import { createDragHandler } from './drag.js';
 import { createLeadInSwiper } from './leadin-swiper.js';
 
-export function initLeadInScreen(screen, navigateToStartScreen) {
+export function initLeadInScreen(screen, navigateToStartScreen, settingsManager) {
     const tellSwipeRight = screen.querySelector('#tell-swipe-right');
     const tellSwipeUp = screen.querySelector('#tell-swipe-up');
     const leadinPlayButton = screen.querySelector('#leadin-play-button');
@@ -9,6 +9,8 @@ export function initLeadInScreen(screen, navigateToStartScreen) {
     const playButtonText = leadinPlayButton.querySelector('#play-button-text-path'); // Target the visual element
     const vSwiperElement = screen.querySelector('#leadin-v-swiper');
     const hSwiperElement = screen.querySelector('#leadin-h-swiper');
+    const noLeadinContainer = screen.querySelector('.no-leadin');
+    const logoBigBg = screen.querySelector('#logo-big-bg');
     let idleTimer;
 
     // Set initial state: hidden and ready for fade-in.
@@ -19,6 +21,30 @@ export function initLeadInScreen(screen, navigateToStartScreen) {
     // Add transitions for smooth opacity changes on the swiper groups.
     vSwiperElement.style.transition = 'opacity 0.3s ease-in-out';
     hSwiperElement.style.transition = 'opacity 0.3s ease-in-out';
+    noLeadinContainer.style.display = 'none'; // Initially hide the checkbox container
+
+    // --- "Skip Lead-in" Logic ---
+    const currentSettings = settingsManager.getSettings();
+
+    if (currentSettings.hasVisited) {
+        const noLeadinCheckbox = noLeadinContainer.querySelector('input[type="checkbox"]');
+        noLeadinCheckbox.checked = currentSettings.skipLeadin;
+
+        noLeadinCheckbox.addEventListener('change', (event) => {
+            settingsManager.updateSetting('skipLeadin', event.target.checked);
+        });
+
+        // Wait for the logo fade-out animation to complete before showing the checkbox.
+        // This ensures the UI elements appear in a logical sequence.
+        const showCheckboxOnAnimationEnd = () => {
+            noLeadinContainer.style.display = 'grid';
+            logoBigBg.removeEventListener('animationend', showCheckboxOnAnimationEnd);
+        };
+        logoBigBg.addEventListener('animationend', showCheckboxOnAnimationEnd);
+    }
+
+    // Mark that the user has now seen the lead-in screen for future visits.
+    settingsManager.updateSetting('hasVisited', true);
 
     // We must wait for the next animation frame to ensure the screen is visible in the DOM
     // before we try to initialize the swipers on its elements.
@@ -183,6 +209,7 @@ export function initLeadInScreen(screen, navigateToStartScreen) {
 
         // Set up idle timer
         resetIdleTimer();
+
         screen.addEventListener('pointerdown', handleInteraction);
         screen.addEventListener('keydown', handleInteraction);
 

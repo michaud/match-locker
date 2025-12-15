@@ -7,6 +7,7 @@ import { createLayoutVisualizer } from './visualiser.js';
 import { createNavigationHandler } from './navigation-handler.js';
 import { createMatchVisualizer } from './match-visualizer.js';
 import { createDragAndTapHandler } from './drag-and-tap-handler.js';
+import { createSettingsManager } from './settings-manager.js';
 import { createDragHandler } from './drag.js';
 
 const start = () => {
@@ -22,8 +23,11 @@ const start = () => {
     let menuDragHandler = null;
     let gameStateMachine = null;
 
-    const defaultStartScreen = 'leadin';
+    const settingsManager = createSettingsManager();
+    let currentSettings = settingsManager.getSettings();
 
+    const defaultStartScreen = currentSettings.skipLeadin ? 'start' : 'leadin';
+    
     const DisplayStyle = Object.freeze({
         BLOCK: 'block',
         FLEX: 'flex',
@@ -63,17 +67,17 @@ const start = () => {
     // Toaster elements
     const toaster = document.querySelector('.toaster');
     const toasterBackButton = document.querySelector('.toaster-back-button');
+    const skipLeadinSettingsCheckbox = document.getElementById('no-leadin');
 
     // --- App Settings ---
     const puzzleCompletionSelect = document.getElementById('puzzle-completion');
     const showSlideNamesCheckbox = document.getElementById('show-slide-names');
     const matchVisualizationSelect = document.getElementById('match-visualization-strategy');
-    const settingsState = {
-        puzzleCompletion: puzzleCompletionSelect.value, // Initialize with default
-        showSlideNames: showSlideNamesCheckbox.checked,
-        matchVisualization: matchVisualizationSelect.value,
-        showSlideNames: showSlideNamesCheckbox.checked
-    };
+    
+    // Sync UI elements with loaded/default settings
+    puzzleCompletionSelect.value = currentSettings.puzzleCompletion;
+    showSlideNamesCheckbox.checked = currentSettings.showSlideNames;
+    matchVisualizationSelect.value = currentSettings.matchVisualization;
 
     // Encapsulate all game-related state into a single object.
     // This object will be replaced entirely when a new game is loaded.
@@ -161,7 +165,7 @@ const start = () => {
         const activePuzzle = getActivePuzzleForCurrentLocation(game);
 
         if (activePuzzle) {
-            // If we are at a puzzle, find the definitive host and guest from the puzzle slot data.
+            // If we are at a puzzle, find the host and guest from the puzzle slot data.
             const { currentSwiperId, currentIndex } = game.playerState;
             const currentSlot = game.layout.puzzle_slots.find(slot => 
                 (slot.host_group_id === currentSwiperId && slot.at_index === currentIndex) ||
@@ -477,7 +481,7 @@ const start = () => {
             updateNavigationControls: () => updateNavigationControls(newGame),
             updatePuzzleStatusIndicator: () => updatePuzzleStatusIndicator(newGame),
             getActivePuzzle: () => getActivePuzzleForCurrentLocation(newGame),
-            getSettings: () => settingsState,
+            getSettings: () => settingsManager.getSettings(),
             checkPuzzleSolved: () => checkActivePuzzleSolved(newGame),
             checkGameWin: () => checkGameWinCondition(newGame),
             matchVisualizer: matchVisualizer,
@@ -571,7 +575,7 @@ const start = () => {
             // Create a destination object for the state machine.
             const destination = {
                 swiperId: slot.host_group_id,
-                index: slot.at_index,
+                index: slot.at_index, // Corrected from 'slideIndex'
                 source: 'visualizer-jump'
             };
 
@@ -585,7 +589,7 @@ const start = () => {
             activeGame.layout,
             activeGame.slideGroups,
             {
-                showNames: settingsState.showSlideNames,
+                showNames: currentSettings.showSlideNames,
                 onSlotClick: handleVisualizerSlotClick,
                 playerState: activeGame.playerState
             });
@@ -618,9 +622,9 @@ const start = () => {
             leadin: {
                 onEnter: () => {
                     leadInScreen.style.display = screenDisplayMap.get(leadInScreen);
-                    topNav.style.display = DisplayStyle.NONE;
+                    topNav.style.display = DisplayStyle.NONE; // No nav on lead-in
                     puzzleNav.style.display = DisplayStyle.NONE;
-                    initLeadInScreen(leadInScreen, () => screenStateMachine.transitionTo('start'));
+                    initLeadInScreen(leadInScreen, () => screenStateMachine.transitionTo('start'), settingsManager);
                 },
                 onExit: () => {
                     leadInScreen.style.display = DisplayStyle.NONE;
@@ -653,6 +657,8 @@ const start = () => {
                     settingsScreen.style.display = screenDisplayMap.get(settingsScreen);
                     topNav.style.display = DisplayStyle.GRID;
                     puzzleNav.style.display = DisplayStyle.NONE;
+                    // Sync the checkbox with the current setting when the screen is shown
+                    skipLeadinSettingsCheckbox.checked = settingsManager.getSettings().skipLeadin;
                 },
                 onExit: () => {
                     settingsScreen.style.display = DisplayStyle.NONE;
@@ -711,7 +717,7 @@ const start = () => {
             quitGameButton.style.display = 'block';
             settingsButton.style.display = 'block';
             // Show submit button only if the setting is correct and there's at least one match
-            if (settingsState.puzzleCompletion === 'user-submits' && getActivePuzzleForCurrentLocation() && (activeGame.gameState.playerMatchesByPuzzle.get(getActivePuzzleForCurrentLocation().id)?.size || 0) > 0) {
+            if (currentSettings.puzzleCompletion === 'user-submits' && getActivePuzzleForCurrentLocation() && (activeGame.gameState.playerMatchesByPuzzle.get(getActivePuzzleForCurrentLocation().id)?.size || 0) > 0) {
 
                 submitButton.style.display = 'block';
             }
@@ -835,19 +841,24 @@ const start = () => {
 
     // --- Settings Logic ---
     puzzleCompletionSelect.addEventListener('change', (event) => {
-
-        settingsState.puzzleCompletion = event.target.value;
+        settingsManager.updateSetting('puzzleCompletion', event.target.value);
     });
 
     showSlideNamesCheckbox.addEventListener('change', (event) => {
-
-        settingsState.showSlideNames = event.target.checked;
+        settingsManager.updateSetting('showSlideNames', event.target.checked);
     });
 
     matchVisualizationSelect.addEventListener('change', (event) => {
+        const newStrategy = event.target.value;
+        settingsManager.updateSetting('matchVisualization', newStrategy);
+        matchVisualizer.setStrategy(newStrategy);
+    });
 
-        settingsState.matchVisualization = event.target.value;
-        matchVisualizer.setStrategy(settingsState.matchVisualization);
+    skipLeadinSettingsCheckbox.addEventListener('change', (event) => {
+        const shouldSkip = event.target.checked;
+        settingsManager.updateSetting('skipLeadin', shouldSkip);
+        // Changing this setting implies they've seen the lead-in.
+        settingsManager.updateSetting('hasVisited', true);
     });
 
     // Set initial state
