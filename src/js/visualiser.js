@@ -52,6 +52,9 @@ export function createLayoutVisualizer(layout, slideGroups, options = { showName
     // Store the coordinates of the player's current slide to use for centering.
     let currentPlayerSlideX = null;
     let currentPlayerSlideY = null;
+    // Store the coordinates of the active puzzle slot for centering.
+    let activePuzzleSlotX = null;
+    let activePuzzleSlotY = null;
 
     const visited = new Set();
 
@@ -134,6 +137,8 @@ export function createLayoutVisualizer(layout, slideGroups, options = { showName
             // Check if this is the currently active puzzle slot
             if (playerState && slot.host_group_id === playerState.currentSwiperId && slot.at_index === playerState.currentIndex) {
                 highlightRect.classList.add('is-active-puzzle-slot');
+                activePuzzleSlotX = highlightX;
+                activePuzzleSlotY = highlightY;
             }
 
             if (onSlotClick) {
@@ -170,26 +175,49 @@ export function createLayoutVisualizer(layout, slideGroups, options = { showName
         rootGroups.forEach(root => calculateLayoutRecursive(root.id, 0, 0));
     }
 
-    let offsetX, offsetY;
+    const finalGroup = document.createElementNS(SVG_NS, 'g');
+    finalGroup.appendChild(slideElements);
+    finalGroup.appendChild(currentPosHighlightElements);
+    finalGroup.appendChild(highlightElements);
 
-    if (playerState && currentPlayerSlideX !== null) {
-        // Center the view on the player's current slide, shifted to the right.
+    let targetTransform;
+
+    console.log('playerState:', playerState)
+    console.log('activePuzzleSlotX:', activePuzzleSlotX)
+    if (playerState && activePuzzleSlotX !== null) {
+        // Center the view on the active puzzle slot, shifted to the right.
         const targetScreenX = svgWidth * (5 / 8); // Center in the right 3/4 of the screen
-        offsetX = targetScreenX - (currentPlayerSlideX + slideWidth / 2);
-        offsetY = (svgHeight / 2) - (currentPlayerSlideY + slideHeight / 2);
+        console.log('svgWidth:', svgWidth)
+        console.log('targetScreenX:', targetScreenX)
+        const offsetX = targetScreenX - (activePuzzleSlotX + slideWidth / 2);
+        console.log('offsetX:', offsetX)
+        const offsetY = (svgHeight / 2) - (activePuzzleSlotY + slideHeight / 2);
+        console.log('offsetY:', offsetY)
+        targetTransform = `translate(${offsetX}px, ${offsetY}px)`;
+        console.log('targetTransform:', targetTransform)
     } else {
         // Fallback to centering the whole layout if no player state is available.
         const contentWidth = bounds.maxX - bounds.minX;
         const contentHeight = bounds.maxY - bounds.minY;
-        offsetX = (svgWidth - contentWidth) / 2 - bounds.minX;
-        offsetY = (svgHeight - contentHeight) / 2 - bounds.minY;
+        const offsetX = (svgWidth - contentWidth) / 2 - bounds.minX;
+        const offsetY = (svgHeight - contentHeight) / 2 - bounds.minY;
+        targetTransform = `translate(${offsetX}px, ${offsetY}px)`;
     }
 
-    const finalGroup = document.createElementNS(SVG_NS, 'g');
-    finalGroup.setAttribute('transform', `translate(${offsetX}, ${offsetY})`);
-    finalGroup.appendChild(slideElements);
-    finalGroup.appendChild(currentPosHighlightElements); // Add current position highlight first
-    finalGroup.appendChild(highlightElements);
+    // Check if an old visualizer group exists and get its transform
+    const existingSvg = document.querySelector('.layout-svg');
+    const oldGroup = existingSvg ? existingSvg.querySelector('g') : null;
+    const oldTransform = oldGroup ? oldGroup.getAttribute('transform') : targetTransform;
+
+    // Animate from the old transform to the new one.
+    finalGroup.animate([
+        { transform: oldTransform, easing: 'ease-out' },
+        { transform: targetTransform }
+    ], {
+        duration: 400, // Animation duration in milliseconds
+        easing: 'ease-in-out',
+        fill: 'forwards' // Keep the final state of the animation
+    });
 
     const svg = document.createElementNS(SVG_NS, 'svg');
     svg.setAttribute('width', svgWidth);

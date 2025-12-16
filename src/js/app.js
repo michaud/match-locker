@@ -480,8 +480,14 @@ const start = () => {
         gameStateMachine = createGameStateMachine({
             getGame: () => newGame,
             updateSwiperVisibility: () => updateSwiperVisibility(newGame),
-            snapSwipersToState: (animate, onComplete) => snapSwipersToState(animate, newGame, onComplete),
-            updateNavigationControls: () => updateNavigationControls(newGame),
+            snapSwipersToState,
+            updateNavigationControls: () => {
+                updateNavigationControls(newGame);
+                // If we are on the info screen, a navigation change means we should re-render the visualizer.
+                if (currentScreenState === 'info') {
+                    renderInfoScreen();
+                }
+            },
             updatePuzzleStatusIndicator: () => updatePuzzleStatusIndicator(newGame),
             getActivePuzzle: () => getActivePuzzleForCurrentLocation(newGame),
             getSettings: () => settingsManager.getSettings(),

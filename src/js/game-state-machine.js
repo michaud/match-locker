@@ -19,7 +19,7 @@
  */
 export function createGameStateMachine(callbacks) {
 
-    let debug = false;
+    let debug = true;
     let currentState = null;
 
     // Unpack callbacks for easier access
@@ -57,7 +57,6 @@ export function createGameStateMachine(callbacks) {
                     swiper.on('endDrag', handleSwiperEndDrag);
                 });
 
-                interactionHandlers.navigationHandler.on('navigate', handleNavigationRequest);
                 interactionHandlers.gameDragAndTapHandler.attach();
                 interactionHandlers.navigationHandler.attach();
             },
@@ -66,7 +65,7 @@ export function createGameStateMachine(callbacks) {
                 getGame().swiperInstances.forEach(swiper => {
                     swiper.off('endDrag', handleSwiperEndDrag);
                 });
-                interactionHandlers.navigationHandler.off('navigate', handleNavigationRequest);
+                interactionHandlers.navigationHandler.detach();
             },
             // Taps are ignored when not at a puzzle.
             handleTap: () => { /* Tap is ignored on path */ },
@@ -90,7 +89,6 @@ export function createGameStateMachine(callbacks) {
                 getGame().swiperInstances.forEach(swiper => {
                     swiper.on('endDrag', handleSwiperEndDrag);
                 });
-                interactionHandlers.navigationHandler.on('navigate', handleNavigationRequest);
                 interactionHandlers.gameDragAndTapHandler.attach();
                 interactionHandlers.navigationHandler.attach();
             },
@@ -98,7 +96,7 @@ export function createGameStateMachine(callbacks) {
                 getGame().swiperInstances.forEach(swiper => {
                     swiper.off('endDrag', handleSwiperEndDrag);
                 });
-                interactionHandlers.navigationHandler.off('navigate', handleNavigationRequest);
+                interactionHandlers.navigationHandler.detach();
             },
             // Taps trigger a match attempt.
             handleTap: () => {
@@ -189,7 +187,7 @@ export function createGameStateMachine(callbacks) {
                 // Force the browser to render the visibility change before starting the animation.
                 // This prevents a race condition where the transitionend event might not fire.
                 requestAnimationFrame(() => {
-                    snapSwipersToState(true, handleSnapComplete);
+                    snapSwipersToState(true, game, handleSnapComplete);
                 });
             },
             onExit() { /* No action needed on exit */ }
@@ -266,6 +264,8 @@ export function createGameStateMachine(callbacks) {
         // A navigation request has been received, so we transition to the NAVIGATING state.
         transitionTo('NAVIGATING', { destination });
     };
+    
+    interactionHandlers.navigationHandler.on('navigate', handleNavigationRequest);
 
     /**
      * Starts the state machine by determining and transitioning to the initial state.
@@ -305,6 +305,7 @@ export function createGameStateMachine(callbacks) {
         // Explicitly detach all handlers when the game is torn down.
         interactionHandlers.gameDragAndTapHandler.detach();
         interactionHandlers.navigationHandler.detach();
+        interactionHandlers.navigationHandler.off('navigate', handleNavigationRequest);
         debug && console.log("GameStateMachine destroyed.");
     }
 
