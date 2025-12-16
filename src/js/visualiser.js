@@ -20,11 +20,11 @@ export function createLayoutVisualizer(layout, slideGroups, options = { showName
     }
 
     // --- Constants for SVG rendering ---
-    const svgWidth = 397;
-    const svgHeight = 298;
-    const slideWidth = 40;
-    const slideHeight = 25;
-    const gap = 5;
+    const svgWidth = 960;
+    const svgHeight = 544;
+    const slideWidth = 80;
+    const slideHeight = 50;
+    const gap = 10;
 
     // --- Logic ported from React component ---
     const allGroupsInLayout = new Map();
@@ -49,6 +49,10 @@ export function createLayoutVisualizer(layout, slideGroups, options = { showName
     const highlightElements = document.createDocumentFragment();
     const currentPosHighlightElements = document.createDocumentFragment();
     const bounds = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
+    // Store the coordinates of the player's current slide to use for centering.
+    let currentPlayerSlideX = null;
+    let currentPlayerSlideY = null;
+
     const visited = new Set();
 
     const calculateLayoutRecursive = (groupId, currentX, currentY) => {
@@ -106,6 +110,8 @@ export function createLayoutVisualizer(layout, slideGroups, options = { showName
                 currentPosRect.setAttribute('height', slideHeight);
                 currentPosRect.setAttribute('class', 'current-position-highlight');
                 currentPosHighlightElements.appendChild(currentPosRect);
+                currentPlayerSlideX = x;
+                currentPlayerSlideY = y;
             }
             slideElements.appendChild(g);
         });
@@ -164,10 +170,20 @@ export function createLayoutVisualizer(layout, slideGroups, options = { showName
         rootGroups.forEach(root => calculateLayoutRecursive(root.id, 0, 0));
     }
 
-    const contentWidth = bounds.maxX - bounds.minX;
-    const contentHeight = bounds.maxY - bounds.minY;
-    const offsetX = (svgWidth - contentWidth) / 2 - bounds.minX;
-    const offsetY = (svgHeight - contentHeight) / 2 - bounds.minY;
+    let offsetX, offsetY;
+
+    if (playerState && currentPlayerSlideX !== null) {
+        // Center the view on the player's current slide, shifted to the right.
+        const targetScreenX = svgWidth * (5 / 8); // Center in the right 3/4 of the screen
+        offsetX = targetScreenX - (currentPlayerSlideX + slideWidth / 2);
+        offsetY = (svgHeight / 2) - (currentPlayerSlideY + slideHeight / 2);
+    } else {
+        // Fallback to centering the whole layout if no player state is available.
+        const contentWidth = bounds.maxX - bounds.minX;
+        const contentHeight = bounds.maxY - bounds.minY;
+        offsetX = (svgWidth - contentWidth) / 2 - bounds.minX;
+        offsetY = (svgHeight - contentHeight) / 2 - bounds.minY;
+    }
 
     const finalGroup = document.createElementNS(SVG_NS, 'g');
     finalGroup.setAttribute('transform', `translate(${offsetX}, ${offsetY})`);

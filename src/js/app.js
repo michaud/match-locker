@@ -63,6 +63,7 @@ const start = () => {
     const infoButton = gameScreen.querySelector('.button-info'); 
     const infoScreenInfoButton = infoScreen.querySelector('.button-info'); 
     const infoPuzzleSection = infoScreen.querySelector('.info-puzzle');
+    const infoContentSection = infoScreen.querySelector('.info-content');
 
     // Toaster elements
     const toaster = document.querySelector('.toaster');
@@ -539,6 +540,9 @@ const start = () => {
             // If no puzzle is loaded, ensure the info screen is blank.
             infoPuzzleSection.innerHTML = '';
 
+        // Also clear the content section to remove any old SVG
+        infoContentSection.innerHTML = '';
+
             return;
         }
 
@@ -565,8 +569,6 @@ const start = () => {
 
             infoPuzzleSection.innerHTML = `<p>Navigate to a puzzle slot to see puzzle information.</p>`;
         }
-
-
 
         // Add the layout visualizer
         const handleVisualizerSlotClick = (slot) => {
@@ -599,19 +601,20 @@ const start = () => {
 
         if (visualizerSvg) {
 
-            const buttonContainer = document.createElement('div');
-            buttonContainer.className = 'info-actions';
             const clearMatchesButton = document.createElement('button');
             clearMatchesButton.textContent = 'clear matches';
             clearMatchesButton.className = 'button--action';
             clearMatchesButton.addEventListener('click', clearActivePuzzleMatches);
+            infoPuzzleSection.appendChild(clearMatchesButton);
 
-            const layoutContainer = document.createElement('div');
-            layoutContainer.className = 'layout-svg-container';
-            layoutContainer.appendChild(visualizerSvg);
-            buttonContainer.appendChild(clearMatchesButton);
-            layoutContainer.appendChild(buttonContainer);
-            infoPuzzleSection.appendChild(layoutContainer);
+            // Clear previous content and append new elements
+            infoContentSection.innerHTML = ''; // Clear out old SVG and other elements
+            infoContentSection.appendChild(infoPuzzleSection);
+            infoContentSection.appendChild(visualizerSvg);
+
+        } else {
+            infoContentSection.innerHTML = '';
+            infoContentSection.appendChild(infoPuzzleSection);
         }
 
     };
