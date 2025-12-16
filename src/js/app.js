@@ -45,7 +45,7 @@ const start = () => {
 
     const gameMenu = startScreen.querySelector('.game-menu ol');
     const topNav = mainScreen.querySelector('.sub-nav.game');
-    const puzzleNav = gameScreen.querySelector('.sub-nav.puzzle');
+    const puzzleNav = mainScreen.querySelector('.sub-nav.puzzle');
     const prevButton = puzzleNav.querySelector('.button-left');
     const nextButton = puzzleNav.querySelector('.button-right');
     const puzzleStatusIndicator = gameScreen.querySelector('.puzzle-status-indicator');
@@ -60,8 +60,7 @@ const start = () => {
     const backButton = menuPopout.querySelector('#button-back');
     const aboutButton = menuPopout.querySelector('#button-about');
     const quitGameButton = menuPopout.querySelector('#button-quit');
-    const infoButton = gameScreen.querySelector('.button-info'); 
-    const infoScreenInfoButton = infoScreen.querySelector('.button-info'); 
+    const infoButton = puzzleNav.querySelector('.button-info'); 
     const infoPuzzleSection = infoScreen.querySelector('.info-puzzle');
     const infoContentSection = infoScreen.querySelector('.info-content');
 
@@ -497,9 +496,7 @@ const start = () => {
         // Stop any pointer events that start on the nav from bubbling to the gameScreen
         puzzleNav.addEventListener('pointerdown', (event) => {
             // Prevent the pointerdown from being treated as a drag-start or tap-to-match
-            // by the gameScreen listener.
             event.stopPropagation();
-            event.preventDefault();
         });
 
         // Identify and set the root horizontal slider as the active one.
@@ -621,9 +618,10 @@ const start = () => {
 
     // --- State-based Screen Navigation ---
 
+    let currentScreenState = defaultStartScreen;
+
     const screenStateMachine = {
 
-        currentState: defaultStartScreen,
         states: {
             leadin: {
                 onEnter: () => {
@@ -654,8 +652,10 @@ const start = () => {
                     topNav.style.display = DisplayStyle.GRID;
                     puzzleNav.style.display = DisplayStyle.GRID;
                 },
-                onExit: () => {
+                onExit: (nextState) => {
                     gameScreen.style.display = DisplayStyle.NONE;
+                    // Hide puzzle nav when leaving game screen unless going to info
+                    if (nextState !== 'info') puzzleNav.style.display = DisplayStyle.NONE;
                 },
             },
             settings: {
@@ -674,10 +674,12 @@ const start = () => {
                 onEnter: () => {
                     infoScreen.style.display = screenDisplayMap.get(infoScreen);
                     topNav.style.display = DisplayStyle.GRID;
-                    puzzleNav.style.display = DisplayStyle.NONE;
+                    puzzleNav.style.display = DisplayStyle.GRID;
                 },
-                onExit: () => {
+                onExit: (nextState) => {
                     infoScreen.style.display = DisplayStyle.NONE;
+                    // Hide puzzle nav when leaving info screen unless going to game
+                    if (nextState !== 'game') puzzleNav.style.display = DisplayStyle.NONE;
                 },
             },
             about: {
@@ -691,13 +693,13 @@ const start = () => {
                 },
             },
         },
-        transitionTo(newState) {
-            if (this.currentState && this.states[this.currentState] && this.states[this.currentState].onExit) {
-                this.states[this.currentState].onExit();
+        transitionTo(newState, payload) {
+            if (currentScreenState && screenStateMachine.states[currentScreenState] && screenStateMachine.states[currentScreenState].onExit) {
+                screenStateMachine.states[currentScreenState].onExit(newState);
             }
-            this.currentState = newState;
-            if (this.states[this.currentState] && this.states[this.currentState].onEnter) {
-                this.states[this.currentState].onEnter();
+            currentScreenState = newState;
+            if (screenStateMachine.states[currentScreenState] && screenStateMachine.states[currentScreenState].onEnter) {
+                screenStateMachine.states[currentScreenState].onEnter();
             }
         },
     };
@@ -731,7 +733,7 @@ const start = () => {
                 submitButton.style.display = 'block';
             }
 
-        } else if (screenStateMachine.currentState === 'settings' || screenStateMachine.currentState === 'info' || screenStateMachine.currentState === 'about') {
+        } else if (currentScreenState === 'settings' || currentScreenState === 'info' || currentScreenState === 'about') {
 
             settingsButton.style.display = 'block';
             aboutButton.style.display = 'block';
@@ -803,27 +805,18 @@ const start = () => {
 
     infoButton.addEventListener('click', () => {
 
-        menuPopout.style.display = 'none';
-        
-        if (screenStateMachine.currentState === 'info') {
+        if (currentScreenState === 'info') {
             // If we are already on the info screen, go back.
             // The most logical "back" is to the game if active, otherwise start.
             const targetState = activeGame.playerState ? 'game' : 'start';
             screenStateMachine.transitionTo(targetState);
         } else {
-            // Otherwise, render and navigate to the info screen.
             renderInfoScreen();
             screenStateMachine.transitionTo('info');
         }
-    });
 
-    infoScreenInfoButton.addEventListener('click', () => {
-        if (screenStateMachine.currentState === 'info') {
-            // If we are already on the info screen, go back.
-            // The most logical "back" is to the game if active, otherwise start.
-            const targetState = activeGame.playerState ? 'game' : 'start';
-            screenStateMachine.transitionTo(targetState);
-        }
+        // Also ensure the main menu popout is closed when toggling info.
+        menuPopout.style.display = 'none';
     });
 
     const handleBackButton = () => {
@@ -860,7 +853,7 @@ const start = () => {
     showSlideNamesCheckbox.addEventListener('change', (event) => {
         settingsManager.updateSetting('showSlideNames', event.target.checked);
         // If we are on the info screen, re-render it to show/hide slide names
-        if (screenStateMachine.currentState === 'info') {
+        if (currentScreenState === 'info') {
             renderInfoScreen();
         }
     });
