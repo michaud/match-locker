@@ -220,17 +220,10 @@ export function createLayoutVisualizer(container, initialOptions = {}) {
         // --- Transform Calculation ---
         let targetTransform;
         if (playerSlidePos) {
-            let offsetX, offsetY;
-            const isAtPuzzle = puzzleSlots.some(s => s.host_group_id === playerState.currentSwiperId && s.at_index === playerState.currentIndex);
 
-            if (isAtPuzzle) {
-                const targetScreenX = svgWidth * (5 / 8);
-                offsetX = targetScreenX - (playerSlidePos.x + slideWidth / 2);
-                offsetY = (svgHeight / 2) - (playerSlidePos.y + slideHeight / 2);
-            } else {
-                offsetX = (svgWidth / 2) - (playerSlidePos.x + slideWidth / 2);
-                offsetY = (svgHeight / 2) - (playerSlidePos.y + slideHeight / 2);
-            }
+            const targetScreenX = svgWidth * (5/8);
+            const offsetX = targetScreenX - (playerSlidePos.x + slideWidth / 2);
+            const offsetY = (svgHeight / 2) - (playerSlidePos.y + slideHeight / 2);
             targetTransform = `translate(${offsetX}, ${offsetY})`;
         } else {
             // Fallback for initial state or error
