@@ -775,12 +775,12 @@ const start = () => {
         aboutButton.style.display = 'none';
         backButton.style.display = 'none';
 
-        if (screenStateMachine.currentState === 'start') {
+        if (currentScreenState === 'start') {
 
             settingsButton.style.display = 'block';
             aboutButton.style.display = 'block';
 
-        } else if (screenStateMachine.currentState === 'game') {
+        } else if (currentScreenState === 'game') {
 
             quitGameButton.style.display = 'block';
             settingsButton.style.display = 'block';
