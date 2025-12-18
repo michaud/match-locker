@@ -20,6 +20,7 @@ export function createLayoutVisualizer(container, initialOptions = {}) {
     const slideElementsMap = new Map(); // Persistently stores references to slide <g> elements
     const slotElementsMap = new Map(); // Persistently stores references to slot <rect> elements
     const allGroupsInLayout = new Map(); // Persistently stores group directions
+    let activeAnimation = null;
     let currentPosHighlightElement = null;
 
     const svg = document.createElementNS(SVG_NS, 'svg');
@@ -236,15 +237,26 @@ export function createLayoutVisualizer(container, initialOptions = {}) {
         }
 
         // --- Animation and DOM Update ---
-        const oldTransform = currentTransform || targetTransform;
-
-        if (oldTransform !== targetTransform) {
-            mainGroup.animate(
-                [{ transform: oldTransform }, { transform: targetTransform }],
-                { duration: 400, easing: 'ease-in-out', fill: 'forwards' }
-            );
-        } else {
+        if (!currentTransform) {
             mainGroup.setAttribute('transform', targetTransform);
+        } else if (currentTransform !== targetTransform) {
+            let startTransform = window.getComputedStyle(mainGroup).transform;
+            if (startTransform === 'none') startTransform = currentTransform;
+
+            if (activeAnimation) {
+                activeAnimation.cancel();
+            }
+
+            // Commit the new position to the DOM immediately.
+            mainGroup.setAttribute('transform', targetTransform);
+
+            activeAnimation = mainGroup.animate(
+                [{ transform: startTransform }, { transform: targetTransform }],
+                { duration: 400, easing: 'ease-in-out' }
+            );
+            activeAnimation.onfinish = () => {
+                activeAnimation = null;
+            };
         }
 
         currentTransform = targetTransform;
