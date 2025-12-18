@@ -81,7 +81,7 @@ export function createGameStateMachine(callbacks) {
         IDLE_AT_PUZZLE: {
             onEnter() {
                 debug && console.log("GameStateMachine: Entering IDLE_AT_PUZZLE");
-                debug && console.log('getGame().worldMap:', JSON.stringify(Array.from(getGame().worldMap.entries())))
+                //debug && console.log('getGame().worldMap:', JSON.stringify(Array.from(getGame().worldMap.entries())))
 
                 // Ensure all visuals and controls are correctly set for the current state.
                 matchVisualizer.synchronizeVisuals();

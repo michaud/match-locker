@@ -79,6 +79,9 @@ const start = () => {
     showSlideNamesCheckbox.checked = currentSettings.showSlideNames;
     matchVisualizationSelect.value = currentSettings.matchVisualization;
 
+    // --- Centralized Visualizer Instance ---
+    let layoutVisualizerInstance = null;
+
     // Encapsulate all game-related state into a single object.
     // This object will be replaced entirely when a new game is loaded.
     let activeGame = {
@@ -574,6 +577,12 @@ const start = () => {
         // Also clear the content section to remove any old SVG
         infoContentSection.innerHTML = '';
 
+        // If we clear the game, we must also destroy the visualizer instance
+        // so it can be recreated with the new game's data.
+        if (layoutVisualizerInstance) {
+            layoutVisualizerInstance = null;
+        }
+
             return;
         }
 
@@ -621,42 +630,34 @@ const start = () => {
             }
         };
 
-        // Find the existing SVG element before creating the new one.
-        const existingSvg = infoContentSection.querySelector('.layout-svg');
-
-        const visualizerSvg = createLayoutVisualizer(
-            activeGame.layout,
-            activeGame.slideGroups,
-            {
+        // Initialize the visualizer if it doesn't exist for the current game.
+        if (!layoutVisualizerInstance) {
+            // Specifically remove any old SVG, but leave other content (like the puzzle description) intact.
+            const oldSvg = infoContentSection.querySelector('.layout-svg');
+            if (oldSvg) {
+                oldSvg.remove();
+            }
+            layoutVisualizerInstance = createLayoutVisualizer(infoContentSection, {
                 showNames: currentSettings.showSlideNames,
                 onSlotClick: handleVisualizerSlotClick,
-                playerState: activeGame.playerState,
-                existingSvg: existingSvg // Pass the old SVG element directly.
             });
-
-        if (visualizerSvg) {
-
-            const clearMatchesButton = document.createElement('button');
-            clearMatchesButton.textContent = 'clear matches';
-            clearMatchesButton.className = 'button--action';
-            clearMatchesButton.addEventListener('click', clearActivePuzzleMatches);
-            infoPuzzleSection.appendChild(clearMatchesButton);
-
-            // Always ensure the puzzle info is the first child.
-            if (infoContentSection.firstChild !== infoPuzzleSection) {
-                infoContentSection.prepend(infoPuzzleSection);
-            }
-
-            if (existingSvg) {
-                existingSvg.replaceWith(visualizerSvg);
-            } else {
-                infoContentSection.appendChild(visualizerSvg);
-            }
-        } else {
-            infoContentSection.innerHTML = '';
-            infoContentSection.appendChild(infoPuzzleSection);
         }
 
+        if (layoutVisualizerInstance) {
+            // Update the existing visualizer instance with the current state.
+            layoutVisualizerInstance.update(activeGame.layout, activeGame.slideGroups, activeGame.playerState, {
+                showNames: currentSettings.showSlideNames,
+                onSlotClick: handleVisualizerSlotClick
+            });
+
+            if (activePuzzle) {
+                const clearMatchesButton = document.createElement('button');
+                clearMatchesButton.textContent = 'clear matches';
+                clearMatchesButton.className = 'button--action';
+                clearMatchesButton.addEventListener('click', clearActivePuzzleMatches);
+                infoPuzzleSection.appendChild(clearMatchesButton);
+            }
+        }
     };
 
     // --- State-based Screen Navigation ---
