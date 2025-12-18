@@ -149,6 +149,7 @@ input[type="checkbox"] {
 
 .button--action {
 
+    height: 2.5rem;
     background: rgba(255, 255, 255, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 10px 20px;
@@ -307,18 +308,17 @@ input[type="checkbox"] {
 
 button {
 
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
     min-width: 3.5rem;
     height: 3.5rem;
     margin: 0;
-    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgb(12 8 51 / 80%);
     color: rgb(70 76 160);
     border-radius: 10px;
     font-size: 1.25rem;
     font-weight: bold;
     transition: background 0.3s ease;
-    /* Re-enable pointer events specifically for the buttons */
+    cursor: pointer;
     pointer-events: auto;
 
     span {
@@ -694,7 +694,8 @@ button {
     grid-row: 1 / span 1;
     z-index: 1;
     width: 25%;
-    background: rgba(0 0 0 / 0.1);
+    min-height: 24rem;
+    background: rgb(12 8 51 / 85%);
     border: 1px solid rgba(255 255 255 / 0.1);
     border-radius: 8px;
     margin: 1rem;
