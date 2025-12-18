@@ -613,7 +613,7 @@ const start = () => {
         // Add the layout visualizer
         const handleVisualizerSlotClick = (slot) => {
             // Navigate to the game screen if not already there.
-            if (screenStateMachine.currentState !== 'game') {
+            if (currentScreenState !== 'game') {
                 screenStateMachine.transitionTo('game');
             }
 
