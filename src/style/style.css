@@ -133,6 +133,14 @@ input[type="checkbox"] {
 
 }
 
+.about-content {
+
+    margin: 2rem;
+    line-height: 1.5;
+    font-size: 1.25rem;
+    color: rgb(255 255 255 / 0.6);
+}
+
 #logo-start {
 
     margin: 0 auto;
