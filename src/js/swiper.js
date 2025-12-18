@@ -94,7 +94,7 @@ export function createSwiper(options) {
             // Set the final translate value before calling any callbacks.
             currentTranslate = targetTranslate;
 
-            if (onComplete) onComplete();
+            if (onComplete) onComplete(handleTransitionEnd); // Pass self as unique ID
 
             checkWrapAround(); // Ensure currentTranslate is normalized after animation.
         }
@@ -291,7 +291,7 @@ export function createSwiper(options) {
                     if (options.onComplete) {
 
                         debug && console.log(`%c[DEBUG] SWIPER (${API.swiperId}): Executing options.onComplete callback.`, 'color: #87CEFA;');
-                        options.onComplete();
+                        options.onComplete(animationCompletionHandler); // Pass self as ID
                     }
 
                     // Use the now-normalized `currentTranslate` to get the definitive final index.

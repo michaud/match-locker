@@ -198,24 +198,51 @@ const start = () => {
     };
 
     const snapSwipersToState = (animate = false, game = activeGame, onComplete = null) => {
-        if (!game.playerState || !game.playerState.currentSwiperId) return;
+        if (!game.playerState || !game.playerState.currentSwiperId) {
+            if (onComplete) onComplete();
+            return;
+        }
 
         // Snap swipers that are part of the *new* active context
         const currentKey = `${game.playerState.currentSwiperId}-${game.playerState.currentIndex}`;
         const currentNode = game.worldMap.get(currentKey);
+        if (!currentNode) {
+            if (onComplete) onComplete();
+            return;
+        }
 
-        if (!currentNode) return;
         const hostSwiper = game.swiperInstances.get(game.playerState.currentSwiperId);
-        // Pass the onComplete callback to the primary swiper being snapped.
-        hostSwiper.snapTo(game.playerState.currentIndex, !animate, { onComplete: onComplete });
-
         const guestInfo = currentNode.guest;
         const guestSwiper = guestInfo ? game.swiperInstances.get(guestInfo.swiperId) : null;
 
-        if (guestSwiper && guestInfo)
-        {
-            // The guest swiper animates, but we don't need a callback from it.
-            guestSwiper.snapTo(guestInfo.index, !animate);
+        if (!animate) {
+            if (hostSwiper) hostSwiper.snapTo(game.playerState.currentIndex, true);
+            if (guestSwiper && guestInfo) guestSwiper.snapTo(guestInfo.index, true);
+            if (onComplete) onComplete();
+            return;
+        }
+
+        const activeAnimations = new Set();
+
+        const handleSnap = (animationId) => {
+            activeAnimations.delete(animationId);
+            if (activeAnimations.size === 0 && onComplete) {
+                onComplete();
+            }
+        };
+
+        if (hostSwiper && hostSwiper.getVisualIndex() !== game.playerState.currentIndex) {
+            const animationId = hostSwiper.snapTo(game.playerState.currentIndex, false, { onComplete: handleSnap });
+            if (animationId) activeAnimations.add(animationId);
+        }
+        if (guestSwiper && guestInfo && guestSwiper.getVisualIndex() !== guestInfo.index) {
+            const animationId = guestSwiper.snapTo(guestInfo.index, false, { onComplete: handleSnap });
+            if (animationId) activeAnimations.add(animationId);
+        }
+
+        // If no animations were started, call onComplete immediately.
+        if (activeAnimations.size === 0 && onComplete) {
+            onComplete();
         }
     };
 
@@ -481,9 +508,10 @@ const start = () => {
             getGame: () => newGame,
             updateSwiperVisibility: () => updateSwiperVisibility(newGame),
             snapSwipersToState,
-            updateNavigationControls: () => {
-                updateNavigationControls(newGame);
-                // If we are on the info screen, a navigation change means we should re-render the visualizer.
+            updateNavigationControls: () => updateNavigationControls(newGame),
+            onNavigationComplete: () => {
+                // This is the correct place to re-render the info screen,
+                // as it's called after all navigation/swipe animations are complete.
                 if (currentScreenState === 'info') {
                     renderInfoScreen();
                 }
@@ -593,13 +621,17 @@ const start = () => {
             }
         };
 
+        // Find the existing SVG element before creating the new one.
+        const existingSvg = infoContentSection.querySelector('.layout-svg');
+
         const visualizerSvg = createLayoutVisualizer(
             activeGame.layout,
             activeGame.slideGroups,
             {
                 showNames: currentSettings.showSlideNames,
                 onSlotClick: handleVisualizerSlotClick,
-                playerState: activeGame.playerState
+                playerState: activeGame.playerState,
+                existingSvg: existingSvg // Pass the old SVG element directly.
             });
 
         if (visualizerSvg) {
@@ -610,11 +642,16 @@ const start = () => {
             clearMatchesButton.addEventListener('click', clearActivePuzzleMatches);
             infoPuzzleSection.appendChild(clearMatchesButton);
 
-            // Clear previous content and append new elements
-            infoContentSection.innerHTML = ''; // Clear out old SVG and other elements
-            infoContentSection.appendChild(infoPuzzleSection);
-            infoContentSection.appendChild(visualizerSvg);
+            // Always ensure the puzzle info is the first child.
+            if (infoContentSection.firstChild !== infoPuzzleSection) {
+                infoContentSection.prepend(infoPuzzleSection);
+            }
 
+            if (existingSvg) {
+                existingSvg.replaceWith(visualizerSvg);
+            } else {
+                infoContentSection.appendChild(visualizerSvg);
+            }
         } else {
             infoContentSection.innerHTML = '';
             infoContentSection.appendChild(infoPuzzleSection);
@@ -655,11 +692,22 @@ const start = () => {
             game: {
                 onEnter: () => {
                     gameScreen.style.display = screenDisplayMap.get(gameScreen);
+                    // Restore visibility and interactivity when returning to the game screen.
+                    gameScreen.style.opacity = '1';
+                    gameScreen.style.pointerEvents = 'auto';
                     topNav.style.display = DisplayStyle.GRID;
                     puzzleNav.style.display = DisplayStyle.GRID;
                 },
                 onExit: (nextState) => {
-                    gameScreen.style.display = DisplayStyle.NONE;
+                    if (nextState === 'info') {
+                        // When going to the info screen, keep the game screen in the DOM
+                        // so its animations can complete, but make it invisible and non-interactive.
+                        gameScreen.style.opacity = '0';
+                        gameScreen.style.pointerEvents = 'none';
+                    } else {
+                        // For any other transition, hide it completely.
+                        gameScreen.style.display = DisplayStyle.NONE;
+                    }
                     // Hide puzzle nav when leaving game screen unless going to info
                     if (nextState !== 'info') puzzleNav.style.display = DisplayStyle.NONE;
                 },
@@ -679,6 +727,10 @@ const start = () => {
             info: {
                 onEnter: () => {
                     infoScreen.style.display = screenDisplayMap.get(infoScreen);
+                    // Ensure the game screen is not interactive when info is on top.
+                    gameScreen.style.opacity = '0';
+                    gameScreen.style.pointerEvents = 'none';
+
                     topNav.style.display = DisplayStyle.GRID;
                     puzzleNav.style.display = DisplayStyle.GRID;
                 },

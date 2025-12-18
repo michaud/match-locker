@@ -28,6 +28,7 @@ export function createGameStateMachine(callbacks) {
         updateSwiperVisibility,
         snapSwipersToState,
         updateNavigationControls,
+        onNavigationComplete,
         updatePuzzleStatusIndicator,
         matchVisualizer,
         getActivePuzzle,
@@ -52,6 +53,7 @@ export function createGameStateMachine(callbacks) {
                 matchVisualizer.synchronizeVisuals();
                 updateNavigationControls();
                 updatePuzzleStatusIndicator();
+                onNavigationComplete();
                 // Enable user interaction.
                 getGame().swiperInstances.forEach(swiper => {
                     swiper.on('endDrag', handleSwiperEndDrag);
@@ -85,6 +87,7 @@ export function createGameStateMachine(callbacks) {
                 matchVisualizer.synchronizeVisuals();
                 updateNavigationControls();
                 updatePuzzleStatusIndicator();
+                onNavigationComplete();
                 // Enable user interaction.
                 getGame().swiperInstances.forEach(swiper => {
                     swiper.on('endDrag', handleSwiperEndDrag);

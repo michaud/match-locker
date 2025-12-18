@@ -8,7 +8,7 @@
  * @returns {SVGElement|null} The SVG element or null if not possible.
  */
 export function createLayoutVisualizer(layout, slideGroups, options = { showNames: false, onSlotClick: null }) {
-    const { showNames, onSlotClick, playerState } = options;
+    const { showNames, onSlotClick, playerState, existingSvg } = options;
 
     const SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -182,42 +182,42 @@ export function createLayoutVisualizer(layout, slideGroups, options = { showName
 
     let targetTransform;
 
-    console.log('playerState:', playerState)
-    console.log('activePuzzleSlotX:', activePuzzleSlotX)
     if (playerState && activePuzzleSlotX !== null) {
         // Center the view on the active puzzle slot, shifted to the right.
-        const targetScreenX = svgWidth * (5 / 8); // Center in the right 3/4 of the screen
-        console.log('svgWidth:', svgWidth)
-        console.log('targetScreenX:', targetScreenX)
+        const targetScreenX = svgWidth * (5 / 8);
         const offsetX = targetScreenX - (activePuzzleSlotX + slideWidth / 2);
-        console.log('offsetX:', offsetX)
         const offsetY = (svgHeight / 2) - (activePuzzleSlotY + slideHeight / 2);
-        console.log('offsetY:', offsetY)
         targetTransform = `translate(${offsetX}px, ${offsetY}px)`;
-        console.log('targetTransform:', targetTransform)
     } else {
-        // Fallback to centering the whole layout if no player state is available.
+        // Fallback to centering the whole layout.
         const contentWidth = bounds.maxX - bounds.minX;
         const contentHeight = bounds.maxY - bounds.minY;
         const offsetX = (svgWidth - contentWidth) / 2 - bounds.minX;
         const offsetY = (svgHeight - contentHeight) / 2 - bounds.minY;
         targetTransform = `translate(${offsetX}px, ${offsetY}px)`;
     }
+    console.log('targetTransform:', targetTransform)
 
     // Check if an old visualizer group exists and get its transform
-    const existingSvg = document.querySelector('.layout-svg');
-    const oldGroup = existingSvg ? existingSvg.querySelector('g') : null;
+    const oldGroup = existingSvg ? existingSvg.querySelector('g') : null; // Use the passed-in element
     const oldTransform = oldGroup ? oldGroup.getAttribute('transform') : targetTransform;
+    console.log('oldTransform:', oldTransform)
 
-    // Animate from the old transform to the new one.
-    finalGroup.animate([
-        { transform: oldTransform, easing: 'ease-out' },
-        { transform: targetTransform }
-    ], {
-        duration: 400, // Animation duration in milliseconds
-        easing: 'ease-in-out',
-        fill: 'forwards' // Keep the final state of the animation
-    });
+    // Only animate if the transform has actually changed. This prevents no-op
+    // animations that can interfere with other browser events like 'transitionend'.
+    if (oldTransform !== targetTransform) {
+        finalGroup.animate(
+            [
+                { transform: oldTransform, easing: 'ease-out' },
+                { transform: targetTransform }
+            ], 
+            { duration: 400, easing: 'ease-in-out', fill: 'forwards' }
+        );
+    } else {
+        // If there's no change, just apply the transform directly without animation.
+        console.log('finalGroup.setAttribute(transform:', finalGroup.getAttribute('transform'))
+        finalGroup.setAttribute('transform', targetTransform);
+    }
 
     const svg = document.createElementNS(SVG_NS, 'svg');
     svg.setAttribute('width', svgWidth);
