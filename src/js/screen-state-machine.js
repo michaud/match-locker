@@ -14,7 +14,8 @@ export function createScreenStateMachine({ domElements, callbacks }) {
     const {
         initLeadInScreen,
         getMenuDragHandler,
-        settingsManager
+        settingsManager,
+        renderInfoScreen
     } = callbacks;
 
     const DisplayStyle = Object.freeze({
@@ -99,6 +100,7 @@ export function createScreenStateMachine({ domElements, callbacks }) {
         info: {
             onEnter: () => {
                 infoScreen.style.display = screenDisplayMap.get(infoScreen);
+                renderInfoScreen();
                 // Ensure the game screen is not interactive when info is on top.
                 gameScreen.style.opacity = '0';
                 gameScreen.style.pointerEvents = 'none';

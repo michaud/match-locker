@@ -274,7 +274,9 @@ const start = () => {
     
         // 3. Destroy the visualizer instance and clear its DOM.
         layoutVisualizerInstance = null;
-        infoContentSection.innerHTML = '';
+        const oldSvg = infoContentSection.querySelector('.layout-svg');
+        if (oldSvg) oldSvg.remove();
+        infoPuzzleSection.innerHTML = '';
 
         // 4. Reset the activeGame state object to its initial, empty state.
         activeGame = {
@@ -564,7 +566,8 @@ const start = () => {
             infoPuzzleSection.innerHTML = '';
 
         // Also clear the content section to remove any old SVG
-        infoContentSection.innerHTML = '';
+        const oldSvg = infoContentSection.querySelector('.layout-svg');
+        if (oldSvg) oldSvg.remove();
 
         // If we clear the game, we must also destroy the visualizer instance
         // so it can be recreated with the new game's data.
@@ -574,7 +577,6 @@ const start = () => {
 
             return;
         }
-
         const activePuzzle = getActivePuzzleForCurrentLocation();
 
         if (activePuzzle) {
@@ -596,7 +598,7 @@ const start = () => {
 
         } else {
 
-            infoPuzzleSection.innerHTML = `<p>Navigate to a puzzle slot to see puzzle information.</p>`;
+            infoPuzzleSection.innerHTML = `<p>Nice slide, no puzzle</p>`;
         }
 
         // Add the layout visualizer
@@ -666,7 +668,8 @@ const start = () => {
         callbacks: {
             initLeadInScreen,
             getMenuDragHandler: () => menuDragHandler,
-            settingsManager
+            settingsManager,
+            renderInfoScreen
         },
     });
 
@@ -777,7 +780,6 @@ const start = () => {
             const targetState = activeGame.playerState ? 'game' : 'start';
             screenStateMachine.transitionTo(targetState);
         } else {
-            renderInfoScreen();
             screenStateMachine.transitionTo('info');
         }
 
