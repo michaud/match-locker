@@ -287,7 +287,11 @@ const start = () => {
         const swiperContainers = gameScreen.querySelectorAll('.swiper');
         swiperContainers.forEach(container => container.remove());
     
-        // 3. Reset the activeGame state object to its initial, empty state.
+        // 3. Destroy the visualizer instance and clear its DOM.
+        layoutVisualizerInstance = null;
+        infoContentSection.innerHTML = '';
+
+        // 4. Reset the activeGame state object to its initial, empty state.
         activeGame = {
             playerState: null,
             puzzleData: [],
