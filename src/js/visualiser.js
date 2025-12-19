@@ -191,7 +191,10 @@ export function createLayoutVisualizer(container, initialOptions = {}) {
             const slot = puzzleSlots.find(s => s.slot_id === slotId);
             if (!slot) return;
 
-            const isActive = playerState && slot.host_group_id === playerState.currentSwiperId && slot.at_index === playerState.currentIndex;
+            const isActive = playerState && (
+                (slot.host_group_id === playerState.currentSwiperId && slot.at_index === playerState.currentIndex) ||
+                (slot.guest_group_id === playerState.currentSwiperId && (slot.guest_align_index || 0) === playerState.currentIndex)
+            );
             rect.classList.toggle('is-active-puzzle-slot', isActive);
 
             // Remove old listener before adding a new one to prevent duplicates
