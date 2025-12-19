@@ -679,22 +679,13 @@ const start = () => {
         menuPopout.style.display = isVisible ? 'none' : 'flex';
 
         // Default all buttons to hidden, then show them based on the current state.
-        submitButton.style.display = 'none';
-        quitGameButton.style.display = 'none';
-        settingsButton.style.display = 'none';
-        aboutButton.style.display = 'none';
         backButton.style.display = 'none';
+        quitGameButton.style.display = 'none';
+        submitButton.style.display = 'none';
 
-        if (screenStateMachine.currentScreenState === 'start') {
-
-            settingsButton.style.display = 'block';
-            aboutButton.style.display = 'block';
-
-        } else if (screenStateMachine.currentScreenState === 'game') {
+        if (screenStateMachine.currentScreenState === 'game') {
 
             quitGameButton.style.display = 'block';
-            settingsButton.style.display = 'block';
-            aboutButton.style.display = 'block';
 
             // Show submit button only if the setting is correct and there's at least one match
             if (currentSettings.puzzleCompletion === 'user-submits' && getActivePuzzleForCurrentLocation() && (activeGame.gameState.playerMatchesByPuzzle.get(getActivePuzzleForCurrentLocation().id)?.size || 0) > 0) {
@@ -702,10 +693,12 @@ const start = () => {
                 submitButton.style.display = 'block';
             }
 
-        } else if (screenStateMachine.currentScreenState === 'settings' || screenStateMachine.currentScreenState === 'info' || screenStateMachine.currentScreenState === 'about') {
+        } else if (screenStateMachine.currentScreenState === 'info') {
 
-            settingsButton.style.display = 'block';
-            aboutButton.style.display = 'block';
+            quitGameButton.style.display = 'block';
+        
+        } else if (screenStateMachine.currentScreenState === 'settings' || screenStateMachine.currentScreenState === 'about') {
+
             backButton.style.display = 'block';
         }
     });
