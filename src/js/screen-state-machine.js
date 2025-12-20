@@ -29,7 +29,7 @@ export function createScreenStateMachine({ domElements, callbacks }) {
         [leadInScreen, DisplayStyle.BLOCK],
         [startScreen, DisplayStyle.GRID],
         [gameScreen, DisplayStyle.BLOCK],
-        [settingsScreen, DisplayStyle.FLEX],
+        [settingsScreen, DisplayStyle.GRID],
         [infoScreen, DisplayStyle.GRID],
         [aboutScreen, DisplayStyle.FLEX]
     ]);

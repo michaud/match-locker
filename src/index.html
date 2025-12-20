@@ -461,22 +461,43 @@
                     </select>
                 </div>
                 <div class="setting-option">
-                    <label for="show-slide-names">Slide Names in Info</label>
-                    <input type="checkbox" id="show-slide-names" name="show-slide-names" />
-                </div>
-                <div class="setting-option">
                     <label for="match-visualization-strategy">Match borders</label>
                     <select id="match-visualization-strategy">
                         <option value="fade-on-drag">Fade on Drag</option>
                         <option value="colored-outlines">Colored Outlines</option>
                     </select>
                 </div>
+                <fieldset>
+                    <legend>hints</legend>
+                    <div class="setting-option">
+                        <label for="show-puzzle-match-count">Show expected match count</label>
+                        <input type="checkbox" id="show-puzzle-match-count" name="show-puzzle-match-count" />
+                    </div>
+                    <div class="setting-option">
+                        <label for="show-match-count">Show match count</label>
+                        <input type="checkbox" id="show-match-count" name="show-match-count" />
+                    </div>
+                    <div class="setting-option">
+                        <label for="show-match-correct-count">Show correct match count</label>
+                        <input type="checkbox" id="show-match-correct-count" name="show-match-correct-count" />
+                    </div>
+                    <div class="setting-option">
+                        <label for="show-match-correct">Show correct matches</label>
+                        <input type="checkbox" id="show-match-correct" name="show-match-correct" />
+                    </div>
+                    <div class="setting-option">
+                        <label for="show-slide-names">Show slide names in Info</label>
+                        <input type="checkbox" id="show-slide-names" name="show-slide-names" />
+                    </div>
+                </fieldset>
                 <div class="setting-option">
-                    <label for="no-leadin">stop making me swipe again,<br>I know how to swipe ffs</label>
+                    <label for="no-leadin">stop making me swipe again,<br>I know how to swipe!!</label>
                     <input type="checkbox" id="no-leadin" name="no-leadin" />
                 </div>
             </div>
-            <button class="back-button">back</button>
+            <div class="control-container">
+                <button class="back-button">back</button>
+            </div>
         </div>
         <div class="info-screen">
             <h1 class="screen-title"><span>info</span></h1>

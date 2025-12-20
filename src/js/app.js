@@ -67,11 +67,17 @@ const start = () => {
     const puzzleCompletionSelect = document.getElementById('puzzle-completion');
     const showSlideNamesCheckbox = document.getElementById('show-slide-names');
     const matchVisualizationSelect = document.getElementById('match-visualization-strategy');
+    const showPuzzleMatchCountCheckbox = document.getElementById('show-puzzle-match-count');
+    const showMatchCountCheckbox = document.getElementById('show-match-count');
+    const showMatchCorrectCountCheckbox = document.getElementById('show-match-correct-count');
     
     // Sync UI elements with loaded/default settings
     puzzleCompletionSelect.value = currentSettings.puzzleCompletion;
     showSlideNamesCheckbox.checked = currentSettings.showSlideNames;
     matchVisualizationSelect.value = currentSettings.matchVisualization;
+    showPuzzleMatchCountCheckbox.checked = currentSettings.showPuzzleMatchCount !== false;
+    showMatchCountCheckbox.checked = currentSettings.showMatchCount !== false;
+    showMatchCorrectCountCheckbox.checked = currentSettings.showMatchCorrectCount || false;
 
     // --- Centralized Visualizer Instance ---
     let layoutVisualizerInstance = null;
@@ -581,9 +587,49 @@ const start = () => {
 
         if (activePuzzle) {
 
+            const settings = settingsManager.getSettings();
             const totalMatches = activePuzzle.solutions.length;
             const playerMatchesForPuzzle = activeGame.gameState.playerMatchesByPuzzle.get(activePuzzle.id) || new Map();
             const playerMatchesCount = playerMatchesForPuzzle.size;
+
+            let correctMatchesCount = 0;
+            if (settings.showMatchCorrectCount && activePuzzle.solutions && playerMatchesForPuzzle.size > 0) {
+                for (const pMatch of playerMatchesForPuzzle.values()) {
+                    const pSet = new Set(pMatch);
+                    for (const sol of activePuzzle.solutions) {
+                        const sSet = new Set(sol);
+                        if (pSet.size === sSet.size) {
+                            let match = true;
+                            for (const id of pSet) {
+                                if (!sSet.has(id)) {
+                                    match = false;
+                                    break;
+                                }
+                            }
+                            if (match) {
+                                correctMatchesCount++;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            const parts = [];
+            const labels = [];
+
+            if (settings.showMatchCorrectCount) {
+                parts.push(correctMatchesCount);
+                labels.push('correct matches');
+            }
+            if (settings.showMatchCount !== false) {
+                parts.push(playerMatchesCount);
+                labels.push('matches');
+            }
+            if (settings.showPuzzleMatchCount !== false) {
+                parts.push(totalMatches);
+                labels.push('expected matches');
+            }
 
             infoPuzzleSection.innerHTML = `
             <div>
@@ -591,7 +637,8 @@ const start = () => {
                 ${activePuzzle.instructions ? `<p><strong>Instructions:</strong> ${activePuzzle.instructions}` : ''}</p>
                 <ul>
                     <li><strong>Type:</strong> ${activePuzzle.type} (${activePuzzle.evaluation})</li>
-                    <li><strong>Matches:</strong> ${playerMatchesCount} / ${totalMatches}</li>
+                    ${parts.length > 0 ? `<li class="match-info-labels">${labels.join(', ')}</li>` : ''}
+                    ${parts.length > 0 ? `<li class="match-info-counts">${parts.join(' / ')} matches</li>` : ''}
                 </ul>
             </div>
             `;
@@ -818,6 +865,30 @@ const start = () => {
             renderInfoScreen();
         }
     });
+
+    if (showPuzzleMatchCountCheckbox) {
+        showPuzzleMatchCountCheckbox.addEventListener('change', (event) => {
+            settingsManager.updateSetting('showPuzzleMatchCount', event.target.checked);
+            currentSettings = settingsManager.getSettings();
+            if (screenStateMachine.currentScreenState === 'info') renderInfoScreen();
+        });
+    }
+
+    if (showMatchCountCheckbox) {
+        showMatchCountCheckbox.addEventListener('change', (event) => {
+            settingsManager.updateSetting('showMatchCount', event.target.checked);
+            currentSettings = settingsManager.getSettings();
+            if (screenStateMachine.currentScreenState === 'info') renderInfoScreen();
+        });
+    }
+
+    if (showMatchCorrectCountCheckbox) {
+        showMatchCorrectCountCheckbox.addEventListener('change', (event) => {
+            settingsManager.updateSetting('showMatchCorrectCount', event.target.checked);
+            currentSettings = settingsManager.getSettings();
+            if (screenStateMachine.currentScreenState === 'info') renderInfoScreen();
+        });
+    }
 
     matchVisualizationSelect.addEventListener('change', (event) => {
         const newStrategy = event.target.value;
