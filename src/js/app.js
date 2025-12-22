@@ -620,32 +620,33 @@ const start = () => {
 
             if (settings.showMatchCorrectCount) {
                 parts.push(correctMatchesCount);
-                labels.push('correct matches');
+                labels.push('correct');
             }
             if (settings.showMatchCount !== false) {
                 parts.push(playerMatchesCount);
-                labels.push('matches');
+                labels.push('matched');
             }
             if (settings.showPuzzleMatchCount !== false) {
                 parts.push(totalMatches);
-                labels.push('expected matches');
+                labels.push('matches');
             }
-
             infoPuzzleSection.innerHTML = `
-            <div>
-                <h3>${activePuzzle.puzzletitle}</h3>
-                ${activePuzzle.instructions ? `<p><strong>Instructions:</strong> ${activePuzzle.instructions}` : ''}</p>
-                <ul>
-                    <li><strong>Type:</strong> ${activePuzzle.type} (${activePuzzle.evaluation})</li>
-                    ${parts.length > 0 ? `<li class="match-info-labels">${labels.join(', ')}</li>` : ''}
-                    ${parts.length > 0 ? `<li class="match-info-counts">${parts.join(' / ')} matches</li>` : ''}
-                </ul>
-            </div>
+                <div class="info-panel matches">
+                    <table class="match-info-table">
+                        <tr>${labels.map(label => `<td class="match-info-labels">${label}</td>`).join(' ')}</tr>
+                        <tr>${parts.map(part => `<td class="match-info-counts">${part}</td>` ).join(' ')}</tr>
+                    </table>
+                </div>
+                <div class="info-panel description">
+                    <h3>${activePuzzle.puzzletitle}</h3>
+                    <p><strong>Type:</strong> ${activePuzzle.type} (${activePuzzle.evaluation})</p>
+                    ${activePuzzle.instructions ? `<p><strong>Instructions:</strong> ${activePuzzle.instructions}` : ''}</p>
+                </div>
             `;
 
         } else {
 
-            infoPuzzleSection.innerHTML = `<p>Nice slide, no puzzle</p>`;
+            infoPuzzleSection.innerHTML = `<div class="info-panel description"><h3>Nice slide</h3><p>no puzzle</p></div>`;
         }
 
         // Add the layout visualizer
@@ -693,7 +694,10 @@ const start = () => {
                 clearMatchesButton.textContent = 'clear matches';
                 clearMatchesButton.className = 'button--action';
                 clearMatchesButton.addEventListener('click', clearActivePuzzleMatches);
-                infoPuzzleSection.appendChild(clearMatchesButton);
+                const matchesPanel = infoPuzzleSection.querySelector('.info-panel.matches');
+                if (matchesPanel) {
+                    matchesPanel.appendChild(clearMatchesButton);
+                }
             }
         }
     };
