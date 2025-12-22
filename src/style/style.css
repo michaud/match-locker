@@ -181,14 +181,12 @@ input[type="checkbox"] {
     height: 680px;
     justify-content: center;
     user-select: none;
-    -webkit-user-drag: none;
 
     img {
 
         display: block;
         object-fit: contain;
         user-select: none;
-        -webkit-user-drag: none;
     }
 
     &.is-matched {

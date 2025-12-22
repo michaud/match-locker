@@ -338,8 +338,9 @@ const start = () => {
                     const listItem = document.createElement('li');
                     listItem.dataset.slideId = slide.id;
                     listItem.dataset.index = index;
+                    listItem.setAttribute('draggable', 'false');
                     listItem.classList.add('slide');
-                    listItem.innerHTML = `<img src="${slide.img}" alt="${slide.name}" />`;
+                    listItem.innerHTML = `<img draggable="false" src="${slide.img}" alt="${slide.name}" />`;
                     listElement.appendChild(listItem);
                 });
     
