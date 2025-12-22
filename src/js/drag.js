@@ -80,12 +80,13 @@ export function createDragHandler(screen, getSwipers, onTapCallback, onDragStart
         window.removeEventListener('pointermove', handlePointerMove);
         window.removeEventListener('pointerup', handlePointerUp);
         
+        // Reset cursor and class on any pointer up, whether it was a tap or a drag.
+        screen.style.cursor = 'grab';
+        screen.classList.remove('is-dragging');
+
         if (state.direction === null && onTapCallback) { // Only call onTap if no drag occurred
 
             onTapCallback(event); // Pass the original event to the callback
-            // Reset cursor and class on tap, since no snap will occur.
-            screen.style.cursor = 'grab';
-            screen.classList.remove('is-dragging');
 
         } else {
 
