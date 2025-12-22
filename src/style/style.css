@@ -482,13 +482,13 @@ button {
 .game-button {
 
     display: grid;
-    min-height: 8rem;
+    min-height: 4rem;
     padding: 0;
     margin-inline: .5rem;
     font-size: 1.125rem;
     font-weight: bold;
     color: rgb(210 200 188);
-    border-radius: .5rem .5rem 1rem 1rem;
+    border-radius: .5rem .5rem 0 0;
     border: 0.125rem solid rgba(255, 255, 255, 0.1);
     /* background-image: radial-gradient(circle farthest-corner at 40px 40px, #1a1e50, hsl(236 51% 14% / 1), #1a1e50); */
     user-select: none;
@@ -500,7 +500,7 @@ button {
 
     .title {
 
-        min-height: 3.5rem;
+        min-height: 4.5rem;
         padding: 1rem;
         font-size: 1rem;
         font-weight: bold;
@@ -510,7 +510,7 @@ button {
     .description {
         position: absolute;
         width: 40ch;
-        padding: 2.5rem 1rem 1rem 1rem;
+        padding: 2.5rem 2rem 1rem 2rem;
         left: 50%;
         transform-origin: center;
         transform: translateX(-50%);
