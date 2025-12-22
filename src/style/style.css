@@ -290,7 +290,8 @@ input[type="checkbox"] {
     &.game {
 
         position: absolute;
-        top: 0;
+        top: 5px;
+        left: 5px;
     }
 
     &.about {
@@ -338,7 +339,7 @@ button {
 
     > button:first-child {
 
-        border-radius: 0 0 10px 0;
+        border-radius: 10px 0 10px 0;
         border-top-width: 0;
         border-left-width: 0;
     }
@@ -352,6 +353,13 @@ button {
 }
 
 .sub-nav.puzzle {
+
+    top: 5px;
+    bottom: 5px;
+    right: 10px;
+    left: 5px;
+    width: 950px;
+    height: 670px;
 
     .button-info {
 
@@ -373,7 +381,7 @@ button {
 
         button:first-child {
 
-            border-radius: 0 10px 0 0;
+            border-radius: 0 10px 0 10px;
             border-bottom-width: 0;
             border-left-width: 0;
             border-top-width: 1px;
@@ -402,7 +410,7 @@ button {
         button:first-child {
 
             grid-row: 1;
-            border-radius: 0 0 0 10px;
+            border-radius: 0 10px 0 10px;
             border-bottom-width: 1px;
             border-left-width: 1px;
             border-top-width: 0;
