@@ -34,6 +34,11 @@ label {
     padding: .75rem 0;
 }
 
+option {
+
+    background: rgb(12 18 45);
+    color: var(--base-font-color);
+}
 input[type="checkbox"] {
 
     min-width: 1.5rem;
@@ -181,6 +186,7 @@ input[type="checkbox"] {
     height: 680px;
     justify-content: center;
     user-select: none;
+    position: relative;
 
     img {
 
@@ -971,4 +977,47 @@ fieldset {
 
     border: 1px solid var(--border-color);
     padding: 0.5rem;
+}
+
+/* Dots Visualization Strategy */
+.slide.has-match-dot::after {
+    content: '';
+    position: absolute;
+    width: 2rem;
+    height: 2rem;
+    background-color: hsl(0deg 0% 100% / 50%);
+    border-radius: 50%;
+    z-index: 10;
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    pointer-events: none;
+}
+
+.slider-vertical .slide.has-match-dot::after {
+    top: 5rem;
+    left: 5rem;
+}
+
+.slider-horizontal .slide.has-match-dot::after {
+    bottom: 5rem;
+    left: 5rem;
+}
+
+.slide.has-match-line::before {
+    content: '';
+    position: absolute;
+    height: 442px;
+    width: 0.4rem;
+    background-color: hsl(0deg 0% 100% / 50%);
+    z-index: 9;
+    pointer-events: none;
+}
+
+.slider-vertical .slide.has-match-line::before {
+    top: 5rem;
+    left: 5rem;
+}
+
+.slider-horizontal .slide.has-match-line::before {
+    bottom: 6.989rem;
+    left: 5.82rem;
 }
