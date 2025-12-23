@@ -25,6 +25,13 @@ export function createMatchVisualizer(callbacks) {
 
     const onDragStart = (dragSwiper, otherSwiper) => {
 
+        if (currentStrategy === 'dots') {
+            document.querySelectorAll('.has-match-line').forEach(el => {
+                el.classList.remove('has-match-line');
+            });
+            return;
+        }
+
         if (currentStrategy === 'fade-on-drag') {
             // Reset the temporary state at the start of any drag.
             draggedMatchState = { draggedSlideId: null, staticSlideId: null };
@@ -154,6 +161,88 @@ export function createMatchVisualizer(callbacks) {
         });
     };
 
+    const synchronizeDots = (game) => {
+        // Clear all dots and lines first
+        document.querySelectorAll('.has-match-dot, .has-match-line').forEach(el => {
+            el.classList.remove('has-match-dot', 'has-match-line');
+            el.style.removeProperty('--line-len');
+            el.style.removeProperty('--line-angle');
+        });
+
+        const activePuzzle = getActivePuzzle(game);
+        if (!activePuzzle) return;
+
+        const puzzleMatches = game.gameState.playerMatchesByPuzzle.get(activePuzzle.id);
+        if (!puzzleMatches || puzzleMatches.size === 0) return;
+
+        const viewportHeight = window.innerHeight;
+        const viewportWidth = window.innerWidth;
+        const DOT_OFFSET = 21; // 15px margin + 6px radius
+
+        const isVisible = (rect) => {
+            return (
+                rect.top < viewportHeight &&
+                rect.bottom > 0 &&
+                rect.left < viewportWidth &&
+                rect.right > 0
+            );
+        };
+
+        puzzleMatches.forEach((guestId, hostId) => {
+            const hostEls = document.querySelectorAll(`.slide[data-slide-id="${hostId}"]`);
+            const guestEls = document.querySelectorAll(`.slide[data-slide-id="${guestId}"]`);
+
+            hostEls.forEach(el => el.classList.add('has-match-dot'));
+            guestEls.forEach(el => el.classList.add('has-match-dot'));
+
+            hostEls.forEach(hostEl => {
+                const hostRect = hostEl.getBoundingClientRect();
+                if (!isVisible(hostRect)) return;
+
+                let targetGuestEl = null;
+                let minDist = Infinity;
+
+                guestEls.forEach(guestEl => {
+                    const guestRect = guestEl.getBoundingClientRect();
+                    if (isVisible(guestRect)) {
+                        const dist = Math.hypot(hostRect.x - guestRect.x, hostRect.y - guestRect.y);
+                        if (dist < minDist) {
+                            minDist = dist;
+                            targetGuestEl = guestEl;
+                        }
+                    }
+                });
+
+                if (targetGuestEl) {
+                    const hostSwiper = hostEl.closest('.swiper');
+                    const guestSwiper = targetGuestEl.closest('.swiper');
+                    
+                    if (hostSwiper && guestSwiper) {
+                        const isHostHoriz = hostSwiper.classList.contains('slider-horizontal');
+                        const isGuestHoriz = guestSwiper.classList.contains('slider-horizontal');
+
+                        const getDotPos = (rect, isHoriz) => ({
+                            x: rect.left + DOT_OFFSET,
+                            y: isHoriz ? (rect.bottom - DOT_OFFSET) : (rect.top + DOT_OFFSET)
+                        });
+
+                        const p1 = getDotPos(hostRect, isHostHoriz);
+                        const p2 = getDotPos(targetGuestEl.getBoundingClientRect(), isGuestHoriz);
+
+                        const dx = p2.x - p1.x;
+                        const dy = p2.y - p1.y;
+                        const len = Math.sqrt(dx * dx + dy * dy);
+                        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+                        hostEl.style.setProperty('--line-len', `${len}px`);
+                        hostEl.style.setProperty('--line-angle', `${angle}deg`);
+                        hostEl.classList.add('has-match-line');
+                    }
+                }
+            });
+        });
+    };
+
     const synchronizeVisuals = () => {
 
         const game = getGame();
@@ -165,6 +254,10 @@ export function createMatchVisualizer(callbacks) {
         } else if (currentStrategy === 'colored-outlines') {
 
             synchronizeColoredOutlines(game);
+
+        } else if (currentStrategy === 'dots') {
+
+            synchronizeDots(game);
         }
     };
 
