@@ -993,12 +993,12 @@ fieldset {
 }
 
 .slider-vertical .slide.has-match-dot::after {
-    top: 5rem;
+    bottom: 5rem;
     left: 5rem;
 }
 
 .slider-horizontal .slide.has-match-dot::after {
-    bottom: 5rem;
+    top: 5rem;
     left: 5rem;
 }
 
