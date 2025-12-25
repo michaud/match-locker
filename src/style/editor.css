@@ -61,6 +61,7 @@
         grid-row: 3;
         padding-block-start: 1rem;
         display: flex;
+        min-height: 35rem;
         flex-direction: column;
     }
 
