@@ -1,0 +1,165 @@
+{
+  "gametitle": "Scientists, their equations and when",
+  "description": "Match the scientist to their famous equation, and the equation to the year it was formulated.",
+  "slide_groups": [
+    {
+      "group_id": "group-scientists",
+      "group_name": "Scientists",
+      "slides": [
+        { "id": "slide-kepler", "name": "Johannes Kepler", "img": "games/scientistsEquations/JKepler.jpg" },
+        { "id": "slide-newton", "name": "Isaac Newton", "img": "games/scientistsEquations/Portrait_of_Sir_Isaac_Newton,_1689.jpg" },
+        { "id": "slide-bernoulli", "name": "Daniel Bernoulli", "img": "games/scientistsEquations/Porträt_des_Daniel_Bernoulli.jpg" },
+        { "id": "slide-gauss", "name": "Carl Friedrich Gauss", "img": "games/scientistsEquations/Carl_Friedrich_Gauss_1840_by_Jensen.jpg" },
+        { "id": "slide-navier-stokes", "name": "Navier & Stokes", "img": "games/scientistsEquations/NavierStokes.jpg" },
+        { "id": "slide-ampere", "name": "André-Marie Ampère", "img": "games/scientistsEquations/Ampere_Andre_1825.jpg" },
+        { "id": "slide-maxwell", "name": "James Clerk Maxwell", "img": "games/scientistsEquations/James-Clerk-Maxwell-1831-1879.jpg" },
+        { "id": "slide-boltzmann", "name": "Ludwig Boltzmann", "img": "games/scientistsEquations/Boltzmann2.jpg" },
+        { "id": "slide-lorentz", "name": "Hendrik Lorentz", "img": "games/scientistsEquations/H.A._Lorentz.jpg" },
+        { "id": "slide-euler", "name": "Leonhard Euler", "img": "games/scientistsEquations/Leonhard_Euler_2.jpg" },
+        { "id": "slide-einstein", "name": "Albert Einstein", "img": "games/scientistsEquations/Albert_Einstein_1947.jpg" },
+        { "id": "slide-friedmann", "name": "Alexander Friedmann", "img": "games/scientistsEquations/Aleksandr_Fridman.jpg" },
+        { "id": "slide-poisson", "name": "Siméon Denis Poisson", "img": "games/scientistsEquations/Simeon_Poisson.jpg" },
+        { "id": "slide-schrodinger", "name": "Erwin Schrödinger", "img": "games/scientistsEquations/Erwin_Schrödinger_-_Narodowe_Archiwum_Cyfrowe_1-E-939.jpg" },
+        { "id": "slide-dirac", "name": "Paul Dirac", "img": "games/scientistsEquations/Paul_Dirac1933.jpg" }
+      ]
+    },
+    {
+      "group_id": "group-equations",
+      "group_name": "Equations",
+      "slides": [
+        { "id": "slide-eq-kepler", "name": "Kepler's Equation", "img": "games/scientistsEquations/Keplersequation.svg" },
+        { "id": "slide-eq-newton", "name": "Newton's Laws", "img": "games/scientistsEquations/Newtonslawsofmotion.svg" },
+        { "id": "slide-eq-bernoulli", "name": "Bernoulli's Equation", "img": "games/scientistsEquations/Bernoullisequation.svg" },
+        { "id": "slide-eq-gauss", "name": "Gauss's Law", "img": "games/scientistsEquations/gaussslaw.svg" },
+        { "id": "slide-eq-navier-stokes", "name": "Navier-Stokes Equation", "img": "games/scientistsEquations/NavierStokesmomentumequation.svg" },
+        { "id": "slide-eq-ampere", "name": "Ampère's Law", "img": "games/scientistsEquations/Amperescircuitallaw.svg" },
+        { "id": "slide-eq-maxwell", "name": "Maxwell's Equations", "img": "games/scientistsEquations/Maxwellsequations.svg" },
+        { "id": "slide-eq-boltzmann", "name": "Boltzmann Entropy", "img": "games/scientistsEquations/bolzmannentropy.svg" },
+        { "id": "slide-eq-lorentz", "name": "Lorentz Force", "img": "games/scientistsEquations/Lorentzforce.svg" },
+        { "id": "slide-eq-euler", "name": "Relativistic Euler", "img": "games/scientistsEquations/relativisticEulerequations.svg" },
+        { "id": "slide-eq-einstein", "name": "Einstein Field Equation", "img": "games/scientistsEquations/einsteinfieldequation.svg" },
+        { "id": "slide-eq-friedmann", "name": "Friedmann Equation", "img": "games/scientistsEquations/Friedmannequation.svg" },
+        { "id": "slide-eq-poisson", "name": "Screened Poisson", "img": "games/scientistsEquations/ScreenedPoissonequation.svg" },
+        { "id": "slide-eq-schrodinger", "name": "Schrödinger Equation", "img": "games/scientistsEquations/schrodingerequation.svg" },
+        { "id": "slide-eq-dirac", "name": "Dirac Equation", "img": "games/scientistsEquations/diracequation.svg" }
+      ]
+    },
+    {
+      "group_id": "group-years",
+      "group_name": "Years",
+      "slides": [
+        { "id": "slide-year-1609", "name": "1609", "img": "games/scientistsEquations/year_1609.svg" },
+        { "id": "slide-year-1687", "name": "1687", "img": "games/scientistsEquations/year_1687.svg" },
+        { "id": "slide-year-1738", "name": "1738", "img": "games/scientistsEquations/year_1738.svg" },
+        { "id": "slide-year-1813", "name": "1813", "img": "games/scientistsEquations/year_1813.svg" },
+        { "id": "slide-year-1822", "name": "1822", "img": "games/scientistsEquations/year_1822.svg" },
+        { "id": "slide-year-1826", "name": "1826", "img": "games/scientistsEquations/year_1826.svg" },
+        { "id": "slide-year-1861", "name": "1861", "img": "games/scientistsEquations/year_1861.svg" },
+        { "id": "slide-year-1877", "name": "1877", "img": "games/scientistsEquations/year_1877.svg" },
+        { "id": "slide-year-1895", "name": "1895", "img": "games/scientistsEquations/year_1895.svg" },
+        { "id": "slide-year-1905", "name": "1905", "img": "games/scientistsEquations/year_1905.svg" },
+        { "id": "slide-year-1915", "name": "1915", "img": "games/scientistsEquations/year_1915.svg" },
+        { "id": "slide-year-1922", "name": "1922", "img": "games/scientistsEquations/year_1922.svg" },
+        { "id": "slide-year-1923", "name": "1923", "img": "games/scientistsEquations/year_1923.svg" },
+        { "id": "slide-year-1926", "name": "1926", "img": "games/scientistsEquations/year_1926.svg" },
+        { "id": "slide-year-1928", "name": "1928", "img": "games/scientistsEquations/year_1928.svg" }
+      ]
+    }
+  ],
+  "puzzles": [
+    {
+      "puzzle_id": "puzzle-physics-timeline",
+      "puzzletitle": "Scientists & Equations",
+      "instructions": "Match the scientist to their equation.",
+      "type": "set",
+      "evaluation": "unordered",
+      "host_group_id": "group-scientists",
+      "guest_group_id": "group-equations",
+      "matches": [
+        { "match": ["slide-kepler", "slide-eq-kepler"] },
+        { "match": ["slide-newton", "slide-eq-newton"] },
+        { "match": ["slide-bernoulli", "slide-eq-bernoulli"] },
+        { "match": ["slide-gauss", "slide-eq-gauss"] },
+        { "match": ["slide-navier-stokes", "slide-eq-navier-stokes"] },
+        { "match": ["slide-ampere", "slide-eq-ampere"] },
+        { "match": ["slide-maxwell", "slide-eq-maxwell"] },
+        { "match": ["slide-boltzmann", "slide-eq-boltzmann"] },
+        { "match": ["slide-lorentz", "slide-eq-lorentz"] },
+        { "match": ["slide-euler", "slide-eq-euler"] },
+        { "match": ["slide-einstein", "slide-eq-einstein"] },
+        { "match": ["slide-friedmann", "slide-eq-friedmann"] },
+        { "match": ["slide-poisson", "slide-eq-poisson"] },
+        { "match": ["slide-schrodinger", "slide-eq-schrodinger"] },
+        { "match": ["slide-dirac", "slide-eq-dirac"] }
+      ]
+    },
+    {
+      "puzzle_id": "puzzle-equations-years",
+      "puzzletitle": "Equations & Years",
+      "instructions": "Match the equation to its year of discovery.",
+      "type": "set",
+      "evaluation": "unordered",
+      "host_group_id": "group-equations",
+      "guest_group_id": "group-years",
+      "matches": [
+        { "match": ["slide-eq-kepler", "slide-year-1609"] },
+        { "match": ["slide-eq-newton", "slide-year-1687"] },
+        { "match": ["slide-eq-bernoulli", "slide-year-1738"] },
+        { "match": ["slide-eq-gauss", "slide-year-1813"] },
+        { "match": ["slide-eq-navier-stokes", "slide-year-1822"] },
+        { "match": ["slide-eq-ampere", "slide-year-1826"] },
+        { "match": ["slide-eq-maxwell", "slide-year-1861"] },
+        { "match": ["slide-eq-boltzmann", "slide-year-1877"] },
+        { "match": ["slide-eq-lorentz", "slide-year-1895"] },
+        { "match": ["slide-eq-euler", "slide-year-1905"] },
+        { "match": ["slide-eq-einstein", "slide-year-1915"] },
+        { "match": ["slide-eq-friedmann", "slide-year-1922"] },
+        { "match": ["slide-eq-poisson", "slide-year-1923"] },
+        { "match": ["slide-eq-schrodinger", "slide-year-1926"] },
+        { "match": ["slide-eq-dirac", "slide-year-1928"] }
+      ]
+    }
+  ],
+  "layout": {
+    "puzzle_slots": [
+      {
+        "slot_id": "slot-main",
+        "activates_puzzle_id": "puzzle-physics-timeline",
+        "host_group_id": "group-scientists",
+        "guest_group_id": "group-equations",
+        "at_index": 0,
+        "guest_align_index": 0,
+        "host_direction": "horizontal",
+        "guest_direction": "vertical"
+      },
+      {
+        "slot_id": "slot-years",
+        "activates_puzzle_id": "puzzle-equations-years",
+        "host_group_id": "group-equations",
+        "guest_group_id": "group-years",
+        "at_index": 2,
+        "guest_align_index": 0,
+        "host_direction": "vertical",
+        "guest_direction": "horizontal"
+      }
+    ],
+    "sliders": [
+        {
+            "id": "group-scientists",
+            "populates_from_group": "group-scientists",
+            "direction": "horizontal"
+        },
+        {
+            "id": "group-equations",
+            "populates_from_group": "group-equations",
+            "direction": "vertical"
+        },
+        {
+            "id": "group-years",
+            "populates_from_group": "group-years",
+            "direction": "horizontal"
+        }
+    ]
+  }
+}
+
