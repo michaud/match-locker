@@ -1,5 +1,7 @@
 const { useState, useEffect, useRef } = React;
 
+const gamesFilePath ='games/games.json';
+
 function generateUUID() {
     // A simple and effective way to generate a UUID in modern browsers
     return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
@@ -722,7 +724,7 @@ function AdvancedEditor() {
 
     useEffect(() => {
 
-        fetch('games/games.json')
+        fetch(gamesFilePath)
             .then(response => response.json())
             .then(data => setAvailableGames(data))
             .catch(error => console.error("Error loading games.json:", error));
