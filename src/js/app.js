@@ -13,6 +13,7 @@ import { createScreenStateMachine } from './screen-state-machine.js';
 
 const start = () => {
 
+    const gamesFilePath ='games/games.json';
     const GAME_SLIDE_WIDTH = 960;
     const GAME_SLIDE_HEIGHT = 680;
     const GAME_CLONE_COUNT = 10;
@@ -923,7 +924,7 @@ const start = () => {
 
         try {
 
-            const response = await fetch('games/games.json');
+            const response = await fetch(gamesFilePath);
 
             if (!response.ok) {
 
