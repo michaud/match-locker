@@ -8,7 +8,11 @@ export function createScreenStateMachine({ domElements, callbacks }) {
         aboutScreen,
         topNav,
         puzzleNav,
-        skipLeadinSettingsCheckbox
+        skipLeadinSettingsCheckbox,
+        prevButton,
+        nextButton,
+        upButton,
+        downButton
     } = domElements;
 
     const {
@@ -35,6 +39,14 @@ export function createScreenStateMachine({ domElements, callbacks }) {
     ]);
 
     let currentScreenState = null;
+
+    const setNavButtonsVisibility = (visible) => {
+        const display = visible ? '' : DisplayStyle.NONE;
+        if (prevButton) prevButton.style.display = display;
+        if (nextButton) nextButton.style.display = display;
+        if (upButton) upButton.style.display = display;
+        if (downButton) downButton.style.display = display;
+    };
 
     const states = {
         leadin: {
@@ -70,6 +82,9 @@ export function createScreenStateMachine({ domElements, callbacks }) {
                 gameScreen.style.pointerEvents = 'auto';
                 topNav.style.display = DisplayStyle.GRID;
                 puzzleNav.style.display = DisplayStyle.GRID;
+
+                const showNav = settingsManager.getSettings().showInGameNav;
+                setNavButtonsVisibility(showNav);
             },
             onExit: (nextState) => {
                 if (nextState === 'info') {
@@ -107,6 +122,7 @@ export function createScreenStateMachine({ domElements, callbacks }) {
 
                 topNav.style.display = DisplayStyle.GRID;
                 puzzleNav.style.display = DisplayStyle.GRID;
+                setNavButtonsVisibility(true);
             },
             onExit: (nextState) => {
                 infoScreen.style.display = DisplayStyle.NONE;

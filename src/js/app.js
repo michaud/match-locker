@@ -71,6 +71,7 @@ const start = () => {
     const showPuzzleMatchCountCheckbox = document.getElementById('show-puzzle-match-count');
     const showMatchCountCheckbox = document.getElementById('show-match-count');
     const showMatchCorrectCountCheckbox = document.getElementById('show-match-correct-count');
+    const showInGameNavCheckbox = document.getElementById('show-in-game-nav');
     
     // Sync UI elements with loaded/default settings
     puzzleCompletionSelect.value = currentSettings.puzzleCompletion;
@@ -79,6 +80,7 @@ const start = () => {
     showPuzzleMatchCountCheckbox.checked = currentSettings.showPuzzleMatchCount !== false;
     showMatchCountCheckbox.checked = currentSettings.showMatchCount !== false;
     showMatchCorrectCountCheckbox.checked = currentSettings.showMatchCorrectCount || false;
+    if (showInGameNavCheckbox) showInGameNavCheckbox.checked = currentSettings.showInGameNav;
 
     // --- Centralized Visualizer Instance ---
     let layoutVisualizerInstance = null;
@@ -716,7 +718,11 @@ const start = () => {
             aboutScreen,
             topNav,
             puzzleNav,
-            skipLeadinSettingsCheckbox
+            skipLeadinSettingsCheckbox,
+            prevButton,
+            nextButton,
+            upButton,
+            downButton
         },
         callbacks: {
             initLeadInScreen,
@@ -893,6 +899,12 @@ const start = () => {
             settingsManager.updateSetting('showMatchCorrectCount', event.target.checked);
             currentSettings = settingsManager.getSettings();
             if (screenStateMachine.currentScreenState === 'info') renderInfoScreen();
+        });
+    }
+
+    if (showInGameNavCheckbox) {
+        showInGameNavCheckbox.addEventListener('change', (event) => {
+            settingsManager.updateSetting('showInGameNav', event.target.checked);
         });
     }
 

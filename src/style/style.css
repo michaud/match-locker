@@ -7,7 +7,9 @@
 
     --base-font-color: hsl(229deg 50% 79% / 60%);
     --content-screen-background: rgba(0 0 0 / 0.4);
-    --border-color: rgb(255, 255, 255, 0.1)
+    --border-color: rgb(255, 255, 255, 0.1);
+    --ui-control-color: rgb(8 7 42);
+    --ui-field-color: rgb(56 57 86);
 }
 
 body,
@@ -21,6 +23,7 @@ html {
     background-color: #111;
     font-family: sans-serif;
     color: var(--base-font-color);
+    scrollbar-color: var(--ui-control-color) var(--ui-field-color);
 }
 
 body {

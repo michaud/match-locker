@@ -2,6 +2,7 @@ const SETTINGS_KEYS = {
     GAME_SETTINGS: 'match-locker-game-settings',
     SKIP_LEADIN: 'match-locker-skip-leadin',
     HAS_VISITED: 'match-locker-has-visited',
+    SHOW_IN_GAME_NAV: 'match-locker-show-in-game-nav',
 };
 
 const defaultSettings = {
@@ -12,6 +13,7 @@ const defaultSettings = {
     // App settings
     skipLeadin: false,
     hasVisited: false,
+    showInGameNav: false,
 };
 
 let settingsState = {};
@@ -22,12 +24,14 @@ function loadSettings() {
     const loadedGameSettings = JSON.parse(localStorage.getItem(SETTINGS_KEYS.GAME_SETTINGS)) || {};
     const skipLeadin = localStorage.getItem(SETTINGS_KEYS.SKIP_LEADIN) === 'true';
     const hasVisited = localStorage.getItem(SETTINGS_KEYS.HAS_VISITED) === 'true';
+    const showInGameNav = localStorage.getItem(SETTINGS_KEYS.SHOW_IN_GAME_NAV) === 'true';
 
     settingsState = {
         ...defaultSettings,
         ...loadedGameSettings,
         skipLeadin,
         hasVisited,
+        showInGameNav,
     };
 }
 
@@ -35,6 +39,7 @@ function saveSettings() {
     // Persist app-specific settings
     localStorage.setItem(SETTINGS_KEYS.SKIP_LEADIN, settingsState.skipLeadin);
     localStorage.setItem(SETTINGS_KEYS.HAS_VISITED, settingsState.hasVisited);
+    localStorage.setItem(SETTINGS_KEYS.SHOW_IN_GAME_NAV, settingsState.showInGameNav);
 
     // Persist game-specific settings as a single object
     const gameSettings = {
