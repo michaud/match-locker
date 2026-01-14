@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="960" height="680" version="1.1" viewBox="0 0 960 680" xmlns="http://www.w3.org/2000/svg">
+    <style type="text/css">
+    .st0{fill:none;stroke:#C3C3C3;stroke-width:2;}
+	.st1{fill:#0000FF;}
+	.st2{fill:none;stroke:#0000FF;stroke-width:2;}
+	.st3{fill:#09A44A;}
+	.st4{fill:none;stroke:#FF0B0B;stroke-width:2;}
+	.st5{fill:#FF0B0B;}
+	.st6{font-family:Liberation Sans;font-style:italic;}
+	.st7{font-size:20px;}
+	.st8{fill:#000B0B;}
+	.st9{font-family:Liberation Sans;}</style>
+    <g transform="matrix(2.2166 0 0 2.2173 -486.61 17.6)" style="stroke-width:.45107">
+        <g transform="translate(313.18 4.1831)" style="stroke-width:.45107">
+            <circle class="st0" cx="122.9" cy="145.4" r="11.8" style="stroke-width:3.6085;stroke:#949494"/>
+            <circle class="st0" cx="122.9" cy="145.4" r="52.2" style="stroke-width:3.6085;stroke:#949494"/>
+            <path class="st0" d="m240.1 156.9c-5.8 59.5-55.9 106-116.9 106-64.9 0-117.5-52.6-117.5-117.5s52.6-117.5 117.5-117.5c60.8 0 110.9 46.2 116.9 105.5" style="stroke-width:3.6085;stroke:#949494"/>
+            <path class="st1" d="m180.1 114.7c3.4-0.8 5.7-1.1 8.5-1.5l-5.1-8.7c-0.6 0.9-3.2 4.1-5.5 6.6-2.5 2.7-4.9 4.9-6.6 6.2 2-0.8 5.1-1.8 8.7-2.6z" style="fill:#a3a3ff"/>
+            <line class="st2" x1="224.6" x2="183.2" y1="86.6" y2="110.5" style="stroke:#a3a3ff"/>
+            <circle class="st3" cx="224.6" cy="86.6" r="3.6" style="fill:#3ef48b;stroke-width:.45107"/>
+            <circle class="st3" cx="168.1" cy="119.2" r="3.6" style="fill:#3ef48b;stroke-width:.45107"/>
+            <path class="st4" d="m291 119h-16.3c-4.3-17-8.3 0-8.3 0s-4 17-8.3 0-8.3 0-8.3 0-4 17-8.3 0-8.3 0-8.3 0-4 17-8.3 0-8.3 0-8.3 0-4 17-8.3 0-8.3 0-8.3 0" style="stroke:#f7b2b2"/>
+            <text class="st5 st6 st7" transform="translate(203.11 152.57)" style="fill:#f7b2b2;stroke-width:.45107">ΔE = hν</text>
+            <path class="st5" d="m296.1 116.5c-3.3-1-5.5-1.9-8.1-3v10.1c0.9-0.5 4.8-2 8.1-3 3.5-1.1 6.7-1.8 8.8-2.1-2-0.2-5.3-0.9-8.8-2z" style="fill:#f7b2b2;stroke-width:.45107"/>
+            <circle cx="122.9" cy="145.4" r="3.6" style="fill:#54ffff;stroke-width:.45107"/>
+            <text class="st8 st6 st7" transform="translate(130.11 168.4)" style="fill:#54ffff;stroke-width:.45107">+Ze</text>
+        </g>
+        <g transform="translate(313.18)" style="stroke-width:.45107">
+            <text transform="translate(100.37 129.76)" style="fill:#ffffff;stroke-width:.45107"><tspan class="st1 st6 st7" x="0" y="0" style="fill:#ffffff;stroke-width:.45107">n = </tspan><tspan class="st1 st9 st7" x="33.900002" y="0" style="fill:#ffffff;stroke-width:.45107">1</tspan></text>
+            <text transform="translate(100.37 89.482)" style="fill:#ffffff;stroke-width:.45107"><tspan class="st1 st6 st7" x="0" y="0" style="fill:#ffffff;stroke-width:.45107">n = </tspan><tspan class="st1 st9 st7" x="33.900002" y="0" style="fill:#ffffff;stroke-width:.45107">2</tspan></text>
+            <text transform="translate(100.37 23.983)" style="fill:#ffffff;stroke-width:.45107"><tspan class="st1 st6 st7" x="0" y="0" style="fill:#ffffff;stroke-width:.45107">n = </tspan><tspan class="st1 st9 st7" x="33.900002" y="0" style="fill:#ffffff;stroke-width:.45107">3</tspan></text>
+        </g>
+    </g>
+</svg>

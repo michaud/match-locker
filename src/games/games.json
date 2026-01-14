@@ -3,5 +3,10 @@
     "title": "Scientists, their equations and when",
     "description": "Match scientists, equations and the year they were formulated.",
     "file": "games/scientists_equations.json"
+  },
+  {
+    "title": "Quantum History",
+    "description": "A journey through the history of Quantum Mechanics and Relativity.",
+    "file": "games/quantum_history.json"
   }
 ]

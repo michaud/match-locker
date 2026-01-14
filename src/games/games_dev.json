@@ -1,5 +1,10 @@
 [
   {
+    "title": "Quantum History",
+    "description": "A journey through the history of Quantum Mechanics and Relativity.",
+    "file": "games/quantum_history.json"
+  },
+  {
     "title": "Timeline of Physics",
     "description": "Match the scientist to their famous equation, sorted chronologically.",
     "file": "games/scientists_and_equations.json"
