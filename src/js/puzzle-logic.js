@@ -9,47 +9,24 @@ export const processGameData = (gameData) => {
     const slideGroups = gameData.slide_groups || [];
     const layout = gameData.layout || { puzzle_slots: [] };
     const rawPuzzles = gameData.puzzles || [];
-
-    //generate a virtual sliders list for the game engine directly from `puzzle_slots`.
-    const virtualSliders = new Map();
-
-    if (layout && layout.puzzle_slots) {
-
-        layout.puzzle_slots.forEach(slot => {
-
-            if (slot.host_group_id && !virtualSliders.has(slot.host_group_id)) {
-
-                virtualSliders.set(slot.host_group_id, {
-                    id: slot.host_group_id,
-                    direction: slot.host_direction || 'horizontal', // Default direction
-                    populates_from_group: slot.host_group_id
-                });
-            }
-
-            if (slot.guest_group_id && !virtualSliders.has(slot.guest_group_id)) {
-
-                virtualSliders.set(slot.guest_group_id, {
-                    id: slot.guest_group_id,
-                    direction: slot.guest_direction || 'vertical', // Default direction
-                    populates_from_group: slot.guest_group_id
-                });
-            }
-        });
-    }
-
+ 
     // Ensure slideGroups contains entries for all groups mentioned in the layout,
     // including virtual ones that might not have explicit slide definitions.
     // This prevents errors in downstream functions like buildWorldMap.
     const allGroupIds = new Set(slideGroups.map(g => g.group_id));
-    virtualSliders.forEach((slider, groupId) => {
-        if (!allGroupIds.has(groupId)) {
-            slideGroups.push({
-                group_id: groupId,
-                group_name: `Virtual Group ${groupId}`, // Provide a default name
-                slides: [] // Virtual groups might not have slides initially
-            });
-        }
-    });
+    if (layout && layout.sliders) {
+        layout.sliders.forEach(slider => {
+            const groupId = slider.populates_from_group;
+            if (groupId && !allGroupIds.has(groupId)) {
+                slideGroups.push({
+                    group_id: groupId,
+                    group_name: `Virtual Group ${groupId}`, // Provide a default name
+                    slides: [] // Virtual groups might not have slides initially
+                });
+                allGroupIds.add(groupId);
+            }
+        });
+    }
 
     const slideData = {};
 
@@ -82,10 +59,8 @@ export const processGameData = (gameData) => {
         });
     });
 
-    // We pass the virtual sliders to the game engine, but the core layout object remains clean.
-    const layoutForEngine = { ...layout, sliders: Array.from(virtualSliders.values()) };
-
-    return { slideData, newPuzzleData, slideGroups, layout: layoutForEngine };
+    // The layout object from the game data is now the source of truth.
+    return { slideData, newPuzzleData, slideGroups, layout };
 }
 
 /**

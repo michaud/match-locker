@@ -425,6 +425,56 @@ function PuzzleSlotItem({ slot, index, onUpdate, onRemove, onDirectionChange, pu
     );
 }
 
+function SliderLayerManager({ sliders, slideGroups, onUpdate }) {
+    if (!sliders || sliders.length === 0) {
+        return (
+            <div className="slider-layer-manager">
+                <h4>Slider Layer Order</h4>
+                <p className="help-text"></p>
+            </div>
+        );
+    }
+
+    const moveSlider = (index, direction) => {
+        const newSliders = [...sliders];
+        const newIndex = index + direction;
+
+        if (newIndex < 0 || newIndex >= newSliders.length) {
+            return; // Out of bounds
+        }
+
+        // Swap elements
+        [newSliders[index], newSliders[newIndex]] = [newSliders[newIndex], newSliders[index]];
+        
+        onUpdate(newSliders);
+    };
+
+    const getGroupName = (groupId) => {
+        const group = slideGroups.find(g => g.group_id === groupId);
+        return group ? group.group_name : `(Unknown: ${groupId})`;
+    };
+
+    return (
+        <div className="slider-layer-manager">
+            <h4>Slider Layer Order (Bottom to Top)</h4>
+            <ol className="reorder-list">
+                {sliders.map((slider, index) => (
+                    <li key={slider.id || index}>
+                        <div className="reorder-item">
+                            <span>{getGroupName(slider.populates_from_group)}</span>
+                            <div className="reorder-controls">
+                                <button onClick={() => moveSlider(index, -1)} disabled={index === 0} title="Move Up">▲</button>
+                                <button onClick={() => moveSlider(index, 1)} disabled={index === sliders.length - 1} title="Move Down">▼</button>
+                            </div>
+                        </div>
+                    </li>
+                ))}
+            </ol>
+            <p className="help-text">The last slider in this list will appear on top of all others in the game.</p>
+        </div>
+    );
+}
+
 function LayoutEditor({ layout, puzzles, slideGroups, onUpdate }) {
 
     const handleDirectionChange = (changedGroupId, newDirection) => {
@@ -462,7 +512,67 @@ function LayoutEditor({ layout, puzzles, slideGroups, onUpdate }) {
             return newSlot;
         });
 
+        // Only update the slots. The useEffect will handle syncing the main sliders array.
         onUpdate({ ...layout, puzzle_slots: newSlots });
+    };
+
+    // Effect to synchronize layout.sliders with the groups defined in puzzle_slots
+    useEffect(() => {
+        const slots = layout?.puzzle_slots || [];
+        const currentSliders = layout?.sliders || [];
+        
+        // 1. Get all unique group IDs and their directions from puzzle slots
+        const groupsInSlots = new Map();
+        slots.forEach(slot => {
+            if (slot.host_group_id) {
+                groupsInSlots.set(slot.host_group_id, slot.host_direction || 'horizontal');
+            }
+            if (slot.guest_group_id) {
+                groupsInSlots.set(slot.guest_group_id, slot.guest_direction || 'vertical');
+            }
+        });
+
+        let newSliders = [...currentSliders];
+        let needsUpdate = false;
+
+        // 2. Remove sliders that are no longer in any slot, preserving order
+        const filteredSliders = newSliders.filter(slider => groupsInSlots.has(slider.populates_from_group));
+        if (filteredSliders.length !== newSliders.length) {
+            newSliders = filteredSliders;
+            needsUpdate = true;
+        }
+
+        // 3. Add new groups from slots that are not in the sliders list yet
+        groupsInSlots.forEach((direction, groupId) => {
+            if (!newSliders.some(s => s.populates_from_group === groupId)) {
+                newSliders.push({
+                    id: groupId, // The slider ID should match the group ID for consistency
+                    populates_from_group: groupId,
+                    direction: direction
+                });
+                needsUpdate = true;
+            }
+        });
+        
+        // 4. Ensure all slider directions are up-to-date with the slots
+        const finalSliders = newSliders.map(slider => {
+            const expectedDirection = groupsInSlots.get(slider.populates_from_group);
+            if (expectedDirection && slider.direction !== expectedDirection) {
+                needsUpdate = true;
+                return { ...slider, direction: expectedDirection };
+            }
+            return slider;
+        });
+
+        if (needsUpdate) {
+            onUpdate({ ...layout, sliders: finalSliders });
+        }
+
+    }, [layout?.puzzle_slots]);
+
+    // Handler for the layer manager to update the order
+    const handleSliderOrderChange = (reorderedSliders) => {
+        onUpdate({ ...layout, sliders: reorderedSliders });
     };
 
     const addPuzzleSlot = () => {
@@ -502,6 +612,11 @@ function LayoutEditor({ layout, puzzles, slideGroups, onUpdate }) {
     return (
         <div className="form-section">
             <h3>Layout</h3>
+            <SliderLayerManager 
+                sliders={layout?.sliders}
+                slideGroups={slideGroups}
+                onUpdate={handleSliderOrderChange}
+            />
             <div className="layout-slots-section">
                 {layout?.puzzle_slots?.map((slot, index) => (
                     <PuzzleSlotItem key={slot.slot_id || index} slot={slot} index={index} onUpdate={updatePuzzleSlot} onRemove={removePuzzleSlot} onDirectionChange={handleDirectionChange} puzzles={puzzles} slideGroups={slideGroups} />
@@ -527,114 +642,126 @@ function LayoutVisualizer({
     useEffect(() => {
 
         const puzzleSlots = layout?.puzzle_slots || [];
+        const sliders = layout?.sliders || []; // Get the ordered sliders
 
-        if (puzzleSlots.length === 0) {
+        if (puzzleSlots.length === 0 || sliders.length === 0) {
 
-            setRenderedElements(<p>Define sliders and puzzle slots to see the visualization.</p>);
+            setRenderedElements(<p>Define puzzle slots to see the visualization.</p>);
 
             return;
         }
 
-        // Create a map of all unique groups mentioned in slots and their directions
+        // --- 1. Position Calculation Phase ---
+        const slidePositions = new Map();
         const allGroupsInLayout = new Map();
-
         puzzleSlots.forEach(slot => {
-
             if (slot.host_group_id && !allGroupsInLayout.has(slot.host_group_id)) {
-
                 allGroupsInLayout.set(slot.host_group_id, { id: slot.host_group_id, direction: slot.host_direction });
             }
-
             if (slot.guest_group_id && !allGroupsInLayout.has(slot.guest_group_id)) {
-
                 allGroupsInLayout.set(slot.guest_group_id, { id: slot.guest_group_id, direction: slot.guest_direction });
             }
         });
 
         const allGuestGroupIds = new Set(puzzleSlots.map(s => s.guest_group_id));
         const rootGroups = Array.from(allGroupsInLayout.values()).filter(g => !allGuestGroupIds.has(g.id));
-
-        const elements = [];
-        const bounds = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
-        const visited = new Set();
-
-        const calculateLayoutRecursive = (groupId, currentX, currentY) => {
-
-            if (visited.has(groupId)) return;
-
-            visited.add(groupId);
+        
+        const visitedPositions = new Set();
+        const calculateAllPositionsRecursive = (groupId, currentX, currentY) => {
+            if (visitedPositions.has(groupId)) return;
+            visitedPositions.add(groupId);
 
             const groupInfo = allGroupsInLayout.get(groupId);
             const slideGroup = slideGroups.find(g => g.group_id === groupId);
-
             if (!slideGroup) return;
 
             const isHorizontal = groupInfo.direction === 'horizontal';
             const guests = puzzleSlots.filter(slot => slot.host_group_id === groupId);
 
-            // Calculate bounds for the current slider
-            const sliderWidthCalc = isHorizontal ? slideGroup.slides.length * (slideWidth + gap) - gap : slideWidth;
-            const sliderHeightCalc = isHorizontal ? slideHeight : slideGroup.slides.length * (slideHeight + gap) - gap;
-            bounds.minX = Math.min(bounds.minX, currentX);
-            bounds.minY = Math.min(bounds.minY, currentY);
-            bounds.maxX = Math.max(bounds.maxX, currentX + sliderWidthCalc);
-            bounds.maxY = Math.max(bounds.maxY, currentY + sliderHeightCalc);
-
-            // Add slide elements to the list
             slideGroup.slides.forEach((slide, index) => {
-
                 const x = isHorizontal ? currentX + index * (slideWidth + gap) : currentX;
                 const y = isHorizontal ? currentY : currentY + index * (slideHeight + gap);
-
-                elements.push(
-                    <g key={`slide-${groupId}-${slide.id}`}>
-                        <rect x={x} y={y} width={slideWidth} height={slideHeight} className={`slide-rect ${isHorizontal ? 'horizontal-slide' : 'vertical-slide'}`} />
-                        <text x={x + slideWidth / 2} y={isHorizontal ? y + slideHeight / 2 + 5 : y + slideHeight - 5} textAnchor="middle" className="slide-text">
-                            {slide.name.substring(0, 10)}
-                        </text>
-                    </g>
-                );
+                // Use slide ID for a stable key
+                slidePositions.set(`${groupId}-${slide.id}`, { x, y });
             });
 
-            // Add highlight and recurse for guests
             guests.forEach(slot => {
-
                 const atIndex = slot.at_index || 0;
                 const guestAlignIndex = slot.guest_align_index || 0;
+                
+                const hostSlideGroup = slideGroups.find(g => g.group_id === slot.host_group_id);
+                const hostSlide = hostSlideGroup?.slides[atIndex];
+                if (!hostSlide) return;
 
-                const highlightX = isHorizontal ? currentX + atIndex * (slideWidth + gap) : currentX;
-                const highlightY = isHorizontal ? currentY : currentY + atIndex * (slideHeight + gap);
-
-                elements.push(
-                    <rect key={slot.slot_id || `slot-${slot.host_group_id}-${slot.guest_group_id}`} x={highlightX} y={highlightY} width={slideWidth} height={slideHeight} className="highlight-slot" />
-                );
+                const hostPos = slidePositions.get(`${slot.host_group_id}-${hostSlide.id}`);
+                if (!hostPos) return;
 
                 let nextX, nextY;
-
                 if (isHorizontal) {
-
-                    nextX = currentX + atIndex * (slideWidth + gap);
-                    nextY = currentY - (guestAlignIndex * (slideHeight + gap));
-
+                    nextX = hostPos.x;
+                    nextY = hostPos.y - (guestAlignIndex * (slideHeight + gap));
                 } else {
-
-                    nextY = currentY + atIndex * (slideHeight + gap);
-                    nextX = currentX - (guestAlignIndex * (slideWidth + gap));
+                    nextY = hostPos.y;
+                    nextX = hostPos.x - (guestAlignIndex * (slideWidth + gap));
                 }
-
-                calculateLayoutRecursive(slot.guest_group_id, nextX, nextY);
+                calculateAllPositionsRecursive(slot.guest_group_id, nextX, nextY);
             });
         };
 
         if (rootGroups.length === 0 && puzzleSlots.length > 0) {
             // Handle case with no root (e.g., a single ring)
-            calculateLayoutRecursive(puzzleSlots[0].host_group_id, 0, 0);
+            calculateAllPositionsRecursive(puzzleSlots[0].host_group_id, 0, 0);
 
         } else {
 
-            rootGroups.forEach(root => calculateLayoutRecursive(root.id, 0, 0));
+            rootGroups.forEach(root => calculateAllPositionsRecursive(root.id, 0, 0));
         }
-        // Start calculation from a neutral origin (0,0)
+
+        // --- 2. Rendering Phase (respecting slider order) ---
+        const elements = [];
+        const bounds = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
+
+        sliders.forEach(sliderConfig => {
+            const groupId = sliderConfig.populates_from_group;
+            const slideGroup = slideGroups.find(g => g.group_id === groupId);
+            if (!slideGroup) return;
+
+            const isHorizontal = sliderConfig.direction === 'horizontal';
+
+            slideGroup.slides.forEach(slide => {
+                const pos = slidePositions.get(`${groupId}-${slide.id}`);
+                if (!pos) return;
+
+                bounds.minX = Math.min(bounds.minX, pos.x);
+                bounds.minY = Math.min(bounds.minY, pos.y);
+                bounds.maxX = Math.max(bounds.maxX, pos.x + slideWidth);
+                bounds.maxY = Math.max(bounds.maxY, pos.y + slideHeight);
+
+                elements.push(
+                    <g key={`slide-${groupId}-${slide.id}`}>
+                        <rect x={pos.x} y={pos.y} width={slideWidth} height={slideHeight} className={`slide-rect ${isHorizontal ? 'horizontal-slide' : 'vertical-slide'}`} />
+                        <text x={pos.x + slideWidth / 2} y={isHorizontal ? pos.y + slideHeight / 2 + 5 : pos.y + slideHeight - 5} textAnchor="middle" className="slide-text">
+                            {slide.name.substring(0, 10)}
+                        </text>
+                    </g>
+                );
+            });
+        });
+
+        // --- 3. Slot Highlighting (drawn on top of all slides) ---
+        puzzleSlots.forEach(slot => {
+            const atIndex = slot.at_index || 0;
+            const hostSlideGroup = slideGroups.find(g => g.group_id === slot.host_group_id);
+            const hostSlide = hostSlideGroup?.slides[atIndex];
+            if (!hostSlide) return;
+
+            const hostPos = slidePositions.get(`${slot.host_group_id}-${hostSlide.id}`);
+            if (!hostPos) return;
+
+            elements.push(
+                <rect key={slot.slot_id || `slot-${slot.host_group_id}-${slot.guest_group_id}`} x={hostPos.x} y={hostPos.y} width={slideWidth} height={slideHeight} className="highlight-slot" />
+            );
+        });
 
         // Calculate centering offset
         const contentWidth = bounds.maxX - bounds.minX;
@@ -647,8 +774,7 @@ function LayoutVisualizer({
                 {elements}
             </g>
         );
-        // I've also corrected the variable names for slider width/height inside the calculation.
-    }, [layout.puzzle_slots, slideGroups, svgWidth, svgHeight, slideWidth, slideHeight, gap]); // Rerun effect when layout or groups change
+    }, [layout, slideGroups, svgWidth, svgHeight, slideWidth, slideHeight, gap]); // Rerun effect when layout or groups change
 
     return (
         <div className="form-section layout-visualizer">

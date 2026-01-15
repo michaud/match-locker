@@ -247,7 +247,7 @@ input[type="checkbox"] {
 .slider-vertical {
 
     position: absolute;
-    z-index: 2;
+    z-index: 1;
     transition: opacity 0.3s ease-in-out;
     width: 960px;
     height: 680px;

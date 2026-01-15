@@ -2,7 +2,6 @@
     "gametitle": "Quantum History",
     "description": "A journey through the history of Quantum Mechanics and Relativity.",
     "licences": [
-
         {
             "type": "Public Domain",
             "url": "",
@@ -40,8 +39,7 @@
         {
             "type": "CC BY 3.0",
             "url": "https://creativecommons.org/licenses/by/3.0",
-            "attribution":"Kurzon, via Wikimedia Commons",
-            
+            "attribution": "Kurzon, via Wikimedia Commons",
             "images": [
                 {
                     "original_url": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Geiger-Marsden_experiment_expectation_and_result.svg",
@@ -55,8 +53,8 @@
         {
             "type": "CC BY-SA 3.0",
             "url": "https://creativecommons.org/licenses/by/3.0",
-            "attribution":"JabberWok, CC BY-SA 3.0, via Wikimedia Commons",
-            "attribution_url":"http://creativecommons.org/licenses/by-sa/3.0/",
+            "attribution": "JabberWok, CC BY-SA 3.0, via Wikimedia Commons",
+            "attribution_url": "http://creativecommons.org/licenses/by-sa/3.0/",
             "images": [
                 {
                     "original_url": "https://upload.wikimedia.org/wikipedia/commons/9/93/Bohr_atom_model.svg",
@@ -77,8 +75,8 @@
         {
             "type": "CC BY-SA 3.0",
             "url": "https://creativecommons.org/licenses/by/3.0",
-            "attribution":"Bundesarchiv, Bild 183-R57262 / Unknown author / CC-BY-SA 3.0",
-            "attribution_url":"https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
+            "attribution": "Bundesarchiv, Bild 183-R57262 / Unknown author / CC-BY-SA 3.0",
+            "attribution_url": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
             "images": [
                 {
                     "original_url": "https://upload.wikimedia.org/wikipedia/commons/9/93/Bohr_atom_model.svg",
@@ -92,8 +90,8 @@
         {
             "type": " CC BY-SA 4.0",
             "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
-            "attribution":"Xcodexif, CC BY-SA 4.0 via Wikimedia Commons",
-            "attribution_url":"https://upload.wikimedia.org/wikipedia/commons/b/b7/Wavepacket-a2k4-en.gif",
+            "attribution": "Xcodexif, CC BY-SA 4.0 via Wikimedia Commons",
+            "attribution_url": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Wavepacket-a2k4-en.gif",
             "images": [
                 {
                     "original_url": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Wavepacket-a2k4-en.gif",
@@ -471,14 +469,14 @@
         ],
         "sliders": [
             {
-                "id": "group-scientists",
-                "populates_from_group": "group-scientists",
-                "direction": "horizontal"
-            },
-            {
                 "id": "group-topics",
                 "populates_from_group": "group-topics",
                 "direction": "vertical"
+            },
+            {
+                "id": "group-scientists",
+                "populates_from_group": "group-scientists",
+                "direction": "horizontal"
             },
             {
                 "id": "group-years",
