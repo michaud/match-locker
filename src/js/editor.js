@@ -223,8 +223,9 @@ function PuzzleItem({ puzzle, index, onUpdate, onRemove, allSlides, onSelect, is
 
     const handleInputChange = (e) => {
 
-        const { name, value } = e.target;
-        onUpdate(index, { ...puzzle, [name]: value });
+        const { name, value, type } = e.target;
+        const newValue = type === 'number' ? (value === '' ? 0 : parseInt(value, 10)) : value;
+        onUpdate(index, { ...puzzle, [name]: newValue });
     };
 
     return (
@@ -256,6 +257,18 @@ function PuzzleItem({ puzzle, index, onUpdate, onRemove, allSlides, onSelect, is
                     <option value="unordered">Unordered</option>
                     <option value="ordered">Ordered</option>
                 </select>
+            </div>
+            <div className="form-group">
+                <label htmlFor={`puzzle-subset-count-${index}`}>Subset Count (0 = All)</label>
+                <input
+                    type="number"
+                    id={`puzzle-subset-count-${index}`}
+                    name="subset_count"
+                    value={puzzle.subset_count || 0}
+                    onChange={handleInputChange}
+                    min="0"
+                    disabled={(puzzle.type || 'set') !== 'set'}
+                />
             </div>
         </div>
     );

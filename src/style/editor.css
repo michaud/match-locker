@@ -468,11 +468,18 @@
         flex: 1;
     }
 
+    input[disabled] {
+        color: #707070
+    }
+
+    .form-group:has(input[disabled]) label {
+        opacity: 0.3;
+    }
+
     .read-only-input {
         background-color: #f0f0f0;
         cursor: not-allowed;
     }
-
 }
 
 .match-slide-list {
