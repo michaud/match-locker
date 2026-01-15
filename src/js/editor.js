@@ -228,6 +228,8 @@ function PuzzleItem({ puzzle, index, onUpdate, onRemove, allSlides, onSelect, is
         onUpdate(index, { ...puzzle, [name]: newValue });
     };
 
+    const matchCount = (puzzle.matches || []).length;
+
     return (
         <div className={`list-item ${isSelected ? 'selected' : ''}`} onClick={() => onSelect(index)}>
             <div className="item-header">
@@ -269,6 +271,11 @@ function PuzzleItem({ puzzle, index, onUpdate, onRemove, allSlides, onSelect, is
                     min="0"
                     disabled={(puzzle.type || 'set') !== 'set'}
                 />
+                {puzzle.subset_count > matchCount && puzzle.subset_count > 0 && (
+                    <p className="help-text" style={{ color: 'orange' }}>
+                        Warning: Count exceeds available matches ({matchCount}). The number will be adjusted to the match count.
+                    </p>
+                )}
             </div>
         </div>
     );

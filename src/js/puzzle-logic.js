@@ -73,8 +73,23 @@ export const processGameData = (gameData) => {
         });
     });
 
+    // Collect all slide IDs that are part of the active solutions in the processed puzzles.
+    const activeSlideIds = new Set();
+    newPuzzleData.forEach(puzzle => {
+        puzzle.solutions.forEach(match => {
+            match.forEach(slideId => activeSlideIds.add(slideId));
+        });
+    });
+
+    // Filter the slide groups to only include slides that are present in the active solutions.
+    // If no matches are defined (activeSlideIds is empty), we return the groups as-is to avoid hiding everything in a puzzle-less context.
+    const filteredSlideGroups = activeSlideIds.size > 0 ? slideGroups.map(group => ({
+        ...group,
+        slides: group.slides ? group.slides.filter(slide => activeSlideIds.has(slide.id)) : []
+    })) : slideGroups;
+
     // The layout object from the game data is now the source of truth.
-    return { slideData, newPuzzleData, slideGroups, layout };
+    return { slideData, newPuzzleData, slideGroups: filteredSlideGroups, layout };
 }
 
 /**
