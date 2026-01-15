@@ -49,13 +49,27 @@ export const processGameData = (gameData) => {
 
     rawPuzzles.forEach(rawPuzzle => {
 
+        let solutions = (rawPuzzle.matches || []).map(m => m.match);
+
+        // If a subset count is defined for a 'set' puzzle, randomly select that many matches.
+        if (rawPuzzle.type === 'set' && rawPuzzle.subset_count > 0 && solutions.length > rawPuzzle.subset_count) {
+            // Fisher-Yates shuffle to randomize the solutions array
+            for (let i = solutions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [solutions[i], solutions[j]] = [solutions[j], solutions[i]];
+            }
+            // Slice the array to the desired count
+            solutions = solutions.slice(0, rawPuzzle.subset_count);
+        }
+
         newPuzzleData.push({
             id: rawPuzzle.puzzle_id,
             puzzletitle: rawPuzzle.puzzletitle,
             instructions: rawPuzzle.instructions,
             type: rawPuzzle.type || 'set',
             evaluation: rawPuzzle.evaluation || 'unordered',
-            solutions: (rawPuzzle.matches || []).map(m => m.match)
+            subset_count: rawPuzzle.subset_count || 0,
+            solutions: solutions
         });
     });
 
