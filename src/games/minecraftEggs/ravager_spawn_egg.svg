@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="960" height="680" version="1.1" viewBox="0 0 960 680" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <filter id="b" x="-.46967" y="-1.6964" width="1.9393" height="4.3927" style="color-interpolation-filters:sRGB">
+            <feFlood flood-color="rgb(0,0,0)" in="SourceGraphic" result="flood" />
+            <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="100" />
+            <feOffset dx="0" dy="0" in="blur" result="offset" />
+            <feComposite in="flood" in2="offset" operator="in" result="comp1" />
+            <feComposite in="SourceGraphic" in2="comp1" result="comp2" />
+        </filter>
+    </defs>
+    <text x="475.27594" y="600" style="filter:url(#b);" xml:space="preserve"><tspan style="fill:#ffffff;font-family:Sans;font-size:127px;font-weight:bold;text-align:center;text-anchor:middle;">ravager</tspan></text>
+</svg>
