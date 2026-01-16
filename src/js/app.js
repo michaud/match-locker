@@ -537,9 +537,16 @@ const start = () => {
             event.stopPropagation();
         });
 
-        // Identify and set the root horizontal slider as the active one.
+        // Identify and set the root slider as the active one.
         const guestIds = new Set((newGame.layout.puzzle_slots || []).map(s => s.guest_group_id));
-        const rootSliderConfig = newGame.layout.sliders.find(s => s.direction === 'horizontal' && !guestIds.has(s.id));
+        
+        // Try to find a horizontal root first (standard layout)
+        let rootSliderConfig = newGame.layout.sliders.find(s => s.direction === 'horizontal' && !guestIds.has(s.id));
+
+        // If no horizontal root, try to find a vertical root
+        if (!rootSliderConfig) {
+            rootSliderConfig = newGame.layout.sliders.find(s => s.direction === 'vertical' && !guestIds.has(s.id));
+        }
 
         if (rootSliderConfig && newGame.layout.sliders.length > 0) {
 
@@ -548,11 +555,11 @@ const start = () => {
 
         } else {
 
-            console.error("Could not find a root horizontal slider.");
-            // Fallback to the first available horizontal slider if no root is found
-            const firstHorizontal = newGame.layout.sliders.find(s => s.direction === 'horizontal');
-            if (firstHorizontal) {
-                newGame.playerState.currentSwiperId = firstHorizontal.id;
+            console.error("Could not find a root slider.");
+            // Fallback to the first available slider if no root is found
+            const firstSlider = newGame.layout.sliders[0];
+            if (firstSlider) {
+                newGame.playerState.currentSwiperId = firstSlider.id;
                 newGame.playerState.currentIndex = 0;
 
             } else {
