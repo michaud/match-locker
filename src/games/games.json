@@ -8,5 +8,10 @@
     "title": "Quantum History",
     "description": "A journey through the history of Quantum Mechanics and Relativity.",
     "file": "games/quantum_history.json"
+  },
+  {
+    "title": "Minecraft Spawn Eggs",
+    "description": "Match the spawn egg to the creature name.",
+    "file": "games/minecraft_spawn_eggs.json"
   }
 ]

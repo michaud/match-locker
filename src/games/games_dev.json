@@ -28,5 +28,10 @@
     "title": "Test Puzzles - smallest set",
     "description": "smallest set of puzzles type:set, with unordered and ordered evaluation.",
     "file": "games/test_puzzles_smallest_set_set_uo_o.json"
+  },
+  {
+    "title": "Minecraft Spawn Eggs",
+    "description": "Match the spawn egg to the creature name.",
+    "file": "games/minecraft_spawn_eggs.json"
   }
 ]

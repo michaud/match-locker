@@ -197,6 +197,7 @@ input[type="checkbox"] {
         display: block;
         object-fit: contain;
         user-select: none;
+        align-self: center;
     }
 
     &.is-matched {
