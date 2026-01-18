@@ -1019,8 +1019,8 @@ fieldset {
 }
 
 .slider-vertical .slide.has-match-line::before {
-    top: 5rem;
-    left: 5rem;
+    top: 7rem;
+    left: 5.81rem;
 }
 
 .slider-horizontal .slide.has-match-line::before {
