@@ -188,38 +188,52 @@ export function createMatchVisualizer(callbacks) {
             );
         };
 
+        const swipers = Array.from(game.swiperInstances.values());
+
         puzzleMatches.forEach((guestId, hostId) => {
-            const hostEls = document.querySelectorAll(`.slide[data-slide-id="${hostId}"]`);
-            const guestEls = document.querySelectorAll(`.slide[data-slide-id="${guestId}"]`);
+            
+            const hostSwiper = swipers.find(s => s.getIndexForSlideId(hostId) > -1);
+            const guestSwiper = swipers.find(s => s.getIndexForSlideId(guestId) > -1);
 
-            hostEls.forEach(el => el.classList.add('has-match-dot'));
-            guestEls.forEach(el => el.classList.add('has-match-dot'));
+            if (!hostSwiper || !guestSwiper) return;
 
-            hostEls.forEach(hostEl => {
-                const hostRect = hostEl.getBoundingClientRect();
-                if (!isVisible(hostRect)) return;
+            // Only show visuals if the slide is the currently active one in its swiper
+            const isHostActive = hostSwiper.getCurrentSlideId() === hostId;
+            const isGuestActive = guestSwiper.getCurrentSlideId() === guestId;
 
-                let targetGuestEl = null;
-                let minDist = Infinity;
+            const hostEls = hostSwiper.getElement().querySelectorAll(`.slide[data-slide-id="${hostId}"]`);
+            const guestEls = guestSwiper.getElement().querySelectorAll(`.slide[data-slide-id="${guestId}"]`);
 
-                guestEls.forEach(guestEl => {
-                    const guestRect = guestEl.getBoundingClientRect();
-                    if (isVisible(guestRect)) {
-                        const dist = Math.hypot(hostRect.x - guestRect.x, hostRect.y - guestRect.y);
-                        if (dist < minDist) {
-                            minDist = dist;
-                            targetGuestEl = guestEl;
+            if (isHostActive) {
+                hostEls.forEach(el => el.classList.add('has-match-dot'));
+            }
+
+            if (isGuestActive) {
+                guestEls.forEach(el => el.classList.add('has-match-dot'));
+            }
+
+            if (isHostActive && isGuestActive) {
+                hostEls.forEach(hostEl => {
+                    const hostRect = hostEl.getBoundingClientRect();
+                    if (!isVisible(hostRect)) return;
+
+                    let targetGuestEl = null;
+                    let minDist = Infinity;
+
+                    guestEls.forEach(guestEl => {
+                        const guestRect = guestEl.getBoundingClientRect();
+                        if (isVisible(guestRect)) {
+                            const dist = Math.hypot(hostRect.x - guestRect.x, hostRect.y - guestRect.y);
+                            if (dist < minDist) {
+                                minDist = dist;
+                                targetGuestEl = guestEl;
+                            }
                         }
-                    }
-                });
+                    });
 
-                if (targetGuestEl) {
-                    const hostSwiper = hostEl.closest('.swiper');
-                    const guestSwiper = targetGuestEl.closest('.swiper');
-                    
-                    if (hostSwiper && guestSwiper) {
-                        const isHostHoriz = hostSwiper.classList.contains('slider-horizontal');
-                        const isGuestHoriz = guestSwiper.classList.contains('slider-horizontal');
+                    if (targetGuestEl) {
+                        const isHostHoriz = hostSwiper.getDirection() === 'horizontal';
+                        const isGuestHoriz = guestSwiper.getDirection() === 'horizontal';
 
                         const getDotPos = (rect, isHoriz) => ({
                             x: rect.left + DOT_OFFSET,
@@ -238,8 +252,8 @@ export function createMatchVisualizer(callbacks) {
                         hostEl.style.setProperty('--line-angle', `${angle}deg`);
                         hostEl.classList.add('has-match-line');
                     }
-                }
-            });
+                });
+            }
         });
     };
 
