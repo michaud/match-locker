@@ -9,7 +9,7 @@ function generateUUID() {
     );
 }
 
-function SlideItem({ slide, index, onUpdate, onRemove, isNew }) {
+function SlideItem({ slide, index, onUpdate, onRemove, isNew, onMove, isFirst, isLast }) {
 
     const nameInputRef = useRef(null);
 
@@ -30,7 +30,16 @@ function SlideItem({ slide, index, onUpdate, onRemove, isNew }) {
         <div className="list-item">
             <div className="form-group">
                 <div className="item-header">
-                    <label htmlFor={`slide-name-${index}`}>Slide Name</label> <button onClick={(e) => { e.stopPropagation(); onRemove(index); }} className="remove-button" title="Remove Slide"><img src="style/trash.svg" alt="Remove" /></button>
+                    <label htmlFor={`slide-name-${index}`}>Slide Name</label> 
+                    <div className="item-controls" style={{ display: 'flex', gap: '5px' }}>
+                        {onMove && (
+                            <>
+                                <button onClick={(e) => { e.stopPropagation(); onMove(index, -1); }} disabled={isFirst} title="Move Up">▲</button>
+                                <button onClick={(e) => { e.stopPropagation(); onMove(index, 1); }} disabled={isLast} title="Move Down">▼</button>
+                            </>
+                        )}
+                        <button onClick={(e) => { e.stopPropagation(); onRemove(index); }} className="remove-button" title="Remove Slide"><img src="style/trash.svg" alt="Remove" /></button>
+                    </div>
                 </div>
                 <input
                     type="text"
@@ -316,6 +325,16 @@ function SlideGroupItem({ group, index, onUpdate, onRemove, onSelect, isSelected
                 placeholder="Enter group name..."
                 onChange={handleInputChange}
             />
+            <div className="form-group" style={{ marginTop: '10px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                    <input
+                        type="checkbox"
+                        checked={group.scramble !== false}
+                        onChange={(e) => onUpdate(index, { ...group, scramble: e.target.checked })}
+                    />
+                    Scramble Slides (Default)
+                </label>
+            </div>
             {/* Placeholder for slides within this group */}
             <div className="nested-list-placeholder">
                 <p>{group.slides.length} slide(s) in this group.</p>
@@ -325,7 +344,7 @@ function SlideGroupItem({ group, index, onUpdate, onRemove, onSelect, isSelected
     );
 }
 
-function AdvancedSlideList({ slides, onAdd, onUpdate, onRemove }) {
+function AdvancedSlideList({ slides, onAdd, onUpdate, onRemove, onMove }) {
 
     if (!slides) return null; // Don't render if no slides array is provided
 
@@ -341,6 +360,9 @@ function AdvancedSlideList({ slides, onAdd, onUpdate, onRemove }) {
                         onUpdate={onUpdate}
                         onRemove={onRemove}
                         isNew={slide.isNew}
+                        onMove={onMove}
+                        isFirst={index === 0}
+                        isLast={index === slides.length - 1}
                     />
                 ))}
             </div>
@@ -994,6 +1016,21 @@ function AdvancedEditor() {
         });
     };
 
+    const moveSlide = (slideIndex, direction) => {
+        setGameData(prev => {
+            const newGameData = { ...prev };
+            const group = newGameData.slide_groups[selectedGroupIndex];
+            const slides = [...group.slides];
+            const newIndex = slideIndex + direction;
+            
+            if (newIndex >= 0 && newIndex < slides.length) {
+                [slides[slideIndex], slides[newIndex]] = [slides[newIndex], slides[slideIndex]];
+                group.slides = slides;
+            }
+            return newGameData;
+        });
+    };
+
     const updateSlide = (slideIndex, updatedSlide) => {
 
         if (updatedSlide.isNew) {
@@ -1223,6 +1260,7 @@ function AdvancedEditor() {
                 onAdd={addSlide}
                 onUpdate={updateSlide}
                 onRemove={removeSlide}
+                onMove={moveSlide}
             />
 
             <PuzzleList

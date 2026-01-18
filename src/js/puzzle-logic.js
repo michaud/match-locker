@@ -81,12 +81,22 @@ export const processGameData = (gameData) => {
         });
     });
 
-    // Filter the slide groups to only include slides that are present in the active solutions.
-    // If no matches are defined (activeSlideIds is empty), we return the groups as-is to avoid hiding everything in a puzzle-less context.
-    const filteredSlideGroups = activeSlideIds.size > 0 ? slideGroups.map(group => ({
-        ...group,
-        slides: group.slides ? group.slides.filter(slide => activeSlideIds.has(slide.id)) : []
-    })) : slideGroups;
+    // Process slide groups: filter based on active puzzle subset and shuffle if requested.
+    const filteredSlideGroups = slideGroups.map(group => {
+        let slides = group.slides ? [...group.slides] : [];
+
+        if (activeSlideIds.size > 0) {
+            slides = slides.filter(slide => activeSlideIds.has(slide.id));
+        }
+
+        if (group.scramble !== false) {
+            for (let i = slides.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [slides[i], slides[j]] = [slides[j], slides[i]];
+            }
+        }
+        return { ...group, slides };
+    });
 
     // The layout object from the game data is now the source of truth.
     return { slideData, newPuzzleData, slideGroups: filteredSlideGroups, layout };
