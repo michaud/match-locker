@@ -19,7 +19,7 @@
  */
 export function createGameStateMachine(callbacks) {
 
-    let debug = true;
+    let debug = false;
     let currentState = null;
 
     // Unpack callbacks for easier access
