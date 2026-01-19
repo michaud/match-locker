@@ -673,13 +673,16 @@ function LayoutVisualizer({
     layout,
     slideGroups,
     svgWidth = 800,
-    svgHeight = 600,
+    svgHeight = 900,
     slideWidth = 80,
     slideHeight = 50,
     gap = 5
 }) {
-
-    const [renderedElements, setRenderedElements] = useState(null);
+    const [layoutData, setLayoutData] = useState(null);
+    const [viewTransform, setViewTransform] = useState({ x: 0, y: 0, scale: 1 });
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+    const svgRef = useRef(null);
 
     useEffect(() => {
 
@@ -687,9 +690,7 @@ function LayoutVisualizer({
         const sliders = layout?.sliders || []; // Get the ordered sliders
 
         if (puzzleSlots.length === 0 || sliders.length === 0) {
-
-            setRenderedElements(<p>Define puzzle slots to see the visualization.</p>);
-
+            setLayoutData(null);
             return;
         }
 
@@ -805,25 +806,137 @@ function LayoutVisualizer({
             );
         });
 
-        // Calculate centering offset
+        setLayoutData({ elements, bounds });
+
+    }, [layout, slideGroups, slideWidth, slideHeight, gap]);
+
+    // Fit to screen when layout changes
+    useEffect(() => {
+        if (layoutData) {
+            fitToScreen();
+        }
+    }, [layoutData]);
+
+    const fitToScreen = () => {
+        if (!layoutData || !svgRef.current) return;
+        const { bounds } = layoutData;
+        const { clientWidth, clientHeight } = svgRef.current;
+        
+        if (bounds.minX === Infinity) return;
+
         const contentWidth = bounds.maxX - bounds.minX;
         const contentHeight = bounds.maxY - bounds.minY;
-        const offsetX = (svgWidth - contentWidth) / 2 - bounds.minX;
-        const offsetY = (svgHeight - contentHeight) / 2 - bounds.minY;
+        const padding = 40;
 
-        setRenderedElements(
-            <g transform={`translate(${offsetX}, ${offsetY})`}>
-                {elements}
-            </g>
-        );
-    }, [layout, slideGroups, svgWidth, svgHeight, slideWidth, slideHeight, gap]); // Rerun effect when layout or groups change
+        if (contentWidth <= 0 || contentHeight <= 0) return;
+
+        const scaleX = (clientWidth - padding) / contentWidth;
+        const scaleY = (clientHeight - padding) / contentHeight;
+        const scale = Math.min(scaleX, scaleY, 1);
+
+        const centerX = (clientWidth - contentWidth * scale) / 2;
+        const centerY = (clientHeight - contentHeight * scale) / 2;
+
+        setViewTransform({
+            x: centerX - bounds.minX * scale,
+            y: centerY - bounds.minY * scale,
+            scale
+        });
+    };
+
+    const handleMouseDown = (e) => {
+        setIsDragging(true);
+        setDragStart({ x: e.clientX - viewTransform.x, y: e.clientY - viewTransform.y });
+    };
+
+    const handleMouseMove = (e) => {
+        if (isDragging) {
+            setViewTransform(prev => ({
+                ...prev,
+                x: e.clientX - dragStart.x,
+                y: e.clientY - dragStart.y
+            }));
+        }
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
+    const handleWheel = (e) => {
+        e.preventDefault();
+        const scaleFactor = 1.1;
+        const direction = e.deltaY > 0 ? -1 : 1;
+        const newScale = direction > 0 ? viewTransform.scale * scaleFactor : viewTransform.scale / scaleFactor;
+        
+        const rect = svgRef.current.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        
+        const mouseWorldX = (mouseX - viewTransform.x) / viewTransform.scale;
+        const mouseWorldY = (mouseY - viewTransform.y) / viewTransform.scale;
+        
+        const newX = mouseX - mouseWorldX * newScale;
+        const newY = mouseY - mouseWorldY * newScale;
+
+        setViewTransform({
+            x: newX,
+            y: newY,
+            scale: newScale
+        });
+    };
+
+    useEffect(() => {
+        const element = svgRef.current;
+        if (!element) return;
+        element.addEventListener('wheel', handleWheel, { passive: false });
+        return () => element.removeEventListener('wheel', handleWheel);
+    }, [handleWheel]);
+
+    const zoom = (factor) => {
+        if (!svgRef.current) return;
+        const { clientWidth, clientHeight } = svgRef.current;
+        const newScale = viewTransform.scale * factor;
+        const centerX = clientWidth / 2;
+        const centerY = clientHeight / 2;
+        const centerWorldX = (centerX - viewTransform.x) / viewTransform.scale;
+        const centerWorldY = (centerY - viewTransform.y) / viewTransform.scale;
+        const newX = centerX - centerWorldX * newScale;
+        const newY = centerY - centerWorldY * newScale;
+        setViewTransform({ x: newX, y: newY, scale: newScale });
+    };
 
     return (
         <div className="form-section layout-visualizer">
-            <h3>Layout Visualization</h3>
-            <svg width={svgWidth} height={svgHeight} className="layout-svg">
-                {renderedElements}
-            </svg>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <h3>Layout Visualization</h3>
+                <div className="visualizer-controls" style={{ display: 'flex', gap: '5px' }}>
+                    <button onClick={() => zoom(1.2)} title="Zoom In" style={{ width: '30px' }}>+</button>
+                    <button onClick={() => zoom(0.8)} title="Zoom Out" style={{ width: '30px' }}>-</button>
+                    <button onClick={fitToScreen} title="Fit to Screen">Fit</button>
+                </div>
+            </div>
+            <div style={{ width: '100%', height: svgHeight, overflow: 'hidden' }}>
+                <svg 
+                    ref={svgRef}
+                    width="100%" 
+                    height="100%" 
+                    className="layout-svg"
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                    style={{ cursor: isDragging ? 'grabbing' : 'grab', display: 'block' }}
+                >
+                    {layoutData ? (
+                        <g transform={`translate(${viewTransform.x}, ${viewTransform.y}) scale(${viewTransform.scale})`}>
+                            {layoutData.elements}
+                        </g>
+                    ) : (
+                        <text fill="white" x="50%" y="50%" textAnchor="middle" dominantBaseline="middle">layout will show here</text>
+                    )}
+                </svg>
+            </div>
         </div>
     );
 }
