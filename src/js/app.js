@@ -358,6 +358,7 @@ const start = () => {
                 swiperContainer.classList.add('visually-hidden'); // All swipers are hidden initially.
     
                 requestAnimationFrame(() => {
+
                     const swiperOptions = {
                         listSelector: `#${listId}`,
                         direction: sliderConfig.direction,
@@ -366,7 +367,8 @@ const start = () => {
                         slideHeight: sliderConfig.direction === 'vertical' ? GAME_SLIDE_HEIGHT : null,
                         viewportMatchesSlide: true,
                         cloneCount: GAME_CLONE_COUNT,
-                        dragFactor: 0.6, // Slower movement during drag
+                        dragFactor: 0.5,
+                        throwMultiplier: 0.4,
                     };
     
                     const swiper = createSwiper(swiperOptions);
