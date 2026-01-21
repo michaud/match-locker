@@ -89,6 +89,7 @@ const start = () => {
     // This object will be replaced entirely when a new game is loaded.
     let activeGame = {
         playerState: null,
+        gameInfo: null,
         puzzleData: [],
         gameState: null,
         layout: {},
@@ -466,7 +467,7 @@ const start = () => {
 
         teardownCurrentGame();
 
-        const { newPuzzleData, layout, slideGroups } = processGameData(gameData);
+        const { newPuzzleData, layout, slideGroups, description, gametitle, licences } = processGameData(gameData);
 
         const newGame = {
             playerState: {

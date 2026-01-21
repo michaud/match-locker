@@ -5,10 +5,13 @@ import { validateSet, validateStar, validateChain, validateRing } from './puzzle
  * @returns {{slideData: object, newPuzzleData: Array, layoutSliders: Map, slideGroups: Array, layout: object}}
  */
 export const processGameData = (gameData) => {
+
     // Use properties directly from the passed gameData object to avoid destructuring issues.
     const slideGroups = gameData.slide_groups || [];
     const layout = gameData.layout || { puzzle_slots: [] };
     const rawPuzzles = gameData.puzzles || [];
+
+    const { description, gametitle, licences } = gameData;
  
     // Ensure slideGroups contains entries for all groups mentioned in the layout,
     // including virtual ones that might not have explicit slide definitions.
@@ -99,7 +102,7 @@ export const processGameData = (gameData) => {
     });
 
     // The layout object from the game data is now the source of truth.
-    return { slideData, newPuzzleData, slideGroups: filteredSlideGroups, layout };
+    return { slideData, newPuzzleData, slideGroups: filteredSlideGroups, layout, description, gametitle, licences };
 }
 
 /**

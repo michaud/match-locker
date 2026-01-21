@@ -332,7 +332,7 @@ function SlideGroupItem({ group, index, onUpdate, onRemove, onSelect, isSelected
                         checked={group.scramble !== false}
                         onChange={(e) => onUpdate(index, { ...group, scramble: e.target.checked })}
                     />
-                    Scramble Slides (Default)
+                    Scramble Slides
                 </label>
             </div>
             {/* Placeholder for slides within this group */}
@@ -653,7 +653,7 @@ function LayoutEditor({ layout, puzzles, slideGroups, onUpdate }) {
 
     return (
         <div className="form-section">
-            <h3>Layout</h3>
+            <h3>Layout with puzzle slots</h3>
             <SliderLayerManager 
                 sliders={layout?.sliders}
                 slideGroups={slideGroups}
@@ -1387,6 +1387,11 @@ function AdvancedEditor() {
 
             <div className="form-section matches">
                 <h3>Match Editor</h3>
+
+                <div className="match-group-selectors">
+                    <h3>host group</h3>
+                    <h3>guest group</h3>
+                </div>
                 <div className="match-group-selectors">
                     <select value={sourceGroupId} onChange={e => handleMatchGroupChange('source', e.target.value)}>
                         {gameData.slide_groups.map(g => (<option key={`source-${g.group_id}`} value={g.group_id}>{g.group_name}</option>))}
@@ -1407,15 +1412,27 @@ function AdvancedEditor() {
 }
 
 function Editor() {
+    const [activeTab, setActiveTab] = useState('editor');
 
     return (
         <div>
             <h1>Match-locker game Editor</h1>
             <div className="editor-tabs">
-                <button className="tab-button active">Editor</button>
+                <button 
+                    className={`tab-button ${activeTab === 'editor' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('editor')}
+                >
+                    Editor
+                </button>
+                <button 
+                    className={`tab-button ${activeTab === 'docs' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('docs')}
+                >
+                    Docs
+                </button>
             </div>
-            <div id="advanced-editor-content" className="tab-content active">
-                <AdvancedEditor />
+            <div className="tab-content active">
+                {activeTab === 'editor' ? <AdvancedEditor /> : <EditorDocs/>}
             </div>
         </div>
     );
