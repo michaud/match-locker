@@ -7,7 +7,7 @@
 export function createLayoutVisualizer(container, initialOptions = {}) {
     const SVG_NS = "http://www.w3.org/2000/svg";
     const svgWidth = 960;
-    const svgHeight = 524;
+    const svgHeight = 500;
     const slideWidth = 80;
     const slideHeight = 50;
     const gap = 10;

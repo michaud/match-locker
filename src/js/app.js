@@ -36,6 +36,7 @@ const start = () => {
     const gameScreen = mainScreen.querySelector('.game-screen');
     const settingsScreen = mainScreen.querySelector('.settings-screen');
     const infoScreen = mainScreen.querySelector('.info-screen');
+    const infoGame = infoScreen.querySelector('.info-game');
     const aboutScreen = mainScreen.querySelector('.about-screen');
 
     const gameMenu = startScreen.querySelector('.game-menu ol');
@@ -482,7 +483,8 @@ const start = () => {
             gameState: {
                 playerMatchesByPuzzle: new Map(),
                 solvedPuzzles: new Set(),
-            }
+            },
+            description, gametitle, licences
         };
 
         // Create swipers and add them to the new game state. This function also modifies the DOM.
@@ -657,7 +659,7 @@ const start = () => {
                     ${activePuzzle.instructions ? `<p><strong>Instructions:</strong> ${activePuzzle.instructions}` : ''}</p>
                 </div>
             `;
-
+            infoGame.innerHTML = `<p>${activeGame.description || ''}</p>`;
         } else {
 
             infoPuzzleSection.innerHTML = `<div class="info-panel description"><h3>Nice slide</h3><p>no puzzle</p></div>`;
@@ -1010,8 +1012,8 @@ const start = () => {
 
                 if (infoButton) {
 
-                    const gameDescriptionPanel = infoButton.closest('.game-description');
-                    const descriptionElement = gameDescriptionPanel.querySelector('.description');
+                    const infoGamePanel = infoButton.closest('.game-description');
+                    const descriptionElement = infoGamePanel.querySelector('.description');
                     const wasVisible = descriptionElement.classList.contains('show');
 
                     cleanInfoPanel();

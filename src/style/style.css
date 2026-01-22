@@ -141,6 +141,10 @@ input[type="checkbox"] {
 
 }
 
+.info-game {
+    margin-inline: 2rem;
+}
+
 .about-content {
 
     margin: 2rem;
@@ -428,8 +432,8 @@ button {
 .screen-title {
 
     margin-inline: auto;
-    margin-block: 1.5rem;
-    min-height: 6rem;
+    margin-block: .5rem;
+    min-height: 5rem;
     font-size: 5rem;
     font-family: 'Gugi', cursive;
     background-image: url('../style/Leonhard_Euler_2.jpg');
