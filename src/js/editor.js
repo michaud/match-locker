@@ -1,5 +1,9 @@
 const { useState, useEffect, useRef } = React;
 
+function wrap(value, max) {
+    return (value % max + max) % max;
+}
+
 const gamesFilePath ='games/games.json';
 
 function generateUUID() {
@@ -385,7 +389,7 @@ function PuzzleSlotItem({ slot, index, onUpdate, onRemove, onDirectionChange, pu
 
     }, [slot.activates_puzzle_id]);
 
-    const handleInputChange = (e) => {
+const handleInputChange = (e) => {
 
         const { name, value } = e.target;
         let updatedSlot = { ...slot, [name]: value };
@@ -403,7 +407,24 @@ function PuzzleSlotItem({ slot, index, onUpdate, onRemove, onDirectionChange, pu
         if (isNumber) {
             // Handle empty string to prevent NaN, default to 0.
             const numValue = value === '' ? 0 : parseInt(value, 10);
-            updatedSlot[name] = numValue;
+            
+            // Apply auto-wrapping for slot indices based on available slide counts
+            if (name === 'at_index' || name === 'guest_align_index') {
+                const hostGroup = slideGroups.find(g => g.group_id === slot.host_group_id);
+                const guestGroup = slideGroups.find(g => g.group_id === slot.guest_group_id);
+                
+                if (name === 'at_index' && hostGroup && hostGroup.slides.length > 0) {
+                    const maxIndex = hostGroup.slides.length - 1;
+                    updatedSlot[name] = wrap(numValue, maxIndex + 1);
+                } else if (name === 'guest_align_index' && guestGroup && guestGroup.slides.length > 0) {
+                    const maxIndex = guestGroup.slides.length - 1;
+                    updatedSlot[name] = wrap(numValue, maxIndex + 1);
+                } else {
+                    updatedSlot[name] = numValue; // Fallback if no group data
+                }
+            } else {
+                updatedSlot[name] = numValue;
+            }
 
         } else {
             // When the puzzle changes, the useEffect above will handle resetting host/guest.
@@ -413,7 +434,7 @@ function PuzzleSlotItem({ slot, index, onUpdate, onRemove, onDirectionChange, pu
         onUpdate(index, updatedSlot);
     };
 
-    // The list of all available sliders/groups for the dropdowns.
+// The list of all available sliders/groups for the dropdowns.
     const puzzle = puzzles.find(p => p.puzzle_id === slot.activates_puzzle_id);
 
     return (
@@ -454,7 +475,7 @@ function PuzzleSlotItem({ slot, index, onUpdate, onRemove, onDirectionChange, pu
                     </select>
                 </div>
             </div>
-            <div className="form-group">
+<div className="form-group">
                 <label>Host slot Index</label>
                 <input type="number" name="at_index" value={slot.at_index} onChange={handleInputChange} min="0" />
             </div>
