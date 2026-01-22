@@ -19,7 +19,8 @@ export function createScreenStateMachine({ domElements, callbacks }) {
         initLeadInScreen,
         getMenuDragHandler,
         settingsManager,
-        renderInfoScreen
+        renderInfoScreen,
+        renderAboutScreen
     } = callbacks;
 
     const DisplayStyle = Object.freeze({
@@ -133,6 +134,7 @@ export function createScreenStateMachine({ domElements, callbacks }) {
         about: {
             onEnter: () => {
                 aboutScreen.style.display = screenDisplayMap.get(aboutScreen);
+                if (renderAboutScreen) renderAboutScreen();
                 topNav.style.display = DisplayStyle.GRID;
                 puzzleNav.style.display = DisplayStyle.NONE;
             },

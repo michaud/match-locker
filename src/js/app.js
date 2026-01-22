@@ -718,6 +718,49 @@ const start = () => {
         }
     };
 
+    const renderAboutScreen = () => {
+        let licensesContainer = aboutScreen.querySelector('.licenses-content');
+        if (!licensesContainer) {
+            licensesContainer = document.createElement('div');
+            licensesContainer.classList.add('licenses-content');
+            aboutScreen.appendChild(licensesContainer);
+        }
+
+        licensesContainer.innerHTML = '';
+
+        if (!activeGame.licences || activeGame.licences.length === 0) {
+            return;
+        }
+
+        const h3 = document.createElement('h3');
+        h3.textContent = 'Game Assets Licenses';
+        licensesContainer.appendChild(h3);
+
+        activeGame.licences.forEach(licence => {
+            const div = document.createElement('div');
+            div.classList.add('license-block');
+            
+            let html = `<p><strong>Type:</strong> ${licence.url ? `<a href="${licence.url}" target="_blank">${licence.type}</a>` : licence.type}</p>`;
+            
+            if (licence.attribution) {
+                html += `<p><strong>Attribution:</strong> ${licence.attribution_url ? `<a href="${licence.attribution_url}" target="_blank">${licence.attribution}</a>` : licence.attribution}</p>`;
+            }
+
+            if (licence.images && licence.images.length > 0) {
+                html += `<ul class="license-images">`;
+                licence.images.forEach(img => {
+                    html += `<li>${img.file}`;
+                    if (img.caption) html += ` - <em>${img.caption}</em>`;
+                    if (img.changes) html += ` (${img.changes})`;
+                    html += `</li>`;
+                });
+                html += `</ul>`;
+            }
+            div.innerHTML = html;
+            licensesContainer.appendChild(div);
+        });
+    };
+
     // --- State-based Screen Navigation ---
 
     const screenStateMachine = createScreenStateMachine({
@@ -740,7 +783,8 @@ const start = () => {
             initLeadInScreen,
             getMenuDragHandler: () => menuDragHandler,
             settingsManager,
-            renderInfoScreen
+            renderInfoScreen,
+            renderAboutScreen
         },
     });
 

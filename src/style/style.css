@@ -10,6 +10,9 @@
     --border-color: rgb(255, 255, 255, 0.1);
     --ui-control-color: rgb(8 7 42);
     --ui-field-color: rgb(56 57 86);
+    --link-color: white;
+    --link-visited-color: lightgray;
+    --link-hover-color: darkgray;
 }
 
 body,
@@ -36,6 +39,19 @@ body {
 label {
 
     padding: .75rem 0;
+}
+
+a:link{
+    color: var(--link-color);
+}
+
+
+a:visited {
+    color: var(--link-visited-color);
+}
+
+a:hover {
+    color: var(--link-hover-color);
 }
 
 option {
