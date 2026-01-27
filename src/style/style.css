@@ -1040,3 +1040,8 @@ fieldset {
     bottom: 6.989rem;
     left: 5.82rem;
 }
+
+.game-button:has(.description.show) .action-buttons .button--action.info {
+    color: white;
+    background-color: rgb(9 12 73);
+}
