@@ -53,8 +53,6 @@ export function createDragHandler(screen, getSwipers, onTapCallback, onDragStart
             }
         }
 
-
-
         if (dragSwiper) {
 
             if (!state.isDragStarted) {
