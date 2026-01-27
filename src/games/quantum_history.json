@@ -1,488 +1,488 @@
 {
-    "gametitle": "Quantum History",
-    "description": "A journey through the history of Quantum Mechanics and Relativity. based on 'Heisenberg Made a Discovery in 1925. We Still Can't Explain It' by PBS Space Time on youtube",
-    "licences": [
+  "gametitle": "Quantum History",
+  "description": "A journey through the history of Quantum Mechanics and Relativity. based on 'Heisenberg Made a Discovery in 1925. We Still Can't Explain It' by PBS Space Time on youtube",
+  "licences": [
+    {
+      "type": "Public Domain",
+      "url": "",
+      "attribution": "Maschen",
+      "attribution_url": "",
+      "images": [
         {
-            "type": "Public Domain",
-            "url": "",
-            "attribution": "Maschen",
-            "attribution_url": "",
-            "images": [
-                {
-                    "path": "games/quantumHistory/",
-                    "file": "Propagation_of_a_de_broglie_wave.svg",
-                    "caption": "Propagation of a de broglie wave",
-                    "changes": "adjusted for dark background"
-                }
-            ]
-        },
-        {
-            "type": "CC BY 4.0",
-            "url": "https://creativecommons.org/licenses/by/4.0/",
-            "attribution": "LibreTexts",
-            "attribution_url": "https://libretexts.org",
-            "images": [
-                {
-                    "path": "games/quantumHistory/",
-                    "file": "CNX_UPhysics_39_01_BlackBBodyradiationcurve.jpg",
-                    "caption": "A blackbody is physically realized by a small hole in the wall of a cavity radiator.",
-                    "changes": "none"
-                },
-                {
-                    "path": "games/quantumHistory/",
-                    "file": "Plancks_hypothesis_of_energy_quanta.svg",
-                    "caption": "Planck's hypothesis of energy quanta.",
-                    "changes": "simplified svg"
-                }
-            ]
-        },
-        {
-            "type": "CC BY 3.0",
-            "url": "https://creativecommons.org/licenses/by/3.0",
-            "attribution": "Kurzon, via Wikimedia Commons",
-            "images": [
-                {
-                    "original_url": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Geiger-Marsden_experiment_expectation_and_result.svg",
-                    "path": "games/quantumHistory/",
-                    "file": "Geiger-Marsden_experiment_expectation_and_result.svg",
-                    "caption": "Albert Einstein in 1905.",
-                    "changes": "cropped to result portion and adjusted for dark background"
-                }
-            ]
-        },
-        {
-            "type": "CC BY-SA 3.0",
-            "url": "https://creativecommons.org/licenses/by/3.0",
-            "attribution": "JabberWok, CC BY-SA 3.0, via Wikimedia Commons",
-            "attribution_url": "http://creativecommons.org/licenses/by-sa/3.0/",
-            "images": [
-                {
-                    "original_url": "https://upload.wikimedia.org/wikipedia/commons/9/93/Bohr_atom_model.svg",
-                    "path": "games/quantumHistory/",
-                    "file": "Bohr_atom_model.svg",
-                    "caption": "Schematic illustration of bound-bound transition in the Bohr atomic model",
-                    "changes": "adjusted for dark background"
-                },
-                {
-                    "original_url": "https://upload.wikimedia.org/wikipedia/commons/9/93/Bohr_atom_model.svg",
-                    "path": "games/quantumHistory/",
-                    "file": "Bohr_atom_model.svg",
-                    "caption": "Schematic illustration of bound-bound transition in the Bohr atomic model",
-                    "changes": "adjusted for dark background"
-                }
-            ]
-        },
-        {
-            "type": "CC BY-SA 3.0",
-            "url": "https://creativecommons.org/licenses/by/3.0",
-            "attribution": "Bundesarchiv, Bild 183-R57262 / Unknown author / CC-BY-SA 3.0",
-            "attribution_url": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
-            "images": [
-                {
-                    "original_url": "https://upload.wikimedia.org/wikipedia/commons/9/93/Bohr_atom_model.svg",
-                    "path": "games/quantumHistory/",
-                    "file": "Bundesarchiv_Bild183-R57262,_Werner_Heisenberg.jpg",
-                    "caption": "Prof. Dr. phil Werner Kar. Heisenberg,",
-                    "changes": "none"
-                }
-            ]
-        },
-        {
-            "type": " CC BY-SA 4.0",
-            "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
-            "attribution": "Xcodexif, CC BY-SA 4.0 via Wikimedia Commons",
-            "attribution_url": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Wavepacket-a2k4-en.gif",
-            "images": [
-                {
-                    "original_url": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Wavepacket-a2k4-en.gif",
-                    "path": "games/quantumHistory/",
-                    "file": "waveFunction.jpg",
-                    "caption": "A depiction of a free wavepacket in one dimension where a =2 and K0=4.",
-                    "changes": "took a frame from the gif"
-                }
-            ]
+          "path": "games/quantumHistory/",
+          "file": "Propagation_of_a_de_broglie_wave.svg",
+          "caption": "Propagation of a de broglie wave",
+          "changes": "adjusted for dark background"
         }
-    ],
-    "slide_groups": [
+      ]
+    },
+    {
+      "type": "CC BY 4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "LibreTexts",
+      "attribution_url": "https://libretexts.org",
+      "images": [
         {
-            "group_id": "group-years",
-            "group_name": "Years",
-            "slides": [
-                {
-                    "id": "year-1900",
-                    "name": "1900",
-                    "img": "games/quantumHistory/year_1900.svg"
-                },
-                {
-                    "id": "year-1905",
-                    "name": "1905",
-                    "img": "games/quantumHistory/year_1905.svg"
-                },
-                {
-                    "id": "year-1911",
-                    "name": "1911",
-                    "img": "games/quantumHistory/year_1911.svg"
-                },
-                {
-                    "id": "year-1913",
-                    "name": "1913",
-                    "img": "games/quantumHistory/year_1913.svg"
-                },
-                {
-                    "id": "year-1915",
-                    "name": "1915",
-                    "img": "games/quantumHistory/year_1915.svg"
-                },
-                {
-                    "id": "year-1923",
-                    "name": "1923",
-                    "img": "games/quantumHistory/year_1923.svg"
-                },
-                {
-                    "id": "year-1925",
-                    "name": "1925",
-                    "img": "games/quantumHistory/year_1925.svg"
-                },
-                {
-                    "id": "year-1926",
-                    "name": "1926",
-                    "img": "games/quantumHistory/year_1926.svg"
-                },
-                {
-                    "id": "year-1927",
-                    "name": "1927",
-                    "img": "games/quantumHistory/year_1927.svg"
-                },
-                {
-                    "id": "year-1928",
-                    "name": "1928",
-                    "img": "games/quantumHistory/year_1928.svg"
-                },
-                {
-                    "id": "year-1948",
-                    "name": "1948-1950",
-                    "img": "games/quantumHistory/year_1948.svg"
-                }
-            ]
+          "path": "games/quantumHistory/",
+          "file": "CNX_UPhysics_39_01_BlackBBodyradiationcurve.jpg",
+          "caption": "A blackbody is physically realized by a small hole in the wall of a cavity radiator.",
+          "changes": "none"
         },
         {
-            "group_id": "group-scientists",
-            "group_name": "Scientists",
-            "slides": [
-                {
-                    "id": "sci-planck",
-                    "name": "Max Planck",
-                    "img": "games/quantumHistory/Max_Planck_1901.gif"
-                },
-                {
-                    "id": "sci-einstein-1905",
-                    "name": "Albert Einstein",
-                    "img": "games/quantumHistory/Einstein_patentoffice_full.jpg"
-                },
-                {
-                    "id": "sci-rutherford",
-                    "name": "Ernest Rutherford",
-                    "img": "games/quantumHistory/Sir_Ernest_Rutherford_LCCN2014716719_-_restoration1.jpg"
-                },
-                {
-                    "id": "sci-bohr",
-                    "name": "Niels Bohr",
-                    "img": "games/quantumHistory/Niels_Bohr.jpg"
-                },
-                {
-                    "id": "sci-einstein-1915",
-                    "name": "Albert Einstein",
-                    "img": "games/quantumHistory/Albert_Einstein_and_his_wife_Mileva_Maric.jpg"
-                },
-                {
-                    "id": "sci-debroglie",
-                    "name": "Louis de Broglie",
-                    "img": "games/quantumHistory/Broglie_Big.jpg"
-                },
-                {
-                    "id": "sci-heisenberg-born-jordan",
-                    "name": "Heisenberg, Born, Jordan",
-                    "img": "games/quantumHistory/Bundesarchiv_Bild183-R57262_Werner_Heisenberg.jpg"
-                },
-                {
-                    "id": "sci-schrodinger",
-                    "name": "Erwin Schrödinger",
-                    "img": "games/quantumHistory/Erwin_Schrödinger_-_Narodowe_Archiwum_Cyfrowe_1-E-939.jpg"
-                },
-                {
-                    "id": "sci-heisenberg",
-                    "name": "Werner Heisenberg",
-                    "img": "games/quantumHistory/Bundesarchiv_Bild183-R57262_Werner_Heisenberg.jpg"
-                },
-                {
-                    "id": "sci-dirac",
-                    "name": "Paul Dirac",
-                    "img": "games/quantumHistory/Paul_Dirac1933.jpg"
-                },
-                {
-                    "id": "sci-feynman-etal",
-                    "name": "Feynman, Tomonaga, Schwinger",
-                    "img": "games/quantumHistory/Richard_Feynman_undated.png"
-                }
-            ]
-        },
-        {
-            "group_id": "group-topics",
-            "group_name": "Topics",
-            "slides": [
-                {
-                    "id": "topic-blackbody",
-                    "name": "Blackbody Radiation",
-                    "img": "games/quantumHistory/CNX_UPhysics_39_01_BlackBodyRadiationCurve.jpg"
-                },
-                {
-                    "id": "topic-photoelectric",
-                    "name": "Photoelectric Effect & Special Relativity",
-                    "img": "games/quantumHistory/solarpanel.002.png"
-                },
-                {
-                    "id": "topic-nuclear",
-                    "name": "Nuclear Model of Atom",
-                    "img": "games/quantumHistory/Bohr_atom_model.svg"
-                },
-                {
-                    "id": "topic-orbital",
-                    "name": "Orbital Model of Atom",
-                    "img": "games/quantumHistory/Bohr_atom_model.svg"
-                },
-                {
-                    "id": "topic-general-rel",
-                    "name": "General Relativity",
-                    "img": "games/quantumHistory/gen-rel.svg"
-                },
-                {
-                    "id": "topic-matter-waves",
-                    "name": "Matter Waves",
-                    "img": "games/quantumHistory/Propagationadebrogliewave.svg"
-                },
-                {
-                    "id": "topic-matrix",
-                    "name": "Matrix Mechanics",
-                    "img": "games/quantumHistory/matrixmech.svg"
-                },
-                {
-                    "id": "topic-wave-mech",
-                    "name": "Wave Mechanics",
-                    "img": "games/quantumHistory/Wavepacket-a2k4-en.jpg"
-                },
-                {
-                    "id": "topic-uncertainty",
-                    "name": "Uncertainty Principle",
-                    "img": "games/quantumHistory/Quantum_mechanics_travelling_wavefunctions_wavelength_opt.svg"
-                },
-                {
-                    "id": "topic-relativistic-qm",
-                    "name": "Relativistic QM & Second Quantization",
-                    "img": "games/quantumHistory/diracEquation.svg"
-                },
-                {
-                    "id": "topic-qed",
-                    "name": "Quantum Electrodynamics",
-                    "img": "games/quantumHistory/Feynmann_Diagram_Gluon_Radiation_opt.svg"
-                }
-            ]
+          "path": "games/quantumHistory/",
+          "file": "Plancks_hypothesis_of_energy_quanta.svg",
+          "caption": "Planck's hypothesis of energy quanta.",
+          "changes": "simplified svg"
         }
-    ],
-    "puzzles": [
+      ]
+    },
+    {
+      "type": "CC BY 3.0",
+      "url": "https://creativecommons.org/licenses/by/3.0",
+      "attribution": "Kurzon, via Wikimedia Commons",
+      "images": [
         {
-            "puzzle_id": "puzzle-year-topic",
-            "puzzletitle": "Timeline of Discoveries",
-            "instructions": "Match the year to the discovery.",
-            "type": "set",
-            "evaluation": "unordered",
-            "host_group_id": "group-years",
-            "guest_group_id": "group-topics",
-            "matches": [
-                {
-                    "match": [
-                        "year-1900",
-                        "topic-blackbody"
-                    ]
-                },
-                {
-                    "match": [
-                        "year-1905",
-                        "topic-photoelectric"
-                    ]
-                },
-                {
-                    "match": [
-                        "year-1911",
-                        "topic-nuclear"
-                    ]
-                },
-                {
-                    "match": [
-                        "year-1913",
-                        "topic-orbital"
-                    ]
-                },
-                {
-                    "match": [
-                        "year-1915",
-                        "topic-general-rel"
-                    ]
-                },
-                {
-                    "match": [
-                        "year-1923",
-                        "topic-matter-waves"
-                    ]
-                },
-                {
-                    "match": [
-                        "year-1925",
-                        "topic-matrix"
-                    ]
-                },
-                {
-                    "match": [
-                        "year-1926",
-                        "topic-wave-mech"
-                    ]
-                },
-                {
-                    "match": [
-                        "year-1927",
-                        "topic-uncertainty"
-                    ]
-                },
-                {
-                    "match": [
-                        "year-1928",
-                        "topic-relativistic-qm"
-                    ]
-                },
-                {
-                    "match": [
-                        "year-1948",
-                        "topic-qed"
-                    ]
-                }
-            ]
+          "original_url": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Geiger-Marsden_experiment_expectation_and_result.svg",
+          "path": "games/quantumHistory/",
+          "file": "Geiger-Marsden_experiment_expectation_and_result.svg",
+          "caption": "Albert Einstein in 1905.",
+          "changes": "cropped to result portion and adjusted for dark background"
+        }
+      ]
+    },
+    {
+      "type": "CC BY-SA 3.0",
+      "url": "https://creativecommons.org/licenses/by/3.0",
+      "attribution": "JabberWok, CC BY-SA 3.0, via Wikimedia Commons",
+      "attribution_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+      "images": [
+        {
+          "original_url": "https://upload.wikimedia.org/wikipedia/commons/9/93/Bohr_atom_model.svg",
+          "path": "games/quantumHistory/",
+          "file": "Bohr_atom_model.svg",
+          "caption": "Schematic illustration of bound-bound transition in the Bohr atomic model",
+          "changes": "adjusted for dark background"
         },
         {
-            "puzzle_id": "puzzle-topic-scientist",
-            "puzzletitle": "Discoveries & Scientists",
-            "instructions": "Match the discovery to the scientist(s).",
-            "type": "set",
-            "evaluation": "unordered",
-            "host_group_id": "group-topics",
-            "guest_group_id": "group-scientists",
-            "matches": [
-                {
-                    "match": [
-                        "topic-blackbody",
-                        "sci-planck"
-                    ]
-                },
-                {
-                    "match": [
-                        "topic-photoelectric",
-                        "sci-einstein-1905"
-                    ]
-                },
-                {
-                    "match": [
-                        "topic-nuclear",
-                        "sci-rutherford"
-                    ]
-                },
-                {
-                    "match": [
-                        "topic-orbital",
-                        "sci-bohr"
-                    ]
-                },
-                {
-                    "match": [
-                        "topic-general-rel",
-                        "sci-einstein-1915"
-                    ]
-                },
-                {
-                    "match": [
-                        "topic-matter-waves",
-                        "sci-debroglie"
-                    ]
-                },
-                {
-                    "match": [
-                        "topic-matrix",
-                        "sci-heisenberg-born-jordan"
-                    ]
-                },
-                {
-                    "match": [
-                        "topic-wave-mech",
-                        "sci-schrodinger"
-                    ]
-                },
-                {
-                    "match": [
-                        "topic-uncertainty",
-                        "sci-heisenberg"
-                    ]
-                },
-                {
-                    "match": [
-                        "topic-relativistic-qm",
-                        "sci-dirac"
-                    ]
-                },
-                {
-                    "match": [
-                        "topic-qed",
-                        "sci-feynman-etal"
-                    ]
-                }
-            ]
+          "original_url": "https://upload.wikimedia.org/wikipedia/commons/9/93/Bohr_atom_model.svg",
+          "path": "games/quantumHistory/",
+          "file": "Bohr_atom_model.svg",
+          "caption": "Schematic illustration of bound-bound transition in the Bohr atomic model",
+          "changes": "adjusted for dark background"
         }
-    ],
-    "layout": {
-        "puzzle_slots": [
-            {
-                "slot_id": "slot-timeline",
-                "activates_puzzle_id": "puzzle-year-topic",
-                "host_group_id": "group-years",
-                "guest_group_id": "group-topics",
-                "at_index": 0,
-                "guest_align_index": 0,
-                "host_direction": "horizontal",
-                "guest_direction": "vertical"
-            },
-            {
-                "slot_id": "slot-discoveries",
-                "activates_puzzle_id": "puzzle-topic-scientist",
-                "host_group_id": "group-topics",
-                "guest_group_id": "group-scientists",
-                "at_index": 2,
-                "guest_align_index": 0,
-                "host_direction": "vertical",
-                "guest_direction": "horizontal"
-            }
-        ],
-        "sliders": [
-            {
-                "id": "group-topics",
-                "populates_from_group": "group-topics",
-                "direction": "vertical"
-            },
-            {
-                "id": "group-scientists",
-                "populates_from_group": "group-scientists",
-                "direction": "horizontal"
-            },
-            {
-                "id": "group-years",
-                "populates_from_group": "group-years",
-                "direction": "horizontal"
-            }
-        ]
+      ]
+    },
+    {
+      "type": "CC BY-SA 3.0",
+      "url": "https://creativecommons.org/licenses/by/3.0",
+      "attribution": "Bundesarchiv, Bild 183-R57262 / Unknown author / CC-BY-SA 3.0",
+      "attribution_url": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
+      "images": [
+        {
+          "original_url": "https://upload.wikimedia.org/wikipedia/commons/9/93/Bohr_atom_model.svg",
+          "path": "games/quantumHistory/",
+          "file": "Bundesarchiv_Bild183-R57262,_Werner_Heisenberg.jpg",
+          "caption": "Prof. Dr. phil Werner Kar. Heisenberg,",
+          "changes": "none"
+        }
+      ]
+    },
+    {
+      "type": " CC BY-SA 4.0",
+      "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en",
+      "attribution": "Xcodexif, CC BY-SA 4.0 via Wikimedia Commons",
+      "attribution_url": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Wavepacket-a2k4-en.gif",
+      "images": [
+        {
+          "original_url": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Wavepacket-a2k4-en.gif",
+          "path": "games/quantumHistory/",
+          "file": "waveFunction.jpg",
+          "caption": "A depiction of a free wavepacket in one dimension where a =2 and K0=4.",
+          "changes": "took a frame from the gif"
+        }
+      ]
     }
+  ],
+  "slide_groups": [
+    {
+      "group_id": "group-years",
+      "group_name": "Years",
+      "slides": [
+        {
+          "id": "year-1900",
+          "name": "1900",
+          "img": "games/quantumHistory/year_1900.svg"
+        },
+        {
+          "id": "year-1905",
+          "name": "1905",
+          "img": "games/quantumHistory/year_1905.svg"
+        },
+        {
+          "id": "year-1911",
+          "name": "1911",
+          "img": "games/quantumHistory/year_1911.svg"
+        },
+        {
+          "id": "year-1913",
+          "name": "1913",
+          "img": "games/quantumHistory/year_1913.svg"
+        },
+        {
+          "id": "year-1915",
+          "name": "1915",
+          "img": "games/quantumHistory/year_1915.svg"
+        },
+        {
+          "id": "year-1923",
+          "name": "1923",
+          "img": "games/quantumHistory/year_1923.svg"
+        },
+        {
+          "id": "year-1925",
+          "name": "1925",
+          "img": "games/quantumHistory/year_1925.svg"
+        },
+        {
+          "id": "year-1926",
+          "name": "1926",
+          "img": "games/quantumHistory/year_1926.svg"
+        },
+        {
+          "id": "year-1927",
+          "name": "1927",
+          "img": "games/quantumHistory/year_1927.svg"
+        },
+        {
+          "id": "year-1928",
+          "name": "1928",
+          "img": "games/quantumHistory/year_1928.svg"
+        },
+        {
+          "id": "year-1948",
+          "name": "1948-1950",
+          "img": "games/quantumHistory/year_1948.svg"
+        }
+      ]
+    },
+    {
+      "group_id": "group-scientists",
+      "group_name": "Scientists",
+      "slides": [
+        {
+          "id": "sci-planck",
+          "name": "Max Planck",
+          "img": "games/quantumHistory/Max_Planck_1901.gif"
+        },
+        {
+          "id": "sci-einstein-1905",
+          "name": "Albert Einstein",
+          "img": "games/quantumHistory/Einstein_patentoffice_full.jpg"
+        },
+        {
+          "id": "sci-rutherford",
+          "name": "Ernest Rutherford",
+          "img": "games/quantumHistory/Sir_Ernest_Rutherford_LCCN2014716719_-_restoration1.jpg"
+        },
+        {
+          "id": "sci-bohr",
+          "name": "Niels Bohr",
+          "img": "games/quantumHistory/Niels_Bohr.jpg"
+        },
+        {
+          "id": "sci-einstein-1915",
+          "name": "Albert Einstein",
+          "img": "games/quantumHistory/Albert_Einstein_and_his_wife_Mileva_Maric.jpg"
+        },
+        {
+          "id": "sci-debroglie",
+          "name": "Louis de Broglie",
+          "img": "games/quantumHistory/Broglie_Big.jpg"
+        },
+        {
+          "id": "sci-heisenberg-born-jordan",
+          "name": "Heisenberg, Born, Jordan",
+          "img": "games/quantumHistory/Bundesarchiv_Bild183-R57262_Werner_Heisenberg.jpg"
+        },
+        {
+          "id": "sci-schrodinger",
+          "name": "Erwin Schrödinger",
+          "img": "games/quantumHistory/Erwin_Schrödinger_-_Narodowe_Archiwum_Cyfrowe_1-E-939.jpg"
+        },
+        {
+          "id": "sci-heisenberg",
+          "name": "Werner Heisenberg",
+          "img": "games/quantumHistory/Bundesarchiv_Bild183-R57262_Werner_Heisenberg.jpg"
+        },
+        {
+          "id": "sci-dirac",
+          "name": "Paul Dirac",
+          "img": "games/quantumHistory/Paul_Dirac1933.jpg"
+        },
+        {
+          "id": "sci-feynman-etal",
+          "name": "Feynman, Tomonaga, Schwinger",
+          "img": "games/quantumHistory/Richard_Feynman_undated.png"
+        }
+      ]
+    },
+    {
+      "group_id": "group-topics",
+      "group_name": "Topics",
+      "slides": [
+        {
+          "id": "topic-blackbody",
+          "name": "Blackbody Radiation",
+          "img": "games/quantumHistory/CNX_UPhysics_39_01_BlackBodyRadiationCurve.jpg"
+        },
+        {
+          "id": "topic-photoelectric",
+          "name": "Photoelectric Effect & Special Relativity",
+          "img": "games/quantumHistory/solarpanel.002.png"
+        },
+        {
+          "id": "topic-nuclear",
+          "name": "Nuclear Model of Atom",
+          "img": "games/quantumHistory/Bohr_atom_model.svg"
+        },
+        {
+          "id": "topic-orbital",
+          "name": "Orbital Model of Atom",
+          "img": "games/quantumHistory/Bohr_atom_model.svg"
+        },
+        {
+          "id": "topic-general-rel",
+          "name": "General Relativity",
+          "img": "games/quantumHistory/gen-rel.svg"
+        },
+        {
+          "id": "topic-matter-waves",
+          "name": "Matter Waves",
+          "img": "games/quantumHistory/Propagationadebrogliewave.svg"
+        },
+        {
+          "id": "topic-matrix",
+          "name": "Matrix Mechanics",
+          "img": "games/quantumHistory/matrixmech.svg"
+        },
+        {
+          "id": "topic-wave-mech",
+          "name": "Wave Mechanics",
+          "img": "games/quantumHistory/Wavepacket-a2k4-en.jpg"
+        },
+        {
+          "id": "topic-uncertainty",
+          "name": "Uncertainty Principle",
+          "img": "games/quantumHistory/Quantum_mechanics_travelling_wavefunctions_wavelength_opt.svg"
+        },
+        {
+          "id": "topic-relativistic-qm",
+          "name": "Relativistic QM & Second Quantization",
+          "img": "games/quantumHistory/diracEquation.svg"
+        },
+        {
+          "id": "topic-qed",
+          "name": "Quantum Electrodynamics",
+          "img": "games/quantumHistory/Feynmann_Diagram_Gluon_Radiation_opt.svg"
+        }
+      ]
+    }
+  ],
+  "puzzles": [
+    {
+      "puzzle_id": "puzzle-year-topic",
+      "puzzletitle": "Timeline of Discoveries",
+      "instructions": "Match the year to the discovery.",
+      "type": "set",
+      "evaluation": "unordered",
+      "host_group_id": "group-years",
+      "guest_group_id": "group-topics",
+      "matches": [
+        {
+          "match": [
+            "year-1900",
+            "topic-blackbody"
+          ]
+        },
+        {
+          "match": [
+            "year-1905",
+            "topic-photoelectric"
+          ]
+        },
+        {
+          "match": [
+            "year-1911",
+            "topic-nuclear"
+          ]
+        },
+        {
+          "match": [
+            "year-1913",
+            "topic-orbital"
+          ]
+        },
+        {
+          "match": [
+            "year-1915",
+            "topic-general-rel"
+          ]
+        },
+        {
+          "match": [
+            "year-1923",
+            "topic-matter-waves"
+          ]
+        },
+        {
+          "match": [
+            "year-1925",
+            "topic-matrix"
+          ]
+        },
+        {
+          "match": [
+            "year-1926",
+            "topic-wave-mech"
+          ]
+        },
+        {
+          "match": [
+            "year-1927",
+            "topic-uncertainty"
+          ]
+        },
+        {
+          "match": [
+            "year-1928",
+            "topic-relativistic-qm"
+          ]
+        },
+        {
+          "match": [
+            "year-1948",
+            "topic-qed"
+          ]
+        }
+      ]
+    },
+    {
+      "puzzle_id": "puzzle-topic-scientist",
+      "puzzletitle": "Discoveries & Scientists",
+      "instructions": "Match the discovery to the scientist(s).",
+      "type": "set",
+      "evaluation": "unordered",
+      "host_group_id": "group-topics",
+      "guest_group_id": "group-scientists",
+      "matches": [
+        {
+          "match": [
+            "topic-blackbody",
+            "sci-planck"
+          ]
+        },
+        {
+          "match": [
+            "topic-photoelectric",
+            "sci-einstein-1905"
+          ]
+        },
+        {
+          "match": [
+            "topic-nuclear",
+            "sci-rutherford"
+          ]
+        },
+        {
+          "match": [
+            "topic-orbital",
+            "sci-bohr"
+          ]
+        },
+        {
+          "match": [
+            "topic-general-rel",
+            "sci-einstein-1915"
+          ]
+        },
+        {
+          "match": [
+            "topic-matter-waves",
+            "sci-debroglie"
+          ]
+        },
+        {
+          "match": [
+            "topic-matrix",
+            "sci-heisenberg-born-jordan"
+          ]
+        },
+        {
+          "match": [
+            "topic-wave-mech",
+            "sci-schrodinger"
+          ]
+        },
+        {
+          "match": [
+            "topic-uncertainty",
+            "sci-heisenberg"
+          ]
+        },
+        {
+          "match": [
+            "topic-relativistic-qm",
+            "sci-dirac"
+          ]
+        },
+        {
+          "match": [
+            "topic-qed",
+            "sci-feynman-etal"
+          ]
+        }
+      ]
+    }
+  ],
+  "layout": {
+    "puzzle_slots": [
+      {
+        "slot_id": "slot-timeline",
+        "activates_puzzle_id": "puzzle-year-topic",
+        "host_group_id": "group-years",
+        "guest_group_id": "group-topics",
+        "at_index": 0,
+        "guest_align_index": 0,
+        "host_direction": "horizontal",
+        "guest_direction": "vertical"
+      },
+      {
+        "slot_id": "slot-discoveries",
+        "activates_puzzle_id": "puzzle-topic-scientist",
+        "host_group_id": "group-topics",
+        "guest_group_id": "group-scientists",
+        "at_index": 2,
+        "guest_align_index": 0,
+        "host_direction": "vertical",
+        "guest_direction": "horizontal"
+      }
+    ],
+    "sliders": [
+      {
+        "id": "group-scientists",
+        "populates_from_group": "group-scientists",
+        "direction": "horizontal"
+      },
+      {
+        "id": "group-topics",
+        "populates_from_group": "group-topics",
+        "direction": "vertical"
+      },
+      {
+        "id": "group-years",
+        "populates_from_group": "group-years",
+        "direction": "horizontal"
+      }
+    ]
+  }
 }
