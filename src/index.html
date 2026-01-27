@@ -12,8 +12,8 @@
 </head>
 
 <body>
-    <div class="screen">
-        <div class="about-screen">
+    <div class="screens">
+        <div class="screen about-screen">
             <h1 class="screen-title"><span>about</span></h1>
             <section class="about-content">
                 <p>Match-locker is a fun and engaging puzzle game where you swipe to match pieces and complete
@@ -24,7 +24,7 @@
             </section>
             <button class="back-button">back</button>
         </div>
-        <div class="leadin-screen">
+        <div class="screen leadin-screen">
             <svg version="1.1" viewBox="0 0 254 179.91667" height="680" width="960"
                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -390,7 +390,7 @@
             </svg>
             <label class="no-leadin"><input type="checkbox" name="no-leadin" value="no"><span>stop making me swipe again,<br>I know how to swipe!!</span></label>
         </div>
-        <div class="start-screen">
+        <div class="screen start-screen">
             <svg viewBox="0 0 366.77771 99.999999" version="1.1" id="logo-start" width="366.77771" height="100"
                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"
                 xmlns:svg="http://www.w3.org/2000/svg">
@@ -439,13 +439,20 @@
                 </ol>
             </nav>
         </div>
-        <div class="game-screen">
+        <div class="screen game-screen">
             <!-- Slider <ol> elements will be dynamically created here by app.js -->
             <div class="puzzle-status-indicator">
                 <div class="puzzle-status">SOLVED</div>
             </div>
         </div>
-        <div class="settings-screen">
+        <div class="screen info-screen">
+            <h1 class="screen-title"><span>info</span></h1>
+            <div class="info-game"></div>
+            <div class="info-content">
+                <div class="info-puzzle"></div>
+            </div>
+        </div>
+        <div class="screen settings-screen">
             <h1 class="screen-title"><span>Settings</span></h1>
             <div class="settings-options">
                 <div class="setting-option">
@@ -497,13 +504,6 @@
             </div>
             <div class="control-container">
                 <button class="back-button">back</button>
-            </div>
-        </div>
-        <div class="info-screen">
-            <h1 class="screen-title"><span>info</span></h1>
-            <div class="info-game"></div>
-            <div class="info-content">
-                <div class="info-puzzle"></div>
             </div>
         </div>
         <nav class="sub-nav game">

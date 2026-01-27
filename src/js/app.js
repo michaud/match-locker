@@ -31,7 +31,7 @@ const start = () => {
     const defaultStartScreen = currentSettings.skipLeadin ? 'start' : 'leadin';
     
     const leadInScreen = document.querySelector('.leadin-screen'); 
-    const mainScreen = document.querySelector('.screen');
+    const mainScreen = document.querySelector('.screens');
     const startScreen = mainScreen.querySelector('.start-screen');
     const gameScreen = mainScreen.querySelector('.game-screen');
     const settingsScreen = mainScreen.querySelector('.settings-screen');
