@@ -195,6 +195,7 @@ export const buildWorldMap = (layout, slideGroups) => {
                 guestNode.up = (hostNode && hostNode.up) ? hostNode.up : { swiperId: slot.host_group_id, index: slot.at_index };
                 guestNode.down = (hostNode && hostNode.down) ? hostNode.down : { swiperId: slot.host_group_id, index: slot.at_index };
             }
+            guestNode.guest = { swiperId: slot.host_group_id, index: slot.at_index };
         }
     });
 

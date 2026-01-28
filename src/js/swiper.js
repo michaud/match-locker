@@ -310,7 +310,7 @@ export function createSwiper(options) {
                     const projected = currentTranslate + velocity * itemSize * THROW_MULTIPLIER;
                     const flingTarget = Math.round((projected - centerOffset) / itemSize) * itemSize + centerOffset;
                     animateListTo(flingTarget, animationCompletionHandler);
-                    return; // Exit here to avoid the "closest target" logic below.
+                    return animationCompletionHandler; // Exit here to avoid the "closest target" logic below.
                 }
                 // For an animated snap, find the closest visual representation of the target slide
                 // (including clones) to ensure the shortest possible animation path.
@@ -329,6 +329,7 @@ export function createSwiper(options) {
                     closestTarget,
                     animationCompletionHandler
                 );
+                return animationCompletionHandler;
             }
         },
 

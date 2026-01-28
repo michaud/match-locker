@@ -67,6 +67,7 @@ export function createGameStateMachine(callbacks) {
                 getGame().swiperInstances.forEach(swiper => {
                     swiper.off('endDrag', handleSwiperEndDrag);
                 });
+                interactionHandlers.gameDragAndTapHandler.detach();
                 interactionHandlers.navigationHandler.detach();
             },
             // Taps are ignored when not at a puzzle.
@@ -99,6 +100,7 @@ export function createGameStateMachine(callbacks) {
                 getGame().swiperInstances.forEach(swiper => {
                     swiper.off('endDrag', handleSwiperEndDrag);
                 });
+                interactionHandlers.gameDragAndTapHandler.detach();
                 interactionHandlers.navigationHandler.detach();
             },
             // Taps trigger a match attempt.
